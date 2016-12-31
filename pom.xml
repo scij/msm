@@ -1,0 +1,12 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.senacor</groupId>
+  <artifactId>msm</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <modules>
+    <module>com.senacor.msm.common</module>
+    <module>com.senacor.msm.onramp.jms</module>
+    <module>com.senacor.msm.offramp.jms</module>
+    <module>com.senacor.msm.offramp.uic</module>
+  </modules>
+</project>

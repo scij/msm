@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ReplState" timestamp="1483193581914">{:repl-history {:ide [], :local [&quot;(class #\&quot;a*\&quot;)&quot; &quot;(re-find #\&quot;A*\&quot; \&quot;ABC\&quot;)&quot; &quot;(re-find #\&quot;A*\&quot; \&quot;BC\&quot;)&quot; &quot;(re-matcher #\&quot;A*\&quot; \&quot;BC\&quot;)&quot; &quot;(re-matches #\&quot;A*\&quot; \&quot;BC\&quot;)&quot; &quot;(re-matches #\&quot;A*\&quot; \&quot;ABC\&quot;)&quot; &quot;.&quot; &quot;(re-matches #\&quot;A.*\&quot; \&quot;ABC\&quot;)&quot; &quot;(re-matches #\&quot;A.*\&quot; \&quot;BC\&quot;)&quot; &quot;(class nil)&quot;], :remote []}}</component>
+</project>
