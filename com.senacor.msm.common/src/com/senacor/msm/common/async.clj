@@ -18,7 +18,8 @@
   [socket label-re channel]
   (go-loop [msg (net/receive socket label-re)]
     (>! channel msg)
-    (recur (net/receive socket label-re))))
+    (recur (net/receive socket label-re)))
+  channel)
 
 (defn chan->zmq
   "Receives messages from channel, transforms them into ZeroMQ messages and sends

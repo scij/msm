@@ -22,7 +22,7 @@
   "Subscribe to the JMS Queue and publish the messages to the
   async channel for further processing
   channel output channel"
-  [channel]
+  [jms-descr channel]
   (.start conn)
   (go-loop [jms-msg (.receive consumer)]
     (>! channel (msg/create-message queue-name
@@ -30,6 +30,6 @@
                                     (.getText ^TextMessage jms-msg)))
     (recur (.receive consumer))
     )
-  (.close conn)
+  channel
   )
 
