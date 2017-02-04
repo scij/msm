@@ -15,10 +15,10 @@
   socket is the zmq socket where the messages are received.
   label is a regular expression to filter by message label. A string is fine too.
   channel is the channel to send the messages to."
-  [socket label-re channel]
-  (go-loop [msg (net/receive socket label-re)]
+  [socket channel]
+  (go-loop [msg (net/zreceive socket)]
     (>! channel msg)
-    (recur (net/receive socket label-re)))
+    (recur (net/zreceive socket)))
   channel)
 
 (defn chan->zmq
@@ -30,7 +30,7 @@
   [socket label channel]
   (go-loop [msg (<! channel)]
     (when msg
-      (net/send socket label msg)
+      (net/zsend socket label msg)
       (recur (<! channel))
       ))
   )

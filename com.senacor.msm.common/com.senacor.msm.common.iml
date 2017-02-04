@@ -27,6 +27,7 @@
     <orderEntry type="library" name="Leiningen: org.clojure/tools.reader:1.0.0-beta2" level="project" />
     <orderEntry type="library" name="Leiningen: org.ow2.asm/asm-all:4.2" level="project" />
     <orderEntry type="library" name="Leiningen: org.zeromq/cljzmq:0.1.4" level="project" />
-    <orderEntry type="library" name="Leiningen: org.zeromq/jeromq:0.3.6" level="project" />
+    <orderEntry type="library" name="Leiningen: org.zeromq/jzmq:3.0.1" level="project" />
+    <orderEntry type="library" name="Leiningen: overtone/at-at:1.2.0" level="project" />
   </component>
 </module>

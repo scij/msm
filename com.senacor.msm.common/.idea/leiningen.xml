@@ -10,6 +10,7 @@
         <option value="dev" />
         <option value="test" />
         <option value="leiningen/test" />
+        <option value="run" />
       </list>
     </option>
   </component>

@@ -9,5 +9,5 @@
   (process {:jms-host   "tcp://localhost:7778",
             :queue-name "RCSD.Q.1"
             :ack-mode   Session/AUTO_ACKNOWLEDGE}
-           "RCSD.TEST.1")
+           "epgm://en0;239.0.0.1:7999")
 )

@@ -10,5 +10,6 @@
   (go-loop [msg (<! chan)]
     ;; message unter der correlation id speichern und zusätzlichen Index für
     ;; ein expiry date (sehr kurz) pflegen.
+    ;; Oder einen ringbuffer nutzen
     )
   )

@@ -2,23 +2,47 @@
   (:require [zeromq.zmq :as zmq]
             [clojure.edn :as edn]
             [com.senacor.msm.common.msg :as msg]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [clojure.string :as str])
   (:import (java.util Date UUID)
            (java.util.regex Pattern)
            (com.senacor.msm.common.msg Message Metadata)
-           (zmq ZMQ)))
+           (org.zeromq ZMQ$Socket ZMQ)
+           (java.io Closeable)))
+
+(declare init-zmq)
+(declare get-label-static-prefix)
 
 ;;
 ;; Context management
 ;;
 
-(declare init-zmq)
-(declare get-label-static-prefix)
-
 (def zmq-ctx (atom (zmq/context)))
+
+(def get-instance-id
+  "Returns the name of the processes MXBean which contains the
+  process id and the hostname"
+  (memoize (fn []
+             (-> (java.lang.management.ManagementFactory/getRuntimeMXBean)
+                 (.getName)))))
+
+;;
+;; Serializing data
+;;
 
 (def edn-readers {Message  msg/map->Message,
                   Metadata msg/map->Metadata})
+
+;;
+;; Socket type
+;;
+(defrecord Socket [
+  ^ZMQ$Socket socket
+  ^Pattern label]
+  Closeable
+  (close [this]
+    (.close (:socket this)))
+  )
 
 ;;
 ;; Socket management
@@ -26,10 +50,13 @@
 
 (defn create-client-socket
   "Returns a new client socket.
-  network-spec is the network address to bind to."
-  [network-spec]
-  (doto (zmq/socket @zmq-ctx :pub)
-    (zmq/connect network-spec)))
+  network-spec is the network address to bind to.
+  label is the message label to send on all outgoing messages"
+  [network-spec label]
+  (->Socket
+    (doto (zmq/socket @zmq-ctx :pub)
+      (zmq/connect network-spec))
+    (get-label-static-prefix label)))
 
 (defn create-server-socket
   "Returns a new server socket.
@@ -38,12 +65,14 @@
   [network-spec label]
   (let [socket (zmq/socket @zmq-ctx :sub)]
     (zmq/bind socket network-spec)
-    (when-not (nil? label)
-      (zmq/subscribe socket (get-label-static-prefix label)))))
+    (zmq/subscribe socket "")
+    ;(when label)
+    ;  (zmq/subscribe socket (get-label-static-prefix label))
+    (->Socket socket label)))
 
 (defn close
-  [sock]
-  (zmq/close sock))
+  [^Socket sock]
+  (zmq/close (:socket sock)))
 
 ;;
 ;; Message label matching
@@ -79,6 +108,10 @@
   (let [label-str (.pattern label)]
     (first (re-find #"^(/|\-|\w)+" label-str))))
 
+(defmethod get-label-static-prefix nil
+  [_]
+  nil)
+
 ;;
 ;; Sending an receiving
 ;; Messages are always sent as three frames:
@@ -95,48 +128,67 @@
   payload Message payload to be transmitted. Should be a CLJ
   builtin type. Use of custom types and records will tie sender
   and receiver closer together than necessary."
-  ([socket label ^String payload]
-   (zmq/send-str socket label ZMQ/ZMQ_SNDMORE)
-   (zmq/send-str socket (msg/create-corr-id) ZMQ/ZMQ_SNDMORE)
-   (zmq/send-str socket (pr-str payload)))
-  ([socket ^Message msg]
-   (zmq/send-str socket (msg/get-label msg) ZMQ/ZMQ_SNDMORE)
-   (zmq/send-str socket (msg/get-correlation-id msg) ZMQ/ZMQ_SNDMORE)
-   (zmq/send-str socket (pr-str (msg/get-payload msg))))
+  ([^Socket sock label ^String payload]
+   (doto (:socket sock)
+     (zmq/send-str label zmq/send-more)
+     (zmq/send-str "DATA" zmq/send-more)
+     (zmq/send-str (msg/create-corr-id) zmq/send-more)
+     (zmq/send-str (pr-str payload))))
+  ([^Socket sock ^Message msg]
+   (doto (:socket sock)
+     (zmq/send-str (msg/get-label msg) zmq/send-more)
+     (zmq/send-str "DATA" zmq/send-more)
+     (zmq/send-str (msg/get-correlation-id msg) zmq/send-more)
+     (zmq/send-str (pr-str (msg/get-payload msg)))))
   )
+
+(defn- receive-str-all
+  "Receive all frames of a message and return them
+  as a collection of strings
+  socket is the ZMQ network socket to receive from"
+  [^ZMQ$Socket socket]
+  (loop [acc []]
+    (log/trace "receiving")
+    (let [new-acc (conj acc (zmq/receive-str socket))]
+      (log/trace "received")
+      (if (zmq/receive-more? socket)
+        (recur new-acc)
+        new-acc))))
 
 (defn ^Message zreceive
   "Receive a message from the specified ZMQ socket.
   Returns the message as a map containing metadata and payload.
   The function blocks until a suitable message\n  was received.
-  socket ZMQ socket.
-  label-re the message label or a RE pattern used to filter
-  incoming messages. Messages that do not match the label string
-  or RE are silently skipped. Use nil to receive all messages."
-  [socket label-re]
-  (loop [label (zmq/receive-str socket)]
-    (log/trace "Received label" label)
-    (if (label-match? label-re label)
-      ;; Regular expression passt -> Nachricht verarbeiten
-      (msg/create-message
-        label
-        (if (zmq/receive-more? socket)
-          (zmq/receive-str socket)
-          nil)
-        (if (zmq/receive-more? socket)
-          (edn/read-string {:readers edn-readers} (zmq/receive-str socket))
-          nil))
-      ;; Regular expression passt nicht, Nachricht verbrauchen aber nicht verarbeiten
-      (while (zmq/receive-more? socket)
-        (zmq/receive socket)))))
+  socket ZMQ socket."
+  [^Socket sock]
+  (let [socket (:socket sock)
+        label-re (:label sock)]
+    (loop [frames (receive-str-all socket)]
+      (log/trace "ZReceive: msg" (count frames) frames)
+      (if (label-match? label-re (first frames))
+        ;; Regular expression passt -> Nachricht verarbeiten
+        (do
+          (log/trace "ZReceive: label match")
+          (msg/create-message
+            (first frames)
+            ;; skip the DATA qualifier
+            (nth frames 2) ;; corr-id
+            (edn/read-string {:readers edn-readers} (nth frames 3))))
+        ;; Label passt nicht, nächste Nachricht versuchen)
+        (do
+          (log/trace "ZReceive: label no match")
+          (recur (receive-str-all socket)))))))
 
 (defn handle-messages
+  "Der Name ist noch bescheuert. Das ist ein Kompaktserver, der eine
+  Serviceadresse abonniert und die dort auflaufenden Nachrichten
+  verarbeitet."
   [network-spec label handler-fn]
   (let [sock (create-server-socket network-spec label)]
-    (loop [msg (zreceive sock label)]
+    (loop [msg (zreceive sock)]
       (try
         (handler-fn msg)
         (catch Exception ex
-          ;; request retransmission
+          ;; report failure to sender
           (log/error ex "Exception handling message")))
-      (recur (zreceive sock label)))))
+      (recur (zreceive sock)))))

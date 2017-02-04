@@ -4,32 +4,32 @@
   (:import (javax.jms Session ConnectionFactory Connection Queue JMSConsumer Message TextMessage)
            (com.tibco.tibjms TibjmsConnection TibjmsConnectionFactory)))
 
-(def url "tcp://localhost:7778")
+(def conn-factory (atom nil))
 
-(def queue-name "MY.QUEUE.1")
+(def conn (atom nil))
 
-(def ^ConnectionFactory conn-factory (TibjmsConnectionFactory. url))
+(defn init-tibjms
+  [url]
+  (swap! conn-factory (fn [_] (TibjmsConnectionFactory. url)))
+  (swap! conn (fn [_] (.createConnection @conn-factory)))
+  (.start conn))
 
-(def ^Connection conn (.createConnection conn-factory))
-
-(def ^Session session (.createSession conn false Session/AUTO_ACKNOWLEDGE))
-
-(def ^Queue queue (.createQueue session queue-name))
-
-(def ^JMSConsumer consumer (.createConsumer session queue))
+(defn- create-consumer
+  [queue-name ack-mode]
+  (let [session (.createSession @conn false ack-mode)
+        queue (.createQueue session queue-name)]
+    (.createConsumer session queue)))
 
 (defn jms->chan
   "Subscribe to the JMS Queue and publish the messages to the
   async channel for further processing
   channel output channel"
-  [jms-descr channel]
-  (.start conn)
+  [^JMSConsumer consumer channel]
   (go-loop [jms-msg (.receive consumer)]
-    (>! channel (msg/create-message queue-name
+    (>! channel (msg/create-message (.getJMSDestination jms-msg)
                                     (.getJMSCorrelationID jms-msg)
                                     (.getText ^TextMessage jms-msg)))
-    (recur (.receive consumer))
-    )
+    (recur (.receive consumer)))
   channel
   )
 

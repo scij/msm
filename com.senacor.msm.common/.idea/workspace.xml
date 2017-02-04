@@ -2,29 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dba21096-bc98-4765-a3b5-16615820daf9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/leiningen.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Leiningen__log4j_1_2_17.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Leiningen__org_clojure_tools_logging_0_3_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test-resources/log4j.properties" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/senacor/msm/common/demo.clj" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/senacor/msm/common/msg_test.clj" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/senacor/msm/common/net_test.clj" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/store.clj" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Leiningen__org_zeromq_jzmq_3_0_1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Leiningen__overtone_at_at_1_2_0.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/senacor/msm/common/stateful_server.clj" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_zeromq_jzmq_3_0_1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__overtone_at_at_1_2_0.xml" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Leiningen__org_zeromq_jeromq_0_3_6.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test/com/senacor/msm/common_test.clj" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_zeromq_jeromq_0_3_6.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/leiningen.xml" afterPath="$PROJECT_DIR$/.idea/leiningen.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/replstate.xml" afterPath="$PROJECT_DIR$/.idea/replstate.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/com.senacor.msm.common.iml" afterPath="$PROJECT_DIR$/com.senacor.msm.common.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project.clj" afterPath="$PROJECT_DIR$/project.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/common/async.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/common/async.clj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/common/msg.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/common/msg.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/common/net.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/common/net.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/senacor/msm/common/demo.clj" afterPath="$PROJECT_DIR$/test/com/senacor/msm/common/demo.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/senacor/msm/common/net_test.clj" afterPath="$PROJECT_DIR$/test/com/senacor/msm/common/net_test.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/com.senacor.msm.onramp.jms.iml" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/com.senacor.msm.onramp.jms.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/core.clj" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/core.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/jms.clj" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/jms.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/process.clj" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/process.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/store.clj" afterPath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/store.clj" />
     </list>
     <ignored path="com.senacor.msm.common.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,21 +43,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="net.clj" pinned="false" current-in-tab="false">
+      <file leaf-file-name="net.clj" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/common/net.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="105" column="3" lean-forward="false" selection-start-line="105" selection-start-column="3" selection-end-line="105" selection-end-column="3" />
+            <state relative-caret-position="845">
+              <caret line="175" column="65" lean-forward="false" selection-start-line="175" selection-start-column="65" selection-end-line="175" selection-end-column="65" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="demo.clj" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stateful_server.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/common/stateful_server.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="net_test.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/common/net_test.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="390">
+              <caret line="26" column="73" lean-forward="false" selection-start-line="26" selection-start-column="73" selection-end-line="26" selection-end-column="73" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="demo.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/common/demo.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="44" column="19" lean-forward="true" selection-start-line="44" selection-start-column="19" selection-end-line="44" selection-end-column="19" />
+            <state relative-caret-position="170">
+              <caret line="14" column="11" lean-forward="false" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="project.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/project.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -68,7 +97,7 @@
         <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/common/msg_test.clj">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="180">
-              <caret line="12" column="0" lean-forward="true" selection-start-line="0" selection-start-column="4" selection-end-line="0" selection-end-column="35" />
+              <caret line="12" column="0" lean-forward="false" selection-start-line="0" selection-start-column="4" selection-end-line="0" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -87,8 +116,8 @@
       <file leaf-file-name="async.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/common/async.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+            <state relative-caret-position="495">
+              <caret line="33" column="2" lean-forward="false" selection-start-line="33" selection-start-column="2" selection-end-line="33" selection-end-column="2" />
               <folding />
             </state>
           </provider>
@@ -107,15 +136,16 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/common/async.clj" />
         <option value="$PROJECT_DIR$/test-resources/log4j.properties" />
-        <option value="$PROJECT_DIR$/project.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/common/zmq_tests.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/common/msg_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/common/msg.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/common/net.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/common/async.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/common/net_test.clj" />
+        <option value="$PROJECT_DIR$/project.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/common/stateful_server.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/common/demo.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/common/net.clj" />
       </list>
     </option>
   </component>
@@ -129,6 +159,7 @@
         <option value="dev" />
         <option value="test" />
         <option value="leiningen/test" />
+        <option value="run" />
       </list>
     </option>
   </component>
@@ -138,7 +169,7 @@
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1280" />
-    <option name="height" value="710" />
+    <option name="height" value="716" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -172,6 +203,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -236,25 +270,23 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
+    <property name="settings.editor.selected.configurable" value="editing.templates" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../com.senacor.msm.onramp.jms" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="cursive.last.file.extension./Users/jschiewe/src/msm/com.senacor.msm.common/test" value="clj" />
+    <property name="cursive.last.file.extension./Users/jschiewe/src/msm/com.senacor.msm.common/src" value="clj" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/test/com/senacor/msm/common" />
     </key>
   </component>
-  <component name="ReplState" timestamp="1485173397564">{:repl-history {:ide [], :local [&quot;(class #\&quot;a*\&quot;)&quot; &quot;(re-find #\&quot;A*\&quot; \&quot;ABC\&quot;)&quot; &quot;(re-find #\&quot;A*\&quot; \&quot;BC\&quot;)&quot; &quot;(re-matcher #\&quot;A*\&quot; \&quot;BC\&quot;)&quot; &quot;(re-matches #\&quot;A*\&quot; \&quot;BC\&quot;)&quot; &quot;(re-matches #\&quot;A*\&quot; \&quot;ABC\&quot;)&quot; &quot;.&quot; &quot;(re-matches #\&quot;A.*\&quot; \&quot;ABC\&quot;)&quot; &quot;(re-matches #\&quot;A.*\&quot; \&quot;BC\&quot;)&quot; &quot;(class nil)&quot; &quot;(+ 1 3 4)&quot; &quot;(future #(println \&quot;DEB\&quot;))&quot; &quot;(future (println \&quot;DEB\&quot;))&quot; &quot;(def f (future (println \&quot;DEB\&quot;) 1))&quot; &quot;(def f (future (println \&quot;DEB\&quot;) 100))&quot; &quot;(require com.senacor.msm.common.zmq_tests)&quot; &quot;(require 'com.senacor.msm.common.zmq_tests :as t)&quot; &quot;(future (server))&quot; &quot;(class bytes)&quot; &quot;(com.senacor.msm.common.net/charset)&quot; &quot;com.senacor.msm.common.net/charset&quot; &quot;(def ^String t \&quot;UTF-8\&quot;)&quot; &quot;t&quot; &quot;(UUID.)&quot; &quot;(UUID/randomUUID)&quot; &quot;(.toString (UUID/randomUUID))&quot; &quot;(class {:a 1})&quot; &quot;(deref *1)&quot; &quot;(future (com.senacor.msm.common.zmq-tests/server))&quot; &quot;(deref *2\n       )&quot; &quot;(require 'com.senacor.msm.common.zmq_tests)&quot; &quot;(com.senacor.msm.common.zmq-tests/kurzschluss)&quot; &quot;(let [context (zmq/zcontext)]\n  (with-open [requester (doto (zmq/socket context :req)\n                          (zmq/connect \&quot;tcp://127.0.0.1:5559\&quot;))]\n    (dotimes [i 10]\n      (zmq/send-str requester \&quot;Hello\&quot;)\n      (let [string (zmq/receive-str requester)]\n        (printf \&quot;Received reply %d [%s]\\n\&quot; i string)))))&quot; &quot;(System/getProperty \&quot;java.library.path\&quot;)&quot; &quot;(Thread. com.senacor.msm.common.zmq-tests/server)&quot; &quot;(Thread)&quot; &quot;(run (Thread. com.senacor.msm.common.zmq-tests/server))&quot; &quot;(start (Thread. com.senacor.msm.common.zmq-tests/server))&quot; &quot;(start ^Thread (Thread. com.senacor.msm.common.zmq-tests/server))&quot; &quot;(.start (Thread. com.senacor.msm.common.zmq-tests/server))&quot; &quot;(com.senacor.msm.common.zmq-tests/client)&quot; &quot;(+ 1 2)&quot; &quot;(class #\&quot;expr\&quot;)&quot; &quot;(.pattern #\&quot;expr.+\&quot;)&quot; &quot;(.quote #\&quot;expr.+\&quot;)&quot; &quot;(.quote #\&quot;expr.+\&quot; \&quot;expr\&quot;)&quot; &quot;(import 'java.util.regex Pattern)&quot; &quot;(Pattern/quote #\&quot;expr.+\&quot; \&quot;expr\&quot;)&quot; &quot;(Pattern/quote \&quot;expr\&quot;)&quot; &quot;()&quot; &quot;(Pattern/quote \&quot;expr.+\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w/\\-)+\&quot; \&quot;/opt/net\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w/\\-)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;(\\w/\\-)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;(\\w)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w/)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w\\/)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^\\w+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+\&quot; \&quot;/rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+\&quot; \&quot;/rcs/mein-humbug\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+.*\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-+).*\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-seq #\&quot;^(\\w|/|\\-+).*\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(\\w|/|\\-+).*\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(\\w|/|\\-+)(.*)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(\\w)(.*)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(/|\\w)(.*)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-matches #\&quot;^(/|\\w)(.*)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(/|\\w)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(/|\\w)+\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(/|\\-|\\w)+\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot;], :remote []}}</component>
+  <component name="ReplState" timestamp="1486199912635">{:repl-history {:ide [], :local [&quot;(def f (future (println \&quot;DEB\&quot;) 1))&quot; &quot;(def f (future (println \&quot;DEB\&quot;) 100))&quot; &quot;(require com.senacor.msm.common.zmq_tests)&quot; &quot;(require 'com.senacor.msm.common.zmq_tests :as t)&quot; &quot;(future (server))&quot; &quot;(class bytes)&quot; &quot;(com.senacor.msm.common.net/charset)&quot; &quot;com.senacor.msm.common.net/charset&quot; &quot;(def ^String t \&quot;UTF-8\&quot;)&quot; &quot;t&quot; &quot;(UUID.)&quot; &quot;(UUID/randomUUID)&quot; &quot;(.toString (UUID/randomUUID))&quot; &quot;(class {:a 1})&quot; &quot;(deref *1)&quot; &quot;(future (com.senacor.msm.common.zmq-tests/server))&quot; &quot;(deref *2\n       )&quot; &quot;(require 'com.senacor.msm.common.zmq_tests)&quot; &quot;(com.senacor.msm.common.zmq-tests/kurzschluss)&quot; &quot;(let [context (zmq/zcontext)]\n  (with-open [requester (doto (zmq/socket context :req)\n                          (zmq/connect \&quot;tcp://127.0.0.1:5559\&quot;))]\n    (dotimes [i 10]\n      (zmq/send-str requester \&quot;Hello\&quot;)\n      (let [string (zmq/receive-str requester)]\n        (printf \&quot;Received reply %d [%s]\\n\&quot; i string)))))&quot; &quot;(System/getProperty \&quot;java.library.path\&quot;)&quot; &quot;(Thread. com.senacor.msm.common.zmq-tests/server)&quot; &quot;(Thread)&quot; &quot;(run (Thread. com.senacor.msm.common.zmq-tests/server))&quot; &quot;(start (Thread. com.senacor.msm.common.zmq-tests/server))&quot; &quot;(start ^Thread (Thread. com.senacor.msm.common.zmq-tests/server))&quot; &quot;(.start (Thread. com.senacor.msm.common.zmq-tests/server))&quot; &quot;(com.senacor.msm.common.zmq-tests/client)&quot; &quot;(+ 1 2)&quot; &quot;(class #\&quot;expr\&quot;)&quot; &quot;(.pattern #\&quot;expr.+\&quot;)&quot; &quot;(.quote #\&quot;expr.+\&quot;)&quot; &quot;(.quote #\&quot;expr.+\&quot; \&quot;expr\&quot;)&quot; &quot;(import 'java.util.regex Pattern)&quot; &quot;(Pattern/quote #\&quot;expr.+\&quot; \&quot;expr\&quot;)&quot; &quot;(Pattern/quote \&quot;expr\&quot;)&quot; &quot;()&quot; &quot;(Pattern/quote \&quot;expr.+\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w/\\-)+\&quot; \&quot;/opt/net\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w/\\-)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;(\\w/\\-)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;(\\w)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w/)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w\\/)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^\\w+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+\&quot; \&quot;rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+\&quot; \&quot;/rcs\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+\&quot; \&quot;/rcs/mein-humbug\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-)+.*\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-matches #\&quot;^(\\w|/|\\-+).*\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-seq #\&quot;^(\\w|/|\\-+).*\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(\\w|/|\\-+).*\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(\\w|/|\\-+)(.*)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(\\w)(.*)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(/|\\w)(.*)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-matches #\&quot;^(/|\\w)(.*)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(/|\\w)\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(/|\\w)+\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(re-find #\&quot;^(/|\\-|\\w)+\&quot; \&quot;/rcs/mein-humbug/.*\&quot;)&quot; &quot;(require 'com.senacor.msm.common.net :as net)&quot; &quot;(use 'com.senacor.msm.common.net)&quot; &quot;(net/create-client-socket \&quot;epgm://en0;239.192.0.1:7777\&quot;)&quot; &quot;(net/zsend *1 \&quot;TEST\&quot; \&quot;TEST\&quot;)&quot; &quot;(doto (:socket *2)\n  (zsend \&quot;TEST\&quot; \&quot;TEST\&quot;))&quot; &quot;(:socket *1)&quot; &quot;(:socket *4)&quot; &quot;(doto (:a {:a 1, :b 2})\n  (println))&quot; &quot;(doto (:socket s)\n  (net/zsend \&quot;TEST\&quot; \&quot;TEST\&quot;))&quot; &quot;(def zs (:socket s))&quot; &quot;zs&quot; &quot;(doto zs\n  (zsend \&quot;TEST\&quot; \&quot;TEST\&quot;))&quot; &quot;(doto zs\n  (net/zsend \&quot;TEST\&quot; \&quot;TEST\&quot;))&quot; &quot;(doto zs\n  (zmq/send-str zs \&quot;TEST\&quot;))&quot; &quot;(zmq/send-str zs \&quot;TEST\&quot;)&quot; &quot;(doto zs\n  (zmq/send-str \&quot;TEST\&quot;))&quot; &quot;(first s)&quot; &quot;(first (first s))&quot; &quot;(name (first (first s)))&quot; &quot;(namespace (first (first s)))&quot; &quot;(:socket s)&quot; &quot;(zsend s \&quot;TEST\&quot; \&quot;TEST\&quot;)&quot; &quot;(require '[zeromq.zmq :as zmq])&quot; &quot;(require [com.senacor.msm.common.net :as net])&quot; &quot;(require '[com.senacor.msm.common.net :as net])&quot; &quot;(def s (net/create-client-socket \&quot;epgm://en0;239.192.0.1:7777\&quot;))&quot; &quot;(net/zsend s \&quot;TEST\&quot; \&quot;TEST\&quot;)&quot; &quot;(.toString nil)&quot; &quot;(str \&quot;target\&quot; File/separator \&quot;testdata\&quot; File/separator)&quot; &quot;(str/join File/separator [\&quot;target\&quot; \&quot;testdata\&quot;])&quot; &quot;(Runtime/getRuntime)&quot; &quot;(System/getProperties)&quot; &quot;(java.lang.management.ManagementFactory/getRuntimeMXBean)&quot; &quot;(.getName (java.lang.management.ManagementFactory/getRuntimeMXBean))&quot; &quot;(let [[a b c]] [1 2]\n               (print a b c))&quot; &quot;(let [[a b c] [1 2]]\n  (print a b c))&quot; &quot;(when nil (print \&quot;nil\&quot;))&quot; &quot;(use 'com.senacor.msm.common.demo)&quot; &quot;(trace \&quot;epgm://en0;239.192.0.1:7777\&quot; \&quot;\&quot;)&quot; &quot;(trace \&quot;epgm://en0;239.192.0.1:7777\&quot;)&quot;], :remote []}}</component>
   <component name="RunManager" selected="Clojure REPL.REPL for com.senacor.msm.common">
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="HTML_USED" value="false" />
@@ -428,23 +460,32 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="710" extended-state="6" />
+    <frame x="0" y="23" width="1280" height="716" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32852563" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32866043" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32852563" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28029078" sideWeight="0.53115267" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.44749597" sideWeight="0.5625" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32852563" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32847896" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.46884736" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.4375" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2657512" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27382874" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -545,18 +586,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/project.clj">
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/common/stateful_server.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="4" lean-forward="false" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="4" />
+        <state relative-caret-position="450">
+          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/common/async.clj">
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/common/net_test.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+        <state relative-caret-position="390">
+          <caret line="26" column="73" lean-forward="false" selection-start-line="26" selection-start-column="73" selection-end-line="26" selection-end-column="73" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/common/msg_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="0" selection-start-column="4" selection-end-line="0" selection-end-column="35" />
           <folding />
         </state>
       </provider>
@@ -569,34 +626,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/common/net_test.clj">
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/common/async.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="720">
-          <caret line="48" column="28" lean-forward="false" selection-start-line="48" selection-start-column="28" selection-end-line="48" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/common/net.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="105" column="3" lean-forward="false" selection-start-line="105" selection-start-column="3" selection-end-line="105" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/common/msg_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="0" lean-forward="true" selection-start-line="0" selection-start-column="4" selection-end-line="0" selection-end-column="35" />
+        <state relative-caret-position="495">
+          <caret line="33" column="2" lean-forward="false" selection-start-line="33" selection-start-column="2" selection-end-line="33" selection-end-column="2" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/common/demo.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="44" column="19" lean-forward="true" selection-start-line="44" selection-start-column="19" selection-end-line="44" selection-end-column="19" />
+        <state relative-caret-position="170">
+          <caret line="14" column="11" lean-forward="false" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/common/net.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="845">
+          <caret line="175" column="65" lean-forward="false" selection-start-line="175" selection-start-column="65" selection-end-line="175" selection-end-column="65" />
           <folding />
         </state>
       </provider>
