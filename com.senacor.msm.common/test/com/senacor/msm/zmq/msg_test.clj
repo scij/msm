@@ -1,6 +1,6 @@
-(ns com.senacor.msm.common.msg-test
+(ns com.senacor.msm.zmq.msg-test
   (:require [clojure.test :refer :all]
-            [com.senacor.msm.common.msg :refer :all]))
+            [com.senacor.msm.zmq.msg :refer :all]))
 
 (deftest test-create-message
   (testing "create-message"

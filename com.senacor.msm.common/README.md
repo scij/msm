@@ -1,4 +1,4 @@
-# com.senacor.msm.common
+# com.senacor.msm.zmq
 
 A Clojure library designed to ... well, that part is up to you.
 

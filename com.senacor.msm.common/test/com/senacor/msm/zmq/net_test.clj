@@ -1,9 +1,9 @@
-(ns com.senacor.msm.common.net-test
+(ns com.senacor.msm.zmq.net-test
   (:require [clojure.test :refer :all]
-            [com.senacor.msm.common.net :refer :all]
-            [com.senacor.msm.common.msg :as msg])
+            [com.senacor.msm.zmq.net :refer :all]
+            [com.senacor.msm.zmq.msg :as msg])
   (:import (org.zeromq ZMQ$Socket)
-           (com.senacor.msm.common.msg Message)))
+           (com.senacor.msm.zmq.msg Message)))
 
 (def label "test create sockets")
 

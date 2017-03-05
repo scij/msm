@@ -1,6 +1,6 @@
-(ns com.senacor.msm.common.async
+(ns com.senacor.msm.zmq.async
   (:require [clojure.core.async :refer (go-loop <! >!)]
-            [com.senacor.msm.common.net :as net]
+            [com.senacor.msm.zmq.net :as net]
             [zeromq.zmq :as zmq]
             [clojure.edn :as edn]))
 

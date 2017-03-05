@@ -1,4 +1,4 @@
-(ns com.senacor.msm.common.msg
+(ns com.senacor.msm.zmq.msg
   (:import (java.util Date UUID)))
 
 (defrecord Metadata

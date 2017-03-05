@@ -1,4 +1,4 @@
-(defproject com.senacor.msm.common "0.1.0-SNAPSHOT"
+(defproject com.senacor.msm.zmq "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -18,6 +18,6 @@
   :profiles {:test {:resource-paths ["test-resources"]}
              :run {:aot :all
                    :resource-paths ["test-resources"]}}
-  :main com.senacor.msm.common.demo
+  :main com.senacor.msm.zmq.msg-test
   :repositories [["sonatype" {:url "https://oss.sonatype.org/content/repositories/releases"
                               :update :always}]])

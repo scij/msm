@@ -1,12 +1,12 @@
-(ns com.senacor.msm.common.net
+(ns com.senacor.msm.zmq.net
   (:require [zeromq.zmq :as zmq]
             [clojure.edn :as edn]
-            [com.senacor.msm.common.msg :as msg]
+            [com.senacor.msm.zmq.msg :as msg]
             [clojure.tools.logging :as log]
             [clojure.string :as str])
   (:import (java.util Date UUID)
            (java.util.regex Pattern)
-           (com.senacor.msm.common.msg Message Metadata)
+           (com.senacor.msm.zmq.msg Message Metadata)
            (org.zeromq ZMQ$Socket ZMQ)
            (java.io Closeable)))
 
@@ -41,7 +41,7 @@
   ^Pattern label]
   Closeable
   (close [this]
-    (.close (:socket this)))
+    (.close ^ZMQ$Socket (:socket this)))
   )
 
 ;;
@@ -54,8 +54,10 @@
   label is the message label to send on all outgoing messages"
   [network-spec label]
   (->Socket
-    (doto (zmq/socket @zmq-ctx :pub)
-      (zmq/connect network-spec))
+    (let [sock (zmq/socket @zmq-ctx :pub)]
+      (when (str/starts-with? network-spec "epgm")
+        (.setMulticastLoop sock true))
+      (zmq/connect sock network-spec))
     (get-label-static-prefix label)))
 
 (defn create-server-socket
@@ -65,9 +67,9 @@
   [network-spec label]
   (let [socket (zmq/socket @zmq-ctx :sub)]
     (zmq/bind socket network-spec)
-    (zmq/subscribe socket "")
-    ;(when label)
-    ;  (zmq/subscribe socket (get-label-static-prefix label))
+    (when (str/starts-with? network-spec "epgm")
+      (.setMulticastLoop socket true))
+    (zmq/subscribe socket label)
     (->Socket socket label)))
 
 (defn close
