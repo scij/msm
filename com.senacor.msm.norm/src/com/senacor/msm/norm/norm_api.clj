@@ -547,6 +547,8 @@
   handle)
 
 (defn- ^NormNackingMode key->nacking-mode
+  "Maps the keywords :none, :info-only and :normal used in the clojure world
+  to the Java constants used internally"
   [nacking-mode]
   (case nacking-mode
     :none NormNackingMode/NORM_NACK_NONE
@@ -615,9 +617,9 @@
 
 (defn ^Integer read-stream
   "Reads data from a receiver stream. This function is usually called in response
-  to a :rx-object-new event. buffer and buffer-size specify the location and the
-  size of the buffer allocated to receive the data. The function returns the
-  amout of data actually read. This is a non-blocking call. When no data is
+  to a :rx-object-new and :rx-object-updated event. buffer and buffer-size specify
+  the location and the size of the buffer allocated to receive the data. The function
+  returns the amout of data actually read. This is a non-blocking call. When no data is
   available it will return 0."
   [^NormStream handle ^bytes buffer ^Integer buffer-size]
   (.read handle buffer 0 buffer-size))
