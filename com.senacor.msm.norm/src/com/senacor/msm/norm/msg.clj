@@ -1,12 +1,12 @@
 (ns com.senacor.msm.norm.msg
   (:require [bytebuffer.buff :as bb]
             [clojure.string :as str]
-            [gloss.core :as gc]
-            [gloss.core.codecs :as gcc]
-            [gloss.io :as gio]
-            [manifold.stream :as s])
-  (:import (java.nio ByteBuffer)
-           (java.util UUID)))
+            [clojure.core.async :refer [<! >! <!! >!! go-loop chan close!]]
+            [clojure.tools.logging :as log]
+            [com.senacor.msm.norm.util :as util])
+  (:import (java.nio Buffer ByteBuffer)
+           (java.util UUID)
+           (clojure.lang PersistentQueue)))
 
 ;;
 ;; Container for data across the NORM transport
@@ -33,6 +33,8 @@
 ;; magic-number 2 bytes "MX"
 ;; major version 1 byte
 ;; minor version 1 byte
+;; header var part length short
+;; payload length int
 ;; -- end of header fixed part (10 Bytes)
 ;; label-length 1 byte
 ;; label label-length bytes
@@ -42,43 +44,182 @@
 ;; payload payload-length bytes
 ;; -- end of message
 
-(gc/defcodec msg-codec
-             (gcc/ordered-map
-               :magic1 :byte
-               :magic2 :byte
-               :major-version :byte
-               :minor-version :byte
-               :label (gc/finite-frame :byte (gc/string :utf-8))
-               :corr-id (gc/finite-frame :byte (gc/string :utf-8))
-               :payload (gc/finite-frame :int32 (gc/string :utf-8))
-               )
-             )
+(defn message-length
+  [label corr-id payload]
+  (+ 10
+     1 (count label)
+     1 (count corr-id)
+     (count payload)))
 
-(defn Message->bytebuffer
+(def ^:const hdr-len 10)
+
+(defn ^Message fault-message
+  [corr-id error-msg]
+  (->Message "/sys/fault"
+             (if corr-id corr-id "")
+             error-msg))
+
+(defn ^ByteBuffer Message->bytebuffer
+  "Takes a message and returns a java.nio.ByteBuffer with it's binary
+  transport represenation"
   [msg]
-  (gio/contiguous
-    (gio/encode
-      msg-codec
-      {:magic1        77,
-       :magic2        88,
-       :major-version 1,
-       :minor-version 0,
-       :label         (:label msg),
-       :corr-id       (:correlation-id msg),
-       :payload       (:payload msg)
-       })))
+  (let [b-label (.getBytes (:label msg))
+        b-corr-id (.getBytes (:correlation-id msg))
+        b-payload (.getBytes (:payload msg))]
+    (doto (bb/byte-buffer (+ hdr-len
+                             1 (count b-label)
+                             1 (count b-corr-id)
+                             (count b-payload)))
+      ;; Fixed header
+      (bb/put-byte (byte \M))
+      (bb/put-byte (byte \X))
+      (bb/put-byte 1)
+      (bb/put-byte 0)
+      (bb/put-short (+ 1 (count b-label) 1 (count b-corr-id)))
+      (bb/put-int (count b-payload))
+      ;; Header var part
+      (bb/put-byte (count b-label))
+      (.put b-label)
+      (bb/put-byte (count b-corr-id))
+      (.put b-corr-id)
+      (.put b-payload)
+      (.flip))))
 
-(defn frames->Message
-  "Transforms decoded frames from gloss into a Message"
-  [{:keys [magic1 magic2 major-version minor-version
-           header-length label correlation-id payload]}]
-  (when (or (not= magic1 77) (not= magic2 88))
-    (throw (Exception. (format "Bad magic number %d %d" magic1 magic2))))
-  (when (or (not= major-version 1) (< minor-version 0))
-    (throw (Exception. (format "Incompatible Version %d.%d" major-version minor-version))))
-  (->Message label correlation-id payload))
 
-(defn decode-message
-  "Consumes a manifold/stream of byte blocks and produces a stream of messages"
-  [stream]
-  (s/map frames->Message (gio/decode-stream stream msg-codec)))
+(defn take-string
+  "Reads a string of a given length from a byte buffer
+  returning the string"
+  [length buf]
+  (let [b (byte-array length)]
+    (.get buf b 0 length)
+    (String. b)))
+
+(declare parse-var-hdr)
+(declare parse-payload)
+(declare send-message)
+(declare parse-fixed-header)
+(declare start-state)
+
+(defn skip-to-next-msg-prefix
+  "Reads data from the buffer until the next valid
+  message prefix is detected"
+  [state buf out-chan]
+  (log/trace "Skipping")
+  (loop [b (bb/take-byte buf)]
+    (if (or (nil? b)
+            (and (= b (byte \M))
+                 (= (bb/take-byte buf) (byte \X))))
+      start-state
+      (recur (bb/take-byte buf)))))
+
+(defn parse-fixed-header
+  "Parse the fixed part of the header from buf and return an
+  array of header-is-valid, length-of-header-var-part"
+  [state buf _]
+  (log/trace "parse fixed header" buf)
+  (let [magic1 (bb/take-byte buf)
+        magic2 (bb/take-byte buf)
+        major-version (bb/take-byte buf)
+        minor-version (bb/take-byte buf)
+        hdr-var-length (bb/take-short buf)
+        payload-length (bb/take-int buf)]
+    (.mark buf)
+    (log/tracef "hdr %d %d %d.%d hdr-len=%d payload-len=%d"
+                magic1 magic2 major-version minor-version
+                hdr-var-length payload-length)
+    (if (or (not= magic1 (byte \M)) (not= magic2 (byte \X)))
+      (do
+        (log/errorf "Invalid magic msg prefix: %d %d" magic1 magic2)
+        {:valid? false,
+         :complete? false,
+         :parse-fn skip-to-next-msg-prefix}
+        )
+      (if (or (not= 1 major-version) (< minor-version 0))
+        (do
+          (log/errorf "Invalid msg version: %d %d" major-version minor-version)
+          {:valid? false,
+           :complete? false,
+           :parse-fn skip-to-next-msg-prefix}
+          )
+        {:valid? true,
+         :hdr-var-length hdr-var-length,
+         :payload-length payload-length,
+         :bytes-required hdr-var-length,
+         :parse-fn parse-var-hdr,
+         :complete? false
+         }
+        ))))
+
+(defn parse-var-hdr
+  "Parse the var length metadata from the message header."
+  [state buf _]
+  {:label          (take-string (bb/take-byte buf) buf),
+   :corr-id        (take-string (bb/take-byte buf) buf),
+   :bytes-required (:payload-length state),
+   :parse-fn       parse-payload,
+   :complete?      false
+   })
+
+(defn parse-payload
+  "Reads as many payload bytes from the buf as specified in the
+  payload element of the state and returns an updated state
+  with the payload element set and the state re-initialized for
+  the next message. The buffer is compacted to make room for
+  another message"
+  [state buf _]
+  (let [result {:payload       (take-string (:payload-length state) buf)
+                :parse-fn       send-message,
+                :bytes-required 0,
+                :complete?      true
+               }]
+    result))
+
+(defn send-message
+  [state buf out-chan]
+  (>!! out-chan (->Message (:label state) (:corr-id state) (:payload state)))
+  start-state
+  )
+
+(def start-state
+  "Returns the initial state of the message processing state engine"
+  {:parse-fn parse-fixed-header,
+   :bytes-required hdr-len
+   :complete? false})
+
+(defn process-state
+  [state buf out-chan]
+  (log/tracef "invoke state func %s" (:parse-fn state))
+  ((:parse-fn state) state buf out-chan))
+
+(defn process-message
+  [state byte-arr out-chan]
+  (let [buf (ByteBuffer/wrap byte-arr)]
+    (loop [st state]
+      (if (>= (.remaining buf) (:bytes-required st))
+        (recur (merge st (process-state st buf out-chan)))
+        (merge st {:rest-arr (util/byte-array-rest (.array buf) (.position buf))}) )
+      )
+    )
+  )
+
+(defn bytes->Messages
+  "Consumes a channel of byte arrays containing messages
+  and message fragments and sends the messages to the
+  outbound channel. This function is non-blocking and
+  returns the out-chan."
+  [in-chan out-chan]
+  (let [state (atom start-state)]
+    (go-loop [old-arr (-> "" String. .getBytes)
+              ^bytes new-arr (<! in-chan)]
+      (log/tracef "Message received: >%s<" (if new-arr (String. new-arr) "nil"))
+      (if new-arr
+        (if (>= (+ (count new-arr) (count old-arr)) (:bytes-required @state))
+          (do
+            (log/trace "Processing message")
+            (swap! state process-message (util/cat-byte-array old-arr new-arr) out-chan)
+            (recur (:rest-arr @state) (<! in-chan)))
+          (recur (util/cat-byte-array old-arr new-arr) (<! in-chan)))
+        (close! out-chan))
+      )
+    )
+  out-chan)

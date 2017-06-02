@@ -51,7 +51,7 @@
         session (norm/create-session instance dest-address dest-port 1)]
     (norm/set-congestion-control session true true)
     ;(norm/set-loopback handle true)
-    (norm/set-tx-rate session 80000000.0)
+    ;(norm/set-tx-rate session 80000000.0)
     (norm/set-grtt-estimate session 0.1)
     (norm/set-rx-port-reuse session true)
     (norm/set-multicast-interface session interface)
@@ -72,7 +72,9 @@
         buf (byte-array buf-len)]
     (loop [num-read (norm/read-stream stream buf buf-len)]
       (when (< 0 num-read)
-        (println "Block received")
+        ;; TODO Message zusammenbauen
+        (println "Block received: " (String. buf 0 8))
+        (norm/seek-message-start stream)
         (recur (norm/read-stream stream buf buf-len))))))
 
 (defn receive-data []

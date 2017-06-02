@@ -7,12 +7,14 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [mil.navy.nrl/norm "1.0.0"]
                  [bytebuffer "0.2.0"]
-                 [gloss "0.2.6"]
                  [org.clojure/core.async "0.3.442"]
+                 [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
+                                                    javax.jms/jms
+                                                    com.sun.jmdk/jmxtools
+                                                    com.sun.jmx/jmxri]]
                  ]
   :main com.senacor.msm.norm.norm-simple-test
   :profiles {:test   {:resource-paths ["test-resources"]}
-             :proto3 {:protobuf-version "3.2.0"}
              :run    {:aot      :all
                       :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]}}
   )
