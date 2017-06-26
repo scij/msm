@@ -12,7 +12,7 @@
 
 (def receivers (atom {}))
 
-(def instance (atom 0))
+(def instance (atom nil))
 
 (defn register-sender
   [session handler]
@@ -53,6 +53,7 @@
 
 (defn- event-loop
   [instance]
+  (log/trace "Enter event loop")
   (loop [event (norm/next-event instance)]
     (log/trace "Event loop:" event)
     (cond
@@ -95,5 +96,5 @@
       (norm/set-tos session tos))
     (when loopback
       (norm/set-loopback session true))
-    (.start (Thread. event-loop "NORM event loop"))
+    (.start (Thread. (partial event-loop @instance) "NORM event loop"))
     session))

@@ -14,6 +14,7 @@
                                                     com.sun.jmx/jmxri]]
                  ]
   :main com.senacor.msm.norm.norm-simple-test
+  :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]
   :profiles {:test   {:resource-paths ["test-resources"]}
              :run    {:aot      :all
                       :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]}}

@@ -29,12 +29,12 @@
 
 (deftest test-encode
   (testing "just encode"
-    (let [fxb (Message->bytebuffer fix-msg)]
+    (let [fxb ^bytes (Message->bytes fix-msg)]
       (is fxb)
-      (is (= fix-buflen (count (.array fxb))))
+      (is (= fix-buflen (count fxb)))
       ))
   (testing "encode and inspect"
-    (let [fxb (Message->bytebuffer fix-msg)]
+    (let [fxb (ByteBuffer/wrap (Message->bytes fix-msg))]
       (is (= fix-buflen (.remaining fxb)))
       (is (= 77 (bb/take-byte fxb)))
       (is (= 88 (bb/take-byte fxb)))
@@ -64,7 +64,7 @@
       ))
   )
 
-(defn ^ByteBuffer fill-buffer-with-testdata
+(defn fill-buffer-with-testdata
   [^ByteBuffer buf & do-flip]
   (doto buf
     (bb/put-byte 77)
@@ -97,8 +97,8 @@
 (deftest test-buffer-io
   (testing "Puffer vergleichen"
     (let [buf (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :flip)]
-      (is (= (String. (.array buf))
-             (String. (.array (Message->bytebuffer fix-msg))))))
+      (is (= (String. ^"[B" (.array buf))
+             (String. (Message->bytes fix-msg)))))
     )
   (testing "buffer io mit mark und reset"
     (let [buf (bb/byte-buffer 20)]
@@ -154,9 +154,9 @@
 
 (deftest test-process-message
   (testing "One message, one buffer"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :flip)
+    (let [fix (.array (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :flip))
           out-chan (chan 1)]
-      (process-message start-state (.array fix) out-chan)
+      (process-message start-state fix out-chan)
       (is (= fix-msg (<!! out-chan)))
       ))
   (testing "one message, short buffer"

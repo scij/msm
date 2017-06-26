@@ -44,14 +44,14 @@
 ;; payload payload-length bytes
 ;; -- end of message
 
+(def ^:const hdr-len 10)
+
 (defn message-length
   [label corr-id payload]
-  (+ 10
+  (+ hdr-len
      1 (count label)
      1 (count corr-id)
      (count payload)))
-
-(def ^:const hdr-len 10)
 
 (defn ^Message fault-message
   [corr-id error-msg]
@@ -59,17 +59,15 @@
              (if corr-id corr-id "")
              error-msg))
 
-(defn ^ByteBuffer Message->bytebuffer
-  "Takes a message and returns a java.nio.ByteBuffer with it's binary
-  transport represenation"
+(defn ^"[B" Message->bytes
+  "Takes a message and returns a byte array with it's binary
+  transport representation"
   [msg]
   (let [b-label (.getBytes (:label msg))
         b-corr-id (.getBytes (:correlation-id msg))
-        b-payload (.getBytes (:payload msg))]
-    (doto (bb/byte-buffer (+ hdr-len
-                             1 (count b-label)
-                             1 (count b-corr-id)
-                             (count b-payload)))
+        b-payload (.getBytes (:payload msg))
+        b-array (byte-array (message-length b-label b-corr-id b-payload))]
+    (doto (ByteBuffer/wrap b-array)
       ;; Fixed header
       (bb/put-byte (byte \M))
       (bb/put-byte (byte \X))
@@ -83,8 +81,8 @@
       (bb/put-byte (count b-corr-id))
       (.put b-corr-id)
       (.put b-payload)
-      (.flip))))
-
+      (.flip))
+    b-array))
 
 (defn take-string
   "Reads a string of a given length from a byte buffer
