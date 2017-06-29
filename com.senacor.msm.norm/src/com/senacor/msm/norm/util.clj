@@ -11,6 +11,12 @@
   (printf "remaining %d\n" (.remaining buf))
   (printf "position %d\n" (.position buf)))
 
+(defn dump-bytes
+  [b-arr]
+  (doseq [b b-arr]
+    (print b " "))
+  (println))
+
 (defn string-from-bytebuffer
   [buf]
   (let [b-arr (byte-array 32)]

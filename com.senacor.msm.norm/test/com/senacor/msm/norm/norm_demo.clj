@@ -4,18 +4,20 @@
             [com.senacor.msm.norm.receiver :as rcv]
             [com.senacor.msm.norm.sender :as snd]
             [com.senacor.msm.norm.msg :as msg]
-            [clojure.core.async :refer [chan >!! <!! close! go-loop >! <!]]))
+            [clojure.core.async :refer [chan >!! <!! close! go-loop >! <!]]
+            [clojure.tools.logging :as log]
+            [com.senacor.msm.norm.util :as util]))
 
 (defn sender
   [session args]
-  (let [bytes-chan (chan 5)
-        out-chan (chan 5)
-        sndr (snd/create-sender session 0 bytes-chan 128)]
+  (let [out-chan (chan 5)
+        sndr (snd/create-sender session 0 out-chan 128)]
     (go-loop [i 1]
+      (log/tracef "Sending msg %d" i)
       (>! out-chan (msg/Message->bytes (msg/create-message "DEMO.COUNT" (str i))))
-      (when (< i 10000)
+      (if (< i 10)
         (recur (inc i))
-        )
+        (close! out-chan))
       )
     ))
 
@@ -27,14 +29,14 @@
         msg-conv (msg/bytes->Messages bytes-chan msg-chan)]
     (go-loop [m (<! msg-chan)]
       (when m
-        (println (:payload m))
+        (log/tracef "Received message. Label=%s Payload=%s" (:label m) (:payload m))
         (recur (<! msg-chan))))
     ))
 
 (defn -main [& args]
   (println (System/getProperty "java.library.path"))
-  (ctl/init-norm)
-  (let [session (ctl/start-norm-session "239.192.0.1" 7100 1)]
-    (case (first args)
-      "send" (sender session (rest args))
-      "recv" (receiver session (rest args)))))
+  (let [instance (ctl/init-norm)]
+    (let [session (ctl/start-norm-session instance "239.192.0.1" 7100 1 :loopback true)]
+      (case (first args)
+        "send" (sender session (rest args))
+        "recv" (receiver session (rest args))))))

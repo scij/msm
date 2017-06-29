@@ -73,7 +73,7 @@
                               NormEventType/NORM_RX_OBJECT_COMPLETED    :rx-object-completed,
                               NormEventType/NORM_RX_OBJECT_ABORTED      :rx-object-aborted,
                               NormEventType/NORM_RX_CMD_NEW             :rx-object-cmd-new,
-                              NormEventType/NORM_GRTT_UPDATED           :rx-grtt-updated,
+                              NormEventType/NORM_GRTT_UPDATED           :grtt-updated,
                               NormEventType/NORM_EVENT_INVALID          :rx-event-invalid
                               })
 
@@ -485,11 +485,9 @@
 ;; Receiver functions
 ;;
 
-(defn ^Boolean start-receiver
+(defn start-receiver
   "Starts a receiver in the given session. The session starts to participate in
-  message exchange and will generate receiver specific events. Returns true if
-  the receiver could be started and false if an error like network or memory
-  recource problems prevent the receiver from starting."
+  message exchange and will generate receiver specific events."
   [^NormSession handle ^Long buffer-space]
   (.startReceiver handle buffer-space))
 

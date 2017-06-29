@@ -1,6 +1,7 @@
 (ns com.senacor.msm.norm.control
   (:require [com.senacor.msm.norm.norm-api :as norm]
             [clojure.tools.logging :as log]
+            [clojure.java.jmx :as jmx]
             [clojure.string :as str]))
 
 ;;
@@ -8,11 +9,16 @@
 ;; norm status updates to registered senders and receivers
 ;;
 
+;; maps a sending session to a callback function that handles the
+;; sender-related NORM events
 (def senders (atom {}))
 
+;; maps a receiving session to a callback function that handles
+;; receiver-related NORM events.
 (def receivers (atom {}))
 
-(def instance (atom nil))
+;; Session statistics used by JMX.
+(def session-infos (atom {}))
 
 (defn register-sender
   [session handler]
@@ -26,7 +32,7 @@
   [session handler]
   (swap! receivers assoc session handler))
 
-(defn unregister-receeiver
+(defn unregister-receiver
   [session]
   (swap! receivers dissoc session))
 
@@ -40,16 +46,32 @@
   (when-let [f (get @receivers (:session event))]
     (f event)))
 
-(defn- is-sender-event
+(defn- is-sender-event?
   [event-type]
-  (or
-    (contains? #{:cc-active :cc-inactive} event-type)
-    (str/starts-with? (str event-type) ":tx")
-    ))
+  (contains? #{:tx-queue-empty :tx-queue-vacancy} event-type))
 
-(defn- is-receiver-event
+(defn- is-receiver-event?
   [event-type]
   (str/starts-with? (str event-type) ":rx"))
+
+(defn- is-monitored-event?
+  [event-type]
+  (contains? #{:tx-rate-changed :cc-active :cc-inactive :grtt-updated} event-type))
+
+(defn- update-mon-status
+  [event]
+  (let [session (:session event)
+        mbean (get @session-infos session)]
+    (case (:event-type event)
+      :tx-rate-changed (swap! session-infos
+                              update-in [session :tx-rate] (norm/get-tx-rate session ))
+      :cc-active (swap! session-infos
+                        update-in [session :cc-active] true)
+      :cc-inactive (swap! session-infos
+                          update [session :cc-active] false)
+      :grtt-updated (swap! session-infos
+                           update-in [session :grtt] (norm/get-grtt-estimate session))
+    )))
 
 (defn- event-loop
   [instance]
@@ -57,21 +79,20 @@
   (loop [event (norm/next-event instance)]
     (log/trace "Event loop:" event)
     (cond
-      (is-sender-event (:event-type event))
-      (invoke-sender-callback event)
-      (is-receiver-event (:event-type event))
-      (invoke-receiver-callback event))
+      (is-sender-event? (:event-type event))
+        (invoke-sender-callback event)
+      (is-receiver-event? (:event-type event))
+        (invoke-receiver-callback event)
+      (is-monitored-event? (:event-type event))
+        (update-mon-status event)
+      )
     (recur (norm/next-event instance))))
-
-(defn get-instance [ ]
-  @instance)
 
 (defn init-norm
   "Initialize the NORM infrastructure. Must be called
   exactly onece before any subsequent interaction is possible."
   [ ]
-  (assert (nil? @instance) "NORM already initialized")
-  (swap! instance (fn [_] (norm/create-instance))))
+  (norm/create-instance))
 
 (defn start-norm-session
   "Starts a NORM session for sending and/or receiving data.
@@ -85,9 +106,9 @@
   :tos <byte> the type of service value for all packets
   :loopback if set will enable loopback i.e. local communication
   on this host"
-  [address port node-id
+  [instance address port node-id
    & {:keys [if-name ttl tos loopback]}]
-  (let [session (norm/create-session @instance address port node-id)]
+  (let [session (norm/create-session instance address port node-id)]
     (when if-name
       (norm/set-multicast-interface session if-name))
     (when ttl
@@ -95,6 +116,13 @@
     (when tos
       (norm/set-tos session tos))
     (when loopback
-      (norm/set-loopback session true))
-    (.start (Thread. (partial event-loop @instance) "NORM event loop"))
+      (log/trace "loopback set")
+      (norm/set-loopback session true)
+      (norm/set-rx-port-reuse session true))
+    (let [mbean (jmx/create-bean (atom {}))]
+      (swap! session-infos assoc session mbean)
+      (jmx/register-mbean mbean
+                          (str "com.senacor.msm.norm.control:name=Session/"
+                               address "/" port "/" node-id)))
+    (.start (Thread. (partial event-loop instance) "NORM event loop"))
     session))
