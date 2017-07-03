@@ -1,7 +1,7 @@
 (ns com.senacor.msm.norm.receiver
   (:require [com.senacor.msm.norm.norm-api :as norm]
             [com.senacor.msm.norm.control :as c]
-            [clojure.core.async :refer [>!! chan close!]]
+            [clojure.core.async :refer [>!! >! go-loop chan close!]]
             [com.senacor.msm.norm.util :as util]
             [clojure.tools.logging :as log])
   (:import (java.nio ByteBuffer)))
@@ -19,18 +19,13 @@
   [session out-chan event]
   (case (:event-type event)
     :rx-object-updated
-      (loop [buffer (byte-array buf-size)
+      (go-loop [buffer (byte-array buf-size)
              bytes-read (norm/read-stream (:object event) buffer buf-size)]
         (log/tracef "message received, len=%d" bytes-read)
-        (cond
-          (= buf-size bytes-read) (let [nbuf (byte-array buf-size)]
-                                    (>!! out-chan buffer)
-                                    (recur nbuf
-                                           (norm/read-stream (:object event) nbuf buf-size)))
-          (= bytes-read 0) nil
-          (< bytes-read buf-size) (let [nbuf (byte-array buf-size)]
-                                    (>!! out-chan (util/byte-array-head buffer bytes-read)))
-          ))
+        (when (> bytes-read 0)
+          (let [nbuf (byte-array buf-size)]
+            (>! out-chan (util/byte-array-head buffer bytes-read))
+            (recur nbuf (norm/read-stream (:object event) nbuf buf-size)))))
     :rx-object-completed
       (do
         (norm/stop-receiver session)

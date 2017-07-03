@@ -13,9 +13,15 @@
 
 (defn dump-bytes
   [b-arr]
-  (doseq [b b-arr]
-    (print b " "))
-  (println))
+  (if b-arr
+    (with-out-str
+      (doseq [b b-arr]
+        (if-let [c (char-escape-string (char b))]
+          (printf "%3s " c)
+          (if (Character/isLetterOrDigit (char b))
+            (printf "  %c " (char b))
+            (printf "%03o " b)))))
+    "nil"))
 
 (defn string-from-bytebuffer
   [buf]
@@ -32,12 +38,16 @@
 
 (defn byte-array-rest
   [b-arr pos]
-  (let [result (byte-array (- (count b-arr) pos))]
-    (System/arraycopy b-arr pos result 0 (- (count b-arr) pos))
-    result))
+  (if (zero? pos)
+    b-arr
+    (let [result (byte-array (- (count b-arr) pos))]
+      (System/arraycopy b-arr pos result 0 (- (count b-arr) pos))
+      result)))
 
 (defn byte-array-head
   [b-arr len]
-  (let [result (byte-array len)]
-    (System/arraycopy b-arr 0 result 0 len)
-    result))
+  (if (= len (count b-arr))
+    b-arr
+    (let [result (byte-array len)]
+      (System/arraycopy b-arr 0 result 0 len)
+      result)))

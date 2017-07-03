@@ -6,10 +6,11 @@
             [com.senacor.msm.norm.msg :as msg]
             [clojure.core.async :refer [chan >!! <!! close! go-loop >! <!]]
             [clojure.tools.logging :as log]
-            [com.senacor.msm.norm.util :as util]))
+            [com.senacor.msm.norm.util :as util]
+            [com.senacor.msm.norm.norm-api :as norm]))
 
 (defn sender
-  [session args]
+  [instance session args]
   (let [out-chan (chan 5)
         sndr (snd/create-sender session 0 out-chan 128)]
     (go-loop [i 1]
@@ -17,9 +18,9 @@
       (>! out-chan (msg/Message->bytes (msg/create-message "DEMO.COUNT" (str i))))
       (if (< i 10)
         (recur (inc i))
-        (close! out-chan))
-      )
+        (close! out-chan)))
     ))
+
 
 (defn receiver
   [session args]
@@ -38,5 +39,5 @@
   (let [instance (ctl/init-norm)]
     (let [session (ctl/start-norm-session instance "239.192.0.1" 7100 1 :loopback true)]
       (case (first args)
-        "send" (sender session (rest args))
+        "send" (sender instance session (rest args))
         "recv" (receiver session (rest args))))))

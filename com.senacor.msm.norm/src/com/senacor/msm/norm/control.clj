@@ -18,7 +18,7 @@
 (def receivers (atom {}))
 
 ;; Session statistics used by JMX.
-(def session-infos (atom {}))
+(def session-names (atom {}))
 
 (defn register-sender
   [session handler]
@@ -48,7 +48,9 @@
 
 (defn- is-sender-event?
   [event-type]
-  (contains? #{:tx-queue-empty :tx-queue-vacancy} event-type))
+  (or
+    (str/starts-with? (str event-type) ":tx")
+    (= :local-sender-closed event-type)))
 
 (defn- is-receiver-event?
   [event-type]
@@ -61,31 +63,25 @@
 (defn- update-mon-status
   [event]
   (let [session (:session event)
-        mbean (get @session-infos session)]
+        mbean (get @session-names session)]
     (case (:event-type event)
-      :tx-rate-changed (swap! session-infos
-                              update-in [session :tx-rate] (norm/get-tx-rate session ))
-      :cc-active (swap! session-infos
-                        update-in [session :cc-active] true)
-      :cc-inactive (swap! session-infos
-                          update [session :cc-active] false)
-      :grtt-updated (swap! session-infos
-                           update-in [session :grtt] (norm/get-grtt-estimate session))
+      :tx-rate-changed (jmx/write! mbean :tx-rate (norm/get-tx-rate session ))
+      :cc-active (jmx/write! mbean :cc-active true)
+      :cc-inactive (jmx/write! mbean :cc-active false)
+      :grtt-updated (jmx/write! mbean :grtt (norm/get-grtt-estimate session))
     )))
 
 (defn- event-loop
   [instance]
   (log/trace "Enter event loop")
   (loop [event (norm/next-event instance)]
-    (log/trace "Event loop:" event)
+    (log/trace "Next event:" event)
     (cond
-      (is-sender-event? (:event-type event))
-        (invoke-sender-callback event)
-      (is-receiver-event? (:event-type event))
-        (invoke-receiver-callback event)
-      (is-monitored-event? (:event-type event))
-        (update-mon-status event)
+      (is-monitored-event? (:event-type event)) (update-mon-status event)
+      (is-sender-event? (:event-type event)) (invoke-sender-callback event)
+      (is-receiver-event? (:event-type event)) (invoke-receiver-callback event)
       )
+    (log/trace "Wait for next event")
     (recur (norm/next-event instance))))
 
 (defn init-norm
@@ -119,10 +115,10 @@
       (log/trace "loopback set")
       (norm/set-loopback session true)
       (norm/set-rx-port-reuse session true))
-    (let [mbean (jmx/create-bean (atom {}))]
-      (swap! session-infos assoc session mbean)
-      (jmx/register-mbean mbean
-                          (str "com.senacor.msm.norm.control:name=Session/"
-                               address "/" port "/" node-id)))
+    (let [mbean (jmx/create-bean (atom {}))
+          s-name (str "com.senacor.msm.norm.control:name=Session/"
+                      address "/" port "/" node-id)]
+      (swap! session-names assoc session s-name)
+      (jmx/register-mbean mbean s-name))
     (.start (Thread. (partial event-loop instance) "NORM event loop"))
     session))

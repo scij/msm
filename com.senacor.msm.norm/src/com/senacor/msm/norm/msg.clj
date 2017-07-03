@@ -209,7 +209,7 @@
   (let [state (atom start-state)]
     (go-loop [old-arr (-> "" String. .getBytes)
               ^bytes new-arr (<! in-chan)]
-      (log/tracef "Message received: >%s<" (if new-arr (String. new-arr) "nil"))
+      (log/tracef "Message received: >%s<" (util/dump-bytes new-arr))
       (if new-arr
         (if (>= (+ (count new-arr) (count old-arr)) (:bytes-required @state))
           (do
