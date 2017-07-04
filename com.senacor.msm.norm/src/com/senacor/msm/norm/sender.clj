@@ -2,7 +2,7 @@
   (:require [com.senacor.msm.norm.norm-api :as norm]
             [com.senacor.msm.norm.control :as c]
             [com.senacor.msm.norm.util :as util]
-            [clojure.core.async :refer [chan go-loop <! <!! >!! poll!]]
+            [clojure.core.async :refer [chan go-loop <! <!! >!! >! poll!]]
             [clojure.tools.logging :as log]))
 
 (def ^:const buffer-size (* 1024 1024))
@@ -12,14 +12,19 @@
 ;;
 
 (defn sender-handler
-  [ctl-chan session event]
-  (case (:event-type event)
-    :tx-queue-vacancy (>!! ctl-chan :new-data)
-    :tx-queue-empty (>!! ctl-chan :new-data)
-    :local-sender-closed (>!! ctl-chan :local-sender-closed)
-    :tx-flush-completed (>!! ctl-chan :tx-flush-completed)
-    :tx-object-purged (>!! ctl-chan :tx-object-purged)
-  ))
+  [event-chan ctl-chan]
+  (go-loop [event (<! event-chan)]
+    (when event
+      (case (:event-type event)
+        :tx-queue-vacancy (>! ctl-chan :new-data)
+        :tx-queue-empty (>! ctl-chan :new-data)
+        :local-sender-closed (>! ctl-chan :local-sender-closed)
+        :tx-flush-completed (>! ctl-chan :tx-flush-completed)
+        :tx-object-purged (>! ctl-chan :tx-object-purged)
+        ;; default
+        nil)
+      (recur (<! event-chan))))
+  )
 
 (defn- wait-for-event
   [chan event]
@@ -36,11 +41,11 @@
     senders in the NORM universe
   in-chan An async channel with byte-arrays of messages to be sent.
   max-msg-size in bytes, used to appropriately size the NORM buffers."
-  [session instance-id in-chan max-msg-size]
+  [session instance-id event-chan in-chan max-msg-size]
   (norm/start-sender session instance-id buffer-size max-msg-size 64 16)
   (let [stream (norm/open-stream session buffer-size)
         ctl-chan (chan 10)]
-    (c/register-sender session (partial sender-handler ctl-chan session))
+    (sender-handler event-chan ctl-chan)
     (log/trace "Sender registered, starting loop")
     (go-loop [b-arr (<! in-chan)
               b-len (count b-arr)
@@ -67,6 +72,5 @@
           (wait-for-event ctl-chan :tx-object-purged)
           (norm/stop-sender session)
           (norm/destroy-session session)
-          (c/unregister-sender session)
           (log/trace "session and stream closed"))
         ))))

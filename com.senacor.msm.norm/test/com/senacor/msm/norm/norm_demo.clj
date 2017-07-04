@@ -4,40 +4,42 @@
             [com.senacor.msm.norm.receiver :as rcv]
             [com.senacor.msm.norm.sender :as snd]
             [com.senacor.msm.norm.msg :as msg]
-            [clojure.core.async :refer [chan >!! <!! close! go-loop >! <!]]
+            [clojure.core.async :refer [chan >!! <!! close! mult tap]]
             [clojure.tools.logging :as log]
             [com.senacor.msm.norm.util :as util]
             [com.senacor.msm.norm.norm-api :as norm]))
 
 (defn sender
-  [instance session args]
-  (let [out-chan (chan 5)
-        sndr (snd/create-sender session 0 out-chan 128)]
-    (go-loop [i 1]
+  [session event-chan args]
+  (let [out-chan (chan)
+        sndr (snd/create-sender session 0 event-chan out-chan 128)]
+    (doseq [i (range 10)]
       (log/tracef "Sending msg %d" i)
-      (>! out-chan (msg/Message->bytes (msg/create-message "DEMO.COUNT" (str i))))
-      (if (< i 10)
-        (recur (inc i))
-        (close! out-chan)))
+      (>!! out-chan (msg/Message->bytes (msg/create-message "DEMO.COUNT" (str "MSG="(inc i))))))
+    (close! out-chan)
     ))
 
 
 (defn receiver
-  [session args]
+  [session event-chan args]
   (let [bytes-chan (chan 5)
         msg-chan (chan 5)
-        rcvr (rcv/create-receiver session bytes-chan)
+        rcvr (rcv/create-receiver session event-chan bytes-chan)
         msg-conv (msg/bytes->Messages bytes-chan msg-chan)]
-    (go-loop [m (<! msg-chan)]
+    (loop [m (<!! msg-chan)]
       (when m
         (log/tracef "Received message. Label=%s Payload=%s" (:label m) (:payload m))
-        (recur (<! msg-chan))))
+        (recur (<!! msg-chan))))
     ))
 
 (defn -main [& args]
   (println (System/getProperty "java.library.path"))
-  (let [instance (ctl/init-norm)]
+  (let [event-chan (chan 5)
+        m-event-chan (mult event-chan)
+        instance (ctl/init-norm event-chan)]
     (let [session (ctl/start-norm-session instance "239.192.0.1" 7100 1 :loopback true)]
+      (ctl/mon-event-loop (tap m-event-chan (chan 5)))
       (case (first args)
-        "send" (sender instance session (rest args))
-        "recv" (receiver session (rest args))))))
+        "send" (sender session (tap m-event-chan (chan 5)) (rest args))
+        "recv" (receiver session (tap m-event-chan (chan 5)) (rest args)))
+      (ctl/finit-norm instance))))

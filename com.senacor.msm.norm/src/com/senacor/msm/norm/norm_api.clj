@@ -74,7 +74,7 @@
                               NormEventType/NORM_RX_OBJECT_ABORTED      :rx-object-aborted,
                               NormEventType/NORM_RX_CMD_NEW             :rx-object-cmd-new,
                               NormEventType/NORM_GRTT_UPDATED           :grtt-updated,
-                              NormEventType/NORM_EVENT_INVALID          :rx-event-invalid
+                              NormEventType/NORM_EVENT_INVALID          :event-invalid
                               })
 
 (defn next-event
