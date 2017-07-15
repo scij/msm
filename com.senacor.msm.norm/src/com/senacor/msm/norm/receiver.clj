@@ -1,7 +1,7 @@
 (ns com.senacor.msm.norm.receiver
   (:require [com.senacor.msm.norm.norm-api :as norm]
             [com.senacor.msm.norm.control :as c]
-            [clojure.core.async :refer [>!! >! <! go-loop chan close!]]
+            [clojure.core.async :refer [>!! >! <! tap untap go-loop chan close!]]
             [com.senacor.msm.norm.util :as util]
             [clojure.tools.logging :as log])
   (:import (java.nio ByteBuffer)))
@@ -34,25 +34,32 @@
   relevant sind. Diese Funktion wird im Controller registriert
   und von diesem aufgerufen, sobald ein RX-NORM-Event eintrifft."
   [session event-chan out-chan]
-  (go-loop [event (<! event-chan)]
-    (case (:event-type event)
-      :rx-object-new
-      (do
-        (log/trace "new stream opened")
-        (recur (<! event-chan)))
-      :rx-object-updated
-      (do
-        (receive-data out-chan event)
-        (recur (<! event-chan)))
-      :rx-object-completed
-      (stop-session session out-chan)
-      :rx-object-aborted
-      (stop-session session out-chan)
-      :event-invalid
-      nil
-      ;; default
-      (recur (<! event-chan))
-    ))
+  ;; TODO ist das unsere Session?
+  (let [ec-tap (chan 5)]
+    (tap event-chan ec-tap)
+    (go-loop [event (<! ec-tap)]
+      (if event
+        (case (:event-type event)
+          :rx-object-new
+          (do
+            (log/trace "new stream opened")
+            (recur (<! ec-tap)))
+          :rx-object-updated
+          (do
+            (receive-data out-chan event)
+            (recur (<! ec-tap)))
+          :rx-object-completed
+          (stop-session session out-chan)
+          :rx-object-aborted
+          (stop-session session out-chan)
+          :event-invalid
+          nil
+          ;; default
+          (recur (<! ec-tap))
+          )
+        (do
+          (log/trace "Exit receiver event loop")
+          (untap event-chan ec-tap)))))
   session)
 
 (defn create-receiver

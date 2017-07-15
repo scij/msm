@@ -2,7 +2,7 @@
   (:require [com.senacor.msm.norm.norm-api :as norm]
             [com.senacor.msm.norm.control :as c]
             [com.senacor.msm.norm.util :as util]
-            [clojure.core.async :refer [chan go-loop <! <!! >!! >! poll!]]
+            [clojure.core.async :refer [chan go-loop tap untap <! <!! >!! >! poll!]]
             [clojure.tools.logging :as log]))
 
 (def ^:const buffer-size (* 1024 1024))
@@ -12,27 +12,32 @@
 ;;
 
 (defn sender-handler
-  [event-chan ctl-chan]
-  (go-loop [event (<! event-chan)]
-    (when event
-      (case (:event-type event)
-        :tx-queue-vacancy (>! ctl-chan :new-data)
-        :tx-queue-empty (>! ctl-chan :new-data)
-        :local-sender-closed (>! ctl-chan :local-sender-closed)
-        :tx-flush-completed (>! ctl-chan :tx-flush-completed)
-        :tx-object-purged (>! ctl-chan :tx-object-purged)
-        ;; default
-        nil)
-      (recur (<! event-chan))))
-  )
+  [session event-chan ctl-chan]
+  (let [ec-tap (chan 5)]
+    (tap event-chan ec-tap)
+    (go-loop [event (<! ec-tap)]
+      (log/trace "Event=" event)
+      (if event
+        (when (and (= session (:session event))
+                   (or (= :tx-queue-vacancy (:event-type event))
+                       (= :tx-queue-empty (:event-type event))))
+          (>! ctl-chan :new-data)
+          (recur (<! ec-tap)))
+        (do
+          (log/trace "Exit sender event loop")
+          (untap event-chan ec-tap))))))
 
-(defn- wait-for-event
-  [chan event]
-  (log/tracef "Waiting for %s" (str event))
+(defn wait-for-event
+  "Does a blocking wait for event-type from session
+  received from chan."
+  [chan session event-type]
+  (log/tracef "Waiting for %s" (str event-type))
   (loop [m (<!! chan)]
-    (when (and m (not= m event))
-      (recur (<!! chan))))
-  (log/tracef "Received %s" (str event)))
+    (if (and m
+               (not (and (= event-type (:event-type m))
+                         (= session (:session m)))))
+      (recur (<!! chan))
+      m)))
 
 (defn create-sender
   "Creates a message sender
@@ -45,7 +50,7 @@
   (norm/start-sender session instance-id buffer-size max-msg-size 64 16)
   (let [stream (norm/open-stream session buffer-size)
         ctl-chan (chan 10)]
-    (sender-handler event-chan ctl-chan)
+    (sender-handler session event-chan ctl-chan)
     (log/trace "Sender registered, starting loop")
     (go-loop [b-arr (<! in-chan)
               b-len (count b-arr)
@@ -56,21 +61,21 @@
           (let [bytes-sent (norm/write-stream stream b-arr b-offs b-len)]
             (if (= bytes-sent b-len)
               (let [n-arr (<! in-chan)]
-                (poll! ctl-chan)
+                (log/trace "ctl chan event=" (poll! ctl-chan))
                 (recur n-arr (count n-arr) 0))
               (do
-                (log/tracef "wait free out buffer space, sent=%d")
-                (<! ctl-chan)
+                (log/tracef "wait free out buffer space, sent=%d" (- b-len bytes-sent))
+                (wait-for-event ctl-chan session :new-data)
                 (log/trace "buffer space available")
                 (recur b-arr (- b-len bytes-sent) (+ b-offs bytes-sent)))))
           )
-        (do
+        (let [ec-tap (tap event-chan (chan 5))]
           (log/trace "closing session")
           (norm/flush-stream stream true :passive)
-          ;;(wait-for-event ctl-chan :tx-flush-completed)
           (norm/close-stream stream true)
-          (wait-for-event ctl-chan :tx-object-purged)
+          (Thread/sleep 5000)
           (norm/stop-sender session)
           (norm/destroy-session session)
-          (log/trace "session and stream closed"))
+          (log/trace "session and stream closed")
+          (untap event-chan ec-tap))
         ))))
