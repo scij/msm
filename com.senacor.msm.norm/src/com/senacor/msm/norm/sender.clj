@@ -73,7 +73,7 @@
           (log/trace "closing session")
           (norm/flush-stream stream true :passive)
           (norm/close-stream stream true)
-          (Thread/sleep 5000)
+          (Thread/sleep 1000)
           (norm/stop-sender session)
           (norm/destroy-session session)
           (log/trace "session and stream closed")

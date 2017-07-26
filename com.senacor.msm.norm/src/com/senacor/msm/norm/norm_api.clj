@@ -474,6 +474,7 @@
   "Sends an application defined command. A :tx-cmd-sent event is generated
   when the command has been sent."
   [^NormSession handle ^bytes buffer ^Integer length ^Boolean robust]
+  (assert (<= 256 length) "Command max size 256 bytes")
   (.sendCommand handle bytes 0 length robust)
   handle)
 
@@ -710,7 +711,7 @@
   "Returns the command sent by a sender. This function should be called in response
   to a :rx-cmd-new event. Returns nil if the command was larger than 256 bytes or if
   no command was present"
-  [NormNode handle]
+  [^NormNode handle]
   (let [cmd (byte-array 256)
         len (.getCommand handle cmd 0 256)]
     (if (> 0 len)
