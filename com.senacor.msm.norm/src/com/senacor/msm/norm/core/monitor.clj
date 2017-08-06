@@ -1,6 +1,6 @@
-(ns com.senacor.msm.norm.mon
+(ns com.senacor.msm.norm.core.monitor
   (:require [clojure.java.jmx :as jmx]
-            [com.senacor.msm.norm.norm-api :as norm]
+            [com.senacor.msm.norm.core.norm-api :as norm]
             [clojure.core.async :refer [chan go-loop tap <! untap]]
             [clojure.tools.logging :as log]))
 
@@ -54,3 +54,8 @@
     (swap! session-names assoc session s-name)
     (jmx/register-mbean mbean s-name)
     (log/tracef "JMX Session bean registered: %s" s-name)))
+
+(defn unregister
+  [session]
+  (log/tracef "JMX session unregistered: %s" (get @session-names session))
+  (jmx/unregister-mbean (get @session-names session)))

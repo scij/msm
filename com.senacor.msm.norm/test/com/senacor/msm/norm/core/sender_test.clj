@@ -1,7 +1,7 @@
-(ns com.senacor.msm.norm.sender-test
+(ns com.senacor.msm.norm.core.sender-test
     (:require [clojure.test :refer :all]
               [clojure.core.async :refer [chan >!! close! timeout]]
-              [com.senacor.msm.norm.sender :refer :all]))
+              [com.senacor.msm.norm.core.sender :refer :all]))
 
 (deftest test-wait-for-event
   (testing "gleich ein treffer"

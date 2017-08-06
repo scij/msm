@@ -1,15 +1,14 @@
-(ns com.senacor.msm.norm.msg-test
-  (:require [com.senacor.msm.norm.msg :refer :all]
+(ns com.senacor.msm.norm.core.msg-test
+  (:require [com.senacor.msm.norm.core.message :refer :all]
             [clojure.test :refer :all]
             [bytebuffer.buff :as bb]
-            [com.senacor.msm.norm.msg :as msg]
             [clojure.core.async :refer [<!! >!! <! >! chan to-chan timeout close!]]
-            [com.senacor.msm.norm.util :as util])
+            [com.senacor.msm.norm.core.util :as util])
   (:import (java.nio ByteBuffer)))
 
 (def fix-msg (create-message "label" "uuid" "payload"))
 
-(def fix-buflen (msg/message-length "label" "uuid" "payload"))
+(def fix-buflen (message-length "label" "uuid" "payload"))
 
 (defn print-bytes [bs]
   (doseq [b bs]
@@ -269,4 +268,21 @@
       (is (nil? (<!! out-chan)))
       )
     )
+  )
+
+(deftest test-label-match
+  (testing "nil match"
+    (let [fix (create-message "foo" "bar")]
+      (is (label-match fix nil))))
+  (testing "string match"
+    (let [fix (create-message "foo" "bar")]
+      (is (label-match fix "foo"))
+      (is (not (label-match fix "bar")))
+      (is (not (label-match fix "f")))
+      (is (not (label-match fix "fo")))
+      (is (not (label-match fix "fooo")))))
+  (testing "regex match"
+    (let [fix (create-message "com.senacor.msm.label.1" "foo.bar")]
+      (is (label-match fix #"com.+"))
+      (is (label-match fix #"com.senacor.*"))))
   )

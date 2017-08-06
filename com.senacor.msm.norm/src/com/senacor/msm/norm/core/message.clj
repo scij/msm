@@ -1,12 +1,13 @@
-(ns com.senacor.msm.norm.msg
+(ns com.senacor.msm.norm.core.message
   (:require [bytebuffer.buff :as bb]
             [clojure.string :as str]
             [clojure.core.async :refer [<! >! <!! >!! go-loop chan close!]]
             [clojure.tools.logging :as log]
-            [com.senacor.msm.norm.util :as util])
+            [com.senacor.msm.norm.core.util :as util])
   (:import (java.nio Buffer ByteBuffer)
            (java.util UUID)
-           (clojure.lang PersistentQueue)))
+           (clojure.lang PersistentQueue)
+           (java.util.regex Pattern)))
 
 ;;
 ;; Container for data across the NORM transport
@@ -25,6 +26,23 @@
    (->Message label corr-id payload))
   ([^String label ^String payload]
    (->Message label (.toString (UUID/randomUUID)) payload)))
+
+(defmulti label-match
+          "checks if the msg's label matches the value given by match"
+          (fn [msg match]
+            (class match)))
+
+(defmethod label-match Pattern
+  [msg match]
+  (re-matches match (:label msg)))
+
+(defmethod label-match String
+  [msg match]
+  (= match (:label msg)))
+
+(defmethod label-match nil
+  [_ _]
+  true)
 
 ;; Message Structure
 ;;

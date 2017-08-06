@@ -1,19 +1,20 @@
-(ns com.senacor.msm.norm.norm-demo
+(ns com.senacor.msm.norm.main.demo
   (:gen-class)
-  (:require [com.senacor.msm.norm.control :as ctl]
-            [com.senacor.msm.norm.receiver :as rcv]
-            [com.senacor.msm.norm.sender :as snd]
-            [com.senacor.msm.norm.msg :as msg]
+  (:require [com.senacor.msm.norm.core.control :as ctl]
+            [com.senacor.msm.norm.core.receiver :as rcv]
+            [com.senacor.msm.norm.core.sender :as snd]
+            [com.senacor.msm.norm.core.message :as msg]
+            [com.senacor.msm.norm.core.util :as util]
+            [com.senacor.msm.norm.core.norm-api :as norm]
+            [com.senacor.msm.norm.core.monitor :as mon]
             [clojure.core.async :refer [chan >!! <!! close! mult tap]]
-            [clojure.tools.logging :as log]
-            [com.senacor.msm.norm.util :as util]
-            [com.senacor.msm.norm.norm-api :as norm]
-            [com.senacor.msm.norm.mon :as mon]))
+            [clojure.tools.logging :as log]))
 
 (defn sender
   [session event-chan args]
   (let [out-chan (chan)
-        sndr (snd/create-sender session 0 event-chan out-chan 128)
+        cmd-chan (chan)
+        sndr (snd/create-sender session 0 event-chan out-chan cmd-chan 128)
         count (if (re-matches #"\d+" (first args)) (Integer/parseInt (first args)) 10)]
     (doseq [i (range 1 (inc count))]
       (log/tracef "Sending msg %d" i)

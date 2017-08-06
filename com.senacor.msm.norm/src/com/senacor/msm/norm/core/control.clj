@@ -1,6 +1,6 @@
-(ns com.senacor.msm.norm.control
-  (:require [com.senacor.msm.norm.norm-api :as norm]
-            [com.senacor.msm.norm.mon :as mon]
+(ns com.senacor.msm.norm.core.control
+  (:require [com.senacor.msm.norm.core.norm-api :as norm]
+            [com.senacor.msm.norm.core.monitor :as mon]
             [clojure.tools.logging :as log]
             [clojure.java.jmx :as jmx]
             [clojure.string :as str]

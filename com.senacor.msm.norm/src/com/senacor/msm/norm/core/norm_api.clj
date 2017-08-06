@@ -1,4 +1,4 @@
-(ns com.senacor.msm.norm.norm-api
+(ns com.senacor.msm.norm.core.norm-api
   (:require [clojure.tools.logging :as log])
   (:import (mil.navy.nrl.norm NormInstance NormSession NormEvent NormData NormObject NormNode NormStream)
            (java.nio ByteBuffer)
@@ -707,7 +707,7 @@
   [^NormNode handle]
   (.getGrtt handle))
 
-(defn ^bytes get-command
+(defn get-command
   "Returns the command sent by a sender. This function should be called in response
   to a :rx-cmd-new event. Returns nil if the command was larger than 256 bytes or if
   no command was present"
