@@ -2,24 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2728eb43-e098-452b-b478-f18e8b8e4c1c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/leiningen.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/command.clj" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/main/listen.clj" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/main/send.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/control.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/control.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/mon.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/monitor.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/msg.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/message.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/norm_api.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/norm_api.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/receiver.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/receiver.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/sender.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/sender.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/util.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/util.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/test/com/senacor/msm/norm/msg_test.clj" afterPath="$PROJECT_DIR$/test/com/senacor/msm/norm/core/msg_test.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/test/com/senacor/msm/norm/norm_demo.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/main/demo.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/test/com/senacor/msm/norm/sender_test.clj" afterPath="$PROJECT_DIR$/test/com/senacor/msm/norm/core/sender_test.clj" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/test/com/senacor/msm/norm/util_test.clj" afterPath="$PROJECT_DIR$/test/com/senacor/msm/norm/core/util_test.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/com.senacor.msm.norm.iml" afterPath="$PROJECT_DIR$/com.senacor.msm.norm.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project.clj" afterPath="$PROJECT_DIR$/project.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/log4j.properties" afterPath="$PROJECT_DIR$/resources/log4j.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/control.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/core/control.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/norm/main/demo.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/norm/main/demo.clj" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -47,8 +33,8 @@
       <file leaf-file-name="demo.clj" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/norm/main/demo.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-29">
-              <caret line="17" column="87" lean-forward="true" selection-start-line="17" selection-start-column="87" selection-end-line="17" selection-end-column="87" />
+            <state relative-caret-position="242">
+              <caret line="17" column="111" lean-forward="true" selection-start-line="17" selection-start-column="111" selection-end-line="17" selection-end-column="111" />
               <folding />
             </state>
           </provider>
@@ -67,18 +53,8 @@
       <file leaf-file-name="control.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/norm/core/control.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-179">
-              <caret line="34" column="15" lean-forward="true" selection-start-line="34" selection-start-column="15" selection-end-line="34" selection-end-column="15" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="listen.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/norm/main/listen.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+            <state relative-caret-position="406">
+              <caret line="73" column="4" lean-forward="false" selection-start-line="73" selection-start-column="4" selection-end-line="73" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -170,7 +146,6 @@
         <option value="$PROJECT_DIR$/test/com/senacor/msm/norm/util_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/jmx.clj" />
         <option value="$PROJECT_DIR$/test-resources/log4j.properties" />
-        <option value="$PROJECT_DIR$/resources/log4j.properties" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/mon.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/norm/sender_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/control.clj" />
@@ -186,10 +161,8 @@
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/main/listen.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/main/send.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/core/command.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/core/control.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/core/message.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/core/util.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/main/demo.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/norm/core/msg_test.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/norm/core/sender_test.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/norm/core/util_test.clj" />
@@ -198,6 +171,9 @@
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/core/receiver.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/core/sender.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/core/monitor.clj" />
+        <option value="$PROJECT_DIR$/resources/log4j.properties" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/core/control.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/norm/main/demo.clj" />
       </list>
     </option>
   </component>
@@ -255,6 +231,11 @@
             <path>
               <item name="com.senacor.msm.norm" type="b2602c69:ProjectViewProjectNode" />
               <item name="com.senacor.msm.norm" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="com.senacor.msm.norm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="com.senacor.msm.norm" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="com.senacor.msm.norm" type="b2602c69:ProjectViewProjectNode" />
@@ -321,7 +302,7 @@
       <recent name="$PROJECT_DIR$/src/com/senacor/msm" />
     </key>
   </component>
-  <component name="ReplState" timestamp="1501745787718">{:repl-history {:ide [], :local [{:command &quot;(s/take! out)&quot;, :offset 13} {:command &quot;(.toByteArray \&quot;hallo\&quot;)&quot;, :offset 22} {:command &quot;(map #(print %1) (.getBytes \&quot;hallo\&quot;))&quot;, :offset 37} {:command &quot;(map #(print \&quot;:\&quot; %1 \&quot;:\&quot; ) (.getBytes \&quot;hallo\&quot;))&quot;, :offset 46} {:command &quot;(s/take! out)&quot;, :offset 13} {:command &quot;@out&quot;, :offset 4} {:command &quot;(io/encode-to-stream protocol in \&quot;hallo\&quot;)&quot;, :offset 41} {:command &quot;(s/put-all! in (io/encode protocol \&quot;hallo\&quot;))&quot;, :offset 44} {:command &quot;(d/deferred? s)&quot;, :offset 15} {:command &quot;(s/take! in)&quot;, :offset 12} {:command &quot;(byte-array 10)&quot;, :offset 15} {:command &quot;(.array (byte-array 10))&quot;, :offset 24} {:command &quot;(import java.nio.ByteBuffer)&quot;, :offset 28} {:command &quot;(.array (byte-buffer 10))&quot;, :offset 25} {:command &quot;(bb/put-byte (bytebuffer) \\l)&quot;, :offset 29} {:command &quot;(bb/put-byte (bb/bytebuffer) \\l)&quot;, :offset 32} {:command &quot;(bb/put-byte (bb/byte-buffer) \\l)&quot;, :offset 33} {:command &quot;(bb/put-byte (bb/byte-buffer 10) \\l)&quot;, :offset 36} {:command &quot;(bb/put-byte (bb/byte-buffer 10) \\l)&quot;, :offset 36} {:command &quot;(doto (bb/byte-buffer 100)\n  (bb/put-byte 77))&quot;, :offset 46} {:command &quot;(doto (bb/byte-buffer 100)\n  (bb/put-byte 77)\n  (.put (.getBytes \&quot;hallo\&quot;)))&quot;, :offset 75} {:command &quot;(java.util.UUID/randomUUID)&quot;, :offset 27} {:command &quot;(.toString(java.util.UUID/randomUUID))&quot;, :offset 38} {:command &quot;(msg/Message-&gt;bytebuffer (msg/create-message \&quot;label\&quot; \&quot;uuid\&quot; \&quot;payload\&quot;))&quot;, :offset 71} {:command &quot;(def m (msg/create-message \&quot;label\&quot; \&quot;uuid\&quot; \&quot;payload\&quot;))&quot;, :offset 53} {:command &quot;m&quot;, :offset 1} {:command &quot;msg/msg-codec&quot;, :offset 13} {:command &quot;(def mb (msg/Message-&gt;bytebuffer m))&quot;, :offset 36} {:command &quot;mb&quot;, :offset 2} {:command &quot;(gloss.io/contiguous mb)&quot;, :offset 24} {:command &quot;(int \\b)&quot;, :offset 8} {:command &quot;(byte \\b)&quot;, :offset 9} {:command &quot;(= (bytes 2)(bytes 2))&quot;, :offset 22} {:command &quot;(= (byte-array 2) (byte-array 2))&quot;, :offset 33} {:command &quot;(= (String. (byte-array 2)) (String. (byte-array 2)))&quot;, :offset 53} {:command &quot;(doseq [v {:a 1, :b 2}]\n  (prn v))&quot;, :offset 34} {:command &quot;(s/-&gt;source (byte-array 100))&quot;, :offset 29} {:command &quot;(byte \\n)&quot;, :offset 9} {:command &quot;(byte (first \&quot;\\n\&quot;))&quot;, :offset 19} {:command &quot;(byte (first \&quot;\\r\&quot;))&quot;, :offset 19} {:command &quot;(def q (PersistentQueue/EMPTY))&quot;, :offset 31} {:command &quot;(conj q 1)&quot;, :offset 10} {:command &quot;(-&gt; q\n    (conj [1 2 3])\n    (conj 4)\n    (pop))&quot;, :offset 48} {:command &quot;(&gt;= 10 11)&quot;, :offset 10} {:command &quot;(-&gt; (bb/byte-buffer 10)\n    (bb/put-int 20)\n    (.capacity)\n    )&quot;, :offset 65} {:command &quot;(-&gt; (bb/byte-buffer 10)\n    (bb/put-int 20)\n    (.position)\n    )&quot;, :offset 65} {:command &quot;(-&gt; (bb/byte-buffer 10)\n    (bb/put-int 20)\n    (.limit)\n    )&quot;, :offset 62} {:command &quot;(conj [1 2] 3)&quot;, :offset 14} {:command &quot;(conj '(1 2) 3)&quot;, :offset 15} {:command &quot;(count \&quot;label\&quot;)&quot;, :offset 15} {:command &quot;(count (.getBytes \&quot;label\&quot;))&quot;, :offset 27} {:command &quot;(merge {:a 1 :b 2} {:b 3 :c 4})&quot;, :offset 31} {:command &quot;(+ 1 1\n   )&quot;, :offset 11} {:command &quot;(require '[com.senacor.msm.norm.msg :as msg])&quot;, :offset 45} {:command &quot;(require '[com.senacor.msm.norm.msg-test :as mt])&quot;, :offset 49} {:command &quot;(mt/fill-buffer (bb/byte-buffer mt/fix-buflen) :flip)&quot;, :offset 53} {:command &quot;(.array (mt/fill-buffer (bb/byte-buffer mt/fix-buflen) :flip))&quot;, :offset 62} {:command &quot;(.getBytes \&quot;hallo\&quot;)&quot;, :offset 19} {:command &quot;(count (.getBytes \&quot;hallo\&quot;))&quot;, :offset 27} {:command &quot;(loop [a 1 b 0]\n  (println a)\n  (when (&lt; a 10)\n    (apply recur [(+ a 1) 0])))&quot;, :offset 78} {:command &quot;(count \&quot;abc\&quot;)&quot;, :offset 13} {:command &quot;(- 11 4 1)&quot;, :offset 10} {:command &quot;(byte 97)&quot;, :offset 9} {:command &quot;(char (byte 97))&quot;, :offset 16} {:command &quot;\&quot;5 108 97 98 25964 74806633\&quot;&quot;, :offset 28} {:command &quot;(char (byte 108))&quot;, :offset 17} {:command &quot;(.remaining (ByteBuffer/wrap (.getBytes \&quot;hallo\&quot;)))&quot;, :offset 50} {:command &quot;(merge {}\n       {:a 1}\n       {:b 2})&quot;, :offset 38} {:command &quot;(loop [i 0]\n  (when (&lt; i 10)\n    (recur (inc i)))\n  i)&quot;, :offset 54} {:command &quot;if&quot;, :offset 2} {:command &quot;(loop [i 0]\n  (if (&lt; i 10)\n    (recur (inc i))\n    i))&quot;, :offset 54} {:command &quot;()&quot;, :offset 2} {:command &quot;(loop [i 0]\n  (if (&lt; i 10)\n    (recur (inc i))\n    (+ i 10)))&quot;, :offset 61} {:command &quot;(= nil (byte \\M))&quot;, :offset 17} {:command &quot;(log/trace \&quot;trace\&quot;)&quot;, :offset 19} {:command &quot;(log/error \&quot;Error\&quot;)&quot;, :offset 19} {:command &quot;(log/enabled? :error)&quot;, :offset 21} {:command &quot;(log/enabled? :trace)&quot;, :offset 21} {:command &quot;(log/find-factory)&quot;, :offset 18} {:command &quot;log/*logger-factory*&quot;, :offset 20} {:command &quot;; observation: fill-buffer-with-testdata schreibt nur eine Nachricht in den buffer&quot;, :offset 82} {:command &quot;(String ^bytes nil)&quot;, :offset 19} {:command &quot;(def )&quot;, :offset 6} {:command &quot;(String.\n  ^bytes nil)&quot;, :offset 22} {:command &quot;(def m nil)&quot;, :offset 11} {:command &quot;(String ^bytes m)&quot;, :offset 17} {:command &quot;(String.\n  ^bytes m)&quot;, :offset 20} {:command &quot;(if m m \&quot;nil\&quot;)&quot;, :offset 14} {:command &quot;(-&gt; \&quot;\&quot; String. .getBytes)&quot;, :offset 25} {:command &quot;(declare foo)&quot;, :offset 13} {:command &quot;(def foo-var f)&quot;, :offset 15} {:command &quot;(def foo-var foo)&quot;, :offset 17} {:command &quot;(defn foo [] (println \&quot;foo\&quot;))&quot;, :offset 29} {:command &quot;(foo)&quot;, :offset 5} {:command &quot;foo-var&quot;, :offset 7} {:command &quot;(+ 1 1)&quot;, :offset 7} {:command &quot;bytes&quot;, :offset 5, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;} {:command &quot;(class bytes)&quot;, :offset 12, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;} {:command &quot;(clojure-version\n  )&quot;, :offset 19, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;} {:command &quot;(type bytes)&quot;, :offset 11, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;} {:command &quot;(+ 1 2)&quot;, :offset 6, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;}], :remote []}}</component>
+  <component name="ReplState" timestamp="1502084809943">{:repl-history {:ide [], :local [{:command &quot;(s/take! out)&quot;, :offset 13} {:command &quot;(.toByteArray \&quot;hallo\&quot;)&quot;, :offset 22} {:command &quot;(map #(print %1) (.getBytes \&quot;hallo\&quot;))&quot;, :offset 37} {:command &quot;(map #(print \&quot;:\&quot; %1 \&quot;:\&quot; ) (.getBytes \&quot;hallo\&quot;))&quot;, :offset 46} {:command &quot;(s/take! out)&quot;, :offset 13} {:command &quot;@out&quot;, :offset 4} {:command &quot;(io/encode-to-stream protocol in \&quot;hallo\&quot;)&quot;, :offset 41} {:command &quot;(s/put-all! in (io/encode protocol \&quot;hallo\&quot;))&quot;, :offset 44} {:command &quot;(d/deferred? s)&quot;, :offset 15} {:command &quot;(s/take! in)&quot;, :offset 12} {:command &quot;(byte-array 10)&quot;, :offset 15} {:command &quot;(.array (byte-array 10))&quot;, :offset 24} {:command &quot;(import java.nio.ByteBuffer)&quot;, :offset 28} {:command &quot;(.array (byte-buffer 10))&quot;, :offset 25} {:command &quot;(bb/put-byte (bytebuffer) \\l)&quot;, :offset 29} {:command &quot;(bb/put-byte (bb/bytebuffer) \\l)&quot;, :offset 32} {:command &quot;(bb/put-byte (bb/byte-buffer) \\l)&quot;, :offset 33} {:command &quot;(bb/put-byte (bb/byte-buffer 10) \\l)&quot;, :offset 36} {:command &quot;(bb/put-byte (bb/byte-buffer 10) \\l)&quot;, :offset 36} {:command &quot;(doto (bb/byte-buffer 100)\n  (bb/put-byte 77))&quot;, :offset 46} {:command &quot;(doto (bb/byte-buffer 100)\n  (bb/put-byte 77)\n  (.put (.getBytes \&quot;hallo\&quot;)))&quot;, :offset 75} {:command &quot;(java.util.UUID/randomUUID)&quot;, :offset 27} {:command &quot;(.toString(java.util.UUID/randomUUID))&quot;, :offset 38} {:command &quot;(msg/Message-&gt;bytebuffer (msg/create-message \&quot;label\&quot; \&quot;uuid\&quot; \&quot;payload\&quot;))&quot;, :offset 71} {:command &quot;(def m (msg/create-message \&quot;label\&quot; \&quot;uuid\&quot; \&quot;payload\&quot;))&quot;, :offset 53} {:command &quot;m&quot;, :offset 1} {:command &quot;msg/msg-codec&quot;, :offset 13} {:command &quot;(def mb (msg/Message-&gt;bytebuffer m))&quot;, :offset 36} {:command &quot;mb&quot;, :offset 2} {:command &quot;(gloss.io/contiguous mb)&quot;, :offset 24} {:command &quot;(int \\b)&quot;, :offset 8} {:command &quot;(byte \\b)&quot;, :offset 9} {:command &quot;(= (bytes 2)(bytes 2))&quot;, :offset 22} {:command &quot;(= (byte-array 2) (byte-array 2))&quot;, :offset 33} {:command &quot;(= (String. (byte-array 2)) (String. (byte-array 2)))&quot;, :offset 53} {:command &quot;(doseq [v {:a 1, :b 2}]\n  (prn v))&quot;, :offset 34} {:command &quot;(s/-&gt;source (byte-array 100))&quot;, :offset 29} {:command &quot;(byte \\n)&quot;, :offset 9} {:command &quot;(byte (first \&quot;\\n\&quot;))&quot;, :offset 19} {:command &quot;(byte (first \&quot;\\r\&quot;))&quot;, :offset 19} {:command &quot;(def q (PersistentQueue/EMPTY))&quot;, :offset 31} {:command &quot;(conj q 1)&quot;, :offset 10} {:command &quot;(-&gt; q\n    (conj [1 2 3])\n    (conj 4)\n    (pop))&quot;, :offset 48} {:command &quot;(&gt;= 10 11)&quot;, :offset 10} {:command &quot;(-&gt; (bb/byte-buffer 10)\n    (bb/put-int 20)\n    (.capacity)\n    )&quot;, :offset 65} {:command &quot;(-&gt; (bb/byte-buffer 10)\n    (bb/put-int 20)\n    (.position)\n    )&quot;, :offset 65} {:command &quot;(-&gt; (bb/byte-buffer 10)\n    (bb/put-int 20)\n    (.limit)\n    )&quot;, :offset 62} {:command &quot;(conj [1 2] 3)&quot;, :offset 14} {:command &quot;(conj '(1 2) 3)&quot;, :offset 15} {:command &quot;(count \&quot;label\&quot;)&quot;, :offset 15} {:command &quot;(count (.getBytes \&quot;label\&quot;))&quot;, :offset 27} {:command &quot;(merge {:a 1 :b 2} {:b 3 :c 4})&quot;, :offset 31} {:command &quot;(+ 1 1\n   )&quot;, :offset 11} {:command &quot;(require '[com.senacor.msm.norm.msg :as msg])&quot;, :offset 45} {:command &quot;(require '[com.senacor.msm.norm.msg-test :as mt])&quot;, :offset 49} {:command &quot;(mt/fill-buffer (bb/byte-buffer mt/fix-buflen) :flip)&quot;, :offset 53} {:command &quot;(.array (mt/fill-buffer (bb/byte-buffer mt/fix-buflen) :flip))&quot;, :offset 62} {:command &quot;(.getBytes \&quot;hallo\&quot;)&quot;, :offset 19} {:command &quot;(count (.getBytes \&quot;hallo\&quot;))&quot;, :offset 27} {:command &quot;(loop [a 1 b 0]\n  (println a)\n  (when (&lt; a 10)\n    (apply recur [(+ a 1) 0])))&quot;, :offset 78} {:command &quot;(count \&quot;abc\&quot;)&quot;, :offset 13} {:command &quot;(- 11 4 1)&quot;, :offset 10} {:command &quot;(byte 97)&quot;, :offset 9} {:command &quot;(char (byte 97))&quot;, :offset 16} {:command &quot;\&quot;5 108 97 98 25964 74806633\&quot;&quot;, :offset 28} {:command &quot;(char (byte 108))&quot;, :offset 17} {:command &quot;(.remaining (ByteBuffer/wrap (.getBytes \&quot;hallo\&quot;)))&quot;, :offset 50} {:command &quot;(merge {}\n       {:a 1}\n       {:b 2})&quot;, :offset 38} {:command &quot;(loop [i 0]\n  (when (&lt; i 10)\n    (recur (inc i)))\n  i)&quot;, :offset 54} {:command &quot;if&quot;, :offset 2} {:command &quot;(loop [i 0]\n  (if (&lt; i 10)\n    (recur (inc i))\n    i))&quot;, :offset 54} {:command &quot;()&quot;, :offset 2} {:command &quot;(loop [i 0]\n  (if (&lt; i 10)\n    (recur (inc i))\n    (+ i 10)))&quot;, :offset 61} {:command &quot;(= nil (byte \\M))&quot;, :offset 17} {:command &quot;(log/trace \&quot;trace\&quot;)&quot;, :offset 19} {:command &quot;(log/error \&quot;Error\&quot;)&quot;, :offset 19} {:command &quot;(log/enabled? :error)&quot;, :offset 21} {:command &quot;(log/enabled? :trace)&quot;, :offset 21} {:command &quot;(log/find-factory)&quot;, :offset 18} {:command &quot;log/*logger-factory*&quot;, :offset 20} {:command &quot;; observation: fill-buffer-with-testdata schreibt nur eine Nachricht in den buffer&quot;, :offset 82} {:command &quot;(String ^bytes nil)&quot;, :offset 19} {:command &quot;(def )&quot;, :offset 6} {:command &quot;(String.\n  ^bytes nil)&quot;, :offset 22} {:command &quot;(def m nil)&quot;, :offset 11} {:command &quot;(String ^bytes m)&quot;, :offset 17} {:command &quot;(String.\n  ^bytes m)&quot;, :offset 20} {:command &quot;(if m m \&quot;nil\&quot;)&quot;, :offset 14} {:command &quot;(-&gt; \&quot;\&quot; String. .getBytes)&quot;, :offset 25} {:command &quot;(declare foo)&quot;, :offset 13} {:command &quot;(def foo-var f)&quot;, :offset 15} {:command &quot;(def foo-var foo)&quot;, :offset 17} {:command &quot;(defn foo [] (println \&quot;foo\&quot;))&quot;, :offset 29} {:command &quot;(foo)&quot;, :offset 5} {:command &quot;foo-var&quot;, :offset 7} {:command &quot;(+ 1 1)&quot;, :offset 7} {:command &quot;bytes&quot;, :offset 5, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;} {:command &quot;(class bytes)&quot;, :offset 12, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;} {:command &quot;(clojure-version\n  )&quot;, :offset 19, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;} {:command &quot;(type bytes)&quot;, :offset 11, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;} {:command &quot;(+ 1 2)&quot;, :offset 6, :ns &quot;com.senacor.msm.norm.norm-simple-test&quot;}], :remote []}}</component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -548,7 +529,14 @@
       <option name="project" value="LOCAL" />
       <updated>1501065782920</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Namespaces sprechender benannt.&#10;Namespacehierarchie besser organisiert.&#10;Demo ist kein Testprogramm mehr sondern liegt in einem eigenen Namespace&#10;des Sourcecodes.&#10;JMX-Beans werden de-registriert, wenn die Session endet.">
+      <created>1502038638193</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1502038638193</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TodoView">
@@ -571,6 +559,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.4937888" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.55582523" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32736155" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32899022" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.44417477" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="CheckStyle" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32736155" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32970452" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -581,16 +570,15 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24959612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937106" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32847896" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937106" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32899022" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -632,7 +620,8 @@
     <MESSAGE value="Umbau auf async für die Verarbeitung der NORM-Events.&#10;Jetzt wird norm-demo auch beendet.&#10;&#10;TODO:&#10;Der Handshake auf der Sender-Seite ist aber noch nicht sauber." />
     <MESSAGE value="Shutdown sender ist noch mit Timer, sonst wird aber übertragen" />
     <MESSAGE value="Improvement of README.MD - mor about the structure and principles.&#10;&#10;Correction in norm-api - missing parameters&#10;Shortened pause in sender shutdown - but we still need a better&#10;solution to find out if and when the sender buffer is empty" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improvement of README.MD - mor about the structure and principles.&#10;&#10;Correction in norm-api - missing parameters&#10;Shortened pause in sender shutdown - but we still need a better&#10;solution to find out if and when the sender buffer is empty" />
+    <MESSAGE value="Namespaces sprechender benannt.&#10;Namespacehierarchie besser organisiert.&#10;Demo ist kein Testprogramm mehr sondern liegt in einem eigenen Namespace&#10;des Sourcecodes.&#10;JMX-Beans werden de-registriert, wenn die Session endet." />
+    <option name="LAST_COMMIT_MESSAGE" value="Namespaces sprechender benannt.&#10;Namespacehierarchie besser organisiert.&#10;Demo ist kein Testprogramm mehr sondern liegt in einem eigenen Namespace&#10;des Sourcecodes.&#10;JMX-Beans werden de-registriert, wenn die Session endet." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -822,13 +811,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/norm/norm_simple_test.clj" />
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/norm/jmx.clj" />
-    <entry file="file://$PROJECT_DIR$/resources/log4j.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="85" lean-forward="false" selection-start-line="3" selection-start-column="85" selection-end-line="3" selection-end-column="85" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test-resources/log4j.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -927,14 +909,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/norm/core/control.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-179">
-          <caret line="34" column="15" lean-forward="true" selection-start-line="34" selection-start-column="15" selection-end-line="34" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/norm/core/receiver.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="440">
@@ -959,10 +933,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resources/log4j.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="74" lean-forward="false" selection-start-line="3" selection-start-column="74" selection-end-line="3" selection-end-column="74" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/norm/core/control.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="73" column="4" lean-forward="false" selection-start-line="73" selection-start-column="4" selection-end-line="73" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/norm/main/demo.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-29">
-          <caret line="17" column="87" lean-forward="true" selection-start-line="17" selection-start-column="87" selection-end-line="17" selection-end-column="87" />
+        <state relative-caret-position="242">
+          <caret line="17" column="111" lean-forward="true" selection-start-line="17" selection-start-column="111" selection-end-line="17" selection-end-column="111" />
           <folding />
         </state>
       </provider>

@@ -15,7 +15,7 @@
   (let [out-chan (chan)
         cmd-chan (chan)
         sndr (snd/create-sender session 0 event-chan out-chan cmd-chan 128)
-        count (if (re-matches #"\d+" (first args)) (Integer/parseInt (first args)) 10)]
+        count (if (and (not (empty args)) (re-matches #"\d+" (first args))) (Integer/parseInt (first args)) 10)]
     (doseq [i (range 1 (inc count))]
       (log/tracef "Sending msg %d" i)
       (>!! out-chan (msg/Message->bytes (msg/create-message "DEMO.COUNT" (str "MSG="i)))))
