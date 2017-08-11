@@ -1,6 +1,6 @@
-(ns com.senacor.msm.norm.core.util-test
+(ns com.senacor.msm.core.util-test
   (:require [clojure.test :refer :all]
-            [com.senacor.msm.norm.core.util :refer :all]))
+            [com.senacor.msm.core.util :refer :all]))
 
 (deftest test-concat
   (testing "array cat"

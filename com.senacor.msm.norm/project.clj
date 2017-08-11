@@ -1,4 +1,4 @@
-(defproject com.senacor.msm.norm "0.1.0-SNAPSHOT"
+(defproject com.senacor.msm "0.1.0-SNAPSHOT"
   :description "NORM-based messaging infrastructure"
   :url "http://bitbucket.senacor.com/jschiewe/msm"
   :license {:name "Eclipse Public License"
@@ -14,9 +14,10 @@
                                                     com.sun.jmdk/jmxtools
                                                     com.sun.jmx/jmxri]]
                  ]
-  :main com.senacor.msm.norm.main.demo
+  :main com.senacor.msm.main.demo
   :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]
   :profiles {:test   {:resource-paths ["test-resources"]}
+             :user   {:plugins [[lein-kibit "0.1.5"]]}
              :run    {:aot      :all
                       :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]}}
   )

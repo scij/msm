@@ -1,7 +1,7 @@
-(ns com.senacor.msm.norm.core.monitor
-  (:require [clojure.java.jmx :as jmx]
-            [com.senacor.msm.norm.core.norm-api :as norm]
+(ns com.senacor.msm.core.monitor
+  (:require [com.senacor.msm.core.norm-api :as norm]
             [clojure.core.async :refer [chan go-loop tap <! untap]]
+            [clojure.java.jmx :as jmx]
             [clojure.tools.logging :as log]))
 
 ;; Maps sessions to JMX bean names.

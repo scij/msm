@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/com.senacor.msm.norm.iml" filepath="$PROJECT_DIR$/com.senacor.msm.norm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.senacor.msm.iml" filepath="$PROJECT_DIR$/com.senacor.msm.iml" />
     </modules>
   </component>
 </project>

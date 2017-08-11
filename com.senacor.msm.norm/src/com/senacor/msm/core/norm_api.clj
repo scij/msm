@@ -1,4 +1,4 @@
-(ns com.senacor.msm.norm.core.norm-api
+(ns com.senacor.msm.core.norm-api
   (:require [clojure.tools.logging :as log])
   (:import (mil.navy.nrl.norm NormInstance NormSession NormEvent NormData NormObject NormNode NormStream)
            (java.nio ByteBuffer)
@@ -714,11 +714,10 @@
   [^NormNode handle]
   (let [cmd (byte-array 256)
         len (.getCommand handle cmd 0 256)]
-    (if (> 0 len)
+    (when (neg? len)
       (let [result [byte-array len]]
         (System/arraycopy cmd 0 result 0 len)
-        result)
-      nil)))
+        result))))
 
 (defn ^NormNode free-buffers
   "Returns the buffers associated with a given node. New buffers will be allocated

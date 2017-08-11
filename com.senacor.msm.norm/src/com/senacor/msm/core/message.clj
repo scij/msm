@@ -1,9 +1,9 @@
-(ns com.senacor.msm.norm.core.message
+(ns com.senacor.msm.core.message
   (:require [bytebuffer.buff :as bb]
             [clojure.string :as str]
             [clojure.core.async :refer [<! >! <!! >!! go-loop chan close!]]
             [clojure.tools.logging :as log]
-            [com.senacor.msm.norm.core.util :as util])
+            [com.senacor.msm.core.util :as util])
   (:import (java.nio Buffer ByteBuffer)
            (java.util UUID)
            (clojure.lang PersistentQueue)
@@ -25,7 +25,7 @@
    (assert (not (str/blank? label)) "Label must not be empty")
    (->Message label corr-id payload))
   ([^String label ^String payload]
-   (->Message label (.toString (UUID/randomUUID)) payload)))
+   (->Message label (str (UUID/randomUUID)) payload)))
 
 (defmulti label-match
           "checks if the msg's label matches the value given by match"
@@ -62,6 +62,9 @@
 ;; payload payload-length bytes
 ;; -- end of message
 
+(def ^:const version-major 1)
+(def ^:const version-minor 0)
+
 (def ^:const hdr-len 10)
 
 (defn message-length
@@ -74,7 +77,7 @@
 (defn ^Message fault-message
   [corr-id error-msg]
   (->Message "/sys/fault"
-             (if corr-id corr-id "")
+             (or corr-id "")
              error-msg))
 
 (defn ^"[B" Message->bytes
@@ -89,8 +92,8 @@
       ;; Fixed header
       (bb/put-byte (byte \M))
       (bb/put-byte (byte \X))
-      (bb/put-byte 1)
-      (bb/put-byte 0)
+      (bb/put-byte version-major)
+      (bb/put-byte version-minor)
       (bb/put-short (+ 1 (count b-label) 1 (count b-corr-id)))
       (bb/put-int (count b-payload))
       ;; Header var part
@@ -135,13 +138,13 @@
   (log/trace "parse fixed header" buf)
   (let [magic1 (bb/take-byte buf)
         magic2 (bb/take-byte buf)
-        major-version (bb/take-byte buf)
-        minor-version (bb/take-byte buf)
+        major-v (bb/take-byte buf)
+        minor-v (bb/take-byte buf)
         hdr-var-length (bb/take-short buf)
         payload-length (bb/take-int buf)]
     (.mark buf)
     (log/tracef "hdr %d %d %d.%d hdr-len=%d payload-len=%d"
-                magic1 magic2 major-version minor-version
+                magic1 magic2 major-v minor-v
                 hdr-var-length payload-length)
     (if (or (not= magic1 (byte \M)) (not= magic2 (byte \X)))
       (do
@@ -150,9 +153,9 @@
          :complete? false,
          :parse-fn skip-to-next-msg-prefix}
         )
-      (if (or (not= 1 major-version) (< minor-version 0))
+      (if (or (not= version-major major-v) (< minor-v version-minor))
         (do
-          (log/errorf "Invalid msg version: %d %d" major-version minor-version)
+          (log/errorf "Invalid msg version: %d %d" major-v minor-v)
           {:valid? false,
            :complete? false,
            :parse-fn skip-to-next-msg-prefix}

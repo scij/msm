@@ -1,9 +1,9 @@
-(ns com.senacor.msm.norm.core.msg-test
-  (:require [com.senacor.msm.norm.core.message :refer :all]
+(ns com.senacor.msm.core.msg-test
+  (:require [com.senacor.msm.core.message :refer :all]
+            [com.senacor.msm.core.util :as util]
             [clojure.test :refer :all]
             [bytebuffer.buff :as bb]
-            [clojure.core.async :refer [<!! >!! <! >! chan to-chan timeout close!]]
-            [com.senacor.msm.norm.core.util :as util])
+            [clojure.core.async :refer [<!! >!! <! >! chan to-chan timeout close!]])
   (:import (java.nio ByteBuffer)))
 
 (def fix-msg (create-message "label" "uuid" "payload"))

@@ -1,12 +1,12 @@
-(ns com.senacor.msm.norm.main.demo
+(ns com.senacor.msm.main.demo
   (:gen-class)
-  (:require [com.senacor.msm.norm.core.control :as ctl]
-            [com.senacor.msm.norm.core.receiver :as rcv]
-            [com.senacor.msm.norm.core.sender :as snd]
-            [com.senacor.msm.norm.core.message :as msg]
-            [com.senacor.msm.norm.core.util :as util]
-            [com.senacor.msm.norm.core.norm-api :as norm]
-            [com.senacor.msm.norm.core.monitor :as mon]
+  (:require [com.senacor.msm.core.control :as ctl]
+            [com.senacor.msm.core.receiver :as rcv]
+            [com.senacor.msm.core.sender :as snd]
+            [com.senacor.msm.core.message :as msg]
+            [com.senacor.msm.core.util :as util]
+            [com.senacor.msm.core.norm-api :as norm]
+            [com.senacor.msm.core.monitor :as mon]
             [clojure.core.async :refer [chan >!! <!! close! mult tap]]
             [clojure.tools.logging :as log]))
 

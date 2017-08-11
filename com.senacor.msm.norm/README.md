@@ -62,10 +62,10 @@ FIXME
 
 | Function||||
 | ---- | --- | --- | --- |
-| Reliable Messaging | com.senacor.msm.norm.topic | com.senacor.msm.norm.stateful | com.senacor.msm.norm.stateless |
-| Simple Messages | com.senacor.msm.norm.msg  |
-| Async adapter | com.senacor.msm.norm.control, sender, receiver |
-| Clojure NORM API | com.senacor.msm.norm.norm-api  |
+| Reliable Messaging | com.senacor.msm.topic | com.senacor.msm.stateful | com.senacor.msm.stateless |
+| Simple Messages | com.senacor.msm.message  |
+| Async adapter | com.senacor.msm.control, sender, receiver, command |
+| Clojure NORM API | com.senacor.msm.norm-api  |
 | Java NORM API | mil.navy.nrl.norm |
 | NORM Implementation | C Library |
 | Transport | UDP Sockets |
@@ -74,7 +74,7 @@ The lowest level is the transport layer offered by UDP/IP sockets providing non.
 The next layer is the NORM library, a C implementation of the NORM protocol. A Java JNI wrapper provides
 an object abstraction at the Java level.
 
-_com.senacor.msm.norm_ starts above this level by wrapping the Java API into a Clojure API (which btw. gets rid of the objects and creating a limited functional flavour).
+_com.senacor.msm_ starts above this level by wrapping the Java API into a Clojure API (which btw. gets rid of the objects and creating a limited functional flavour).
 The Async Adapter is made up of the three namespaces: sender and receiver map clojure.core.async channels to
 NORM streams. The channels accept and return byte arrays containing the NORM payload.
 The control namespace deals with NORM's event-loop mapping it to another async _control_ channel which

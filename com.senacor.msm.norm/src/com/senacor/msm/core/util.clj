@@ -1,4 +1,4 @@
-(ns com.senacor.msm.norm.core.util
+(ns com.senacor.msm.core.util
   (:import (java.nio Buffer ByteBuffer)))
 
 (defn dump-bytebuffer

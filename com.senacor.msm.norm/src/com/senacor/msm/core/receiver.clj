@@ -1,10 +1,10 @@
-(ns com.senacor.msm.norm.core.receiver
-  (:require [com.senacor.msm.norm.core.norm-api :as norm]
-            [com.senacor.msm.norm.core.control :as c]
-            [com.senacor.msm.norm.core.util :as util]
+(ns com.senacor.msm.core.receiver
+  (:require [com.senacor.msm.core.norm-api :as norm]
+            [com.senacor.msm.core.control :as c]
+            [com.senacor.msm.core.monitor :as mon]
+            [com.senacor.msm.core.util :as util]
             [clojure.core.async :refer [>!! >! <! tap untap go-loop chan close!]]
-            [clojure.tools.logging :as log]
-            [com.senacor.msm.norm.core.monitor :as mon])
+            [clojure.tools.logging :as log])
   (:import (java.nio ByteBuffer)))
 
 ;;
@@ -25,7 +25,7 @@
   (go-loop [buffer (byte-array buf-size)
             bytes-read (norm/read-stream (:object event) buffer buf-size)]
     (log/tracef "message received, len=%d" bytes-read)
-    (when (> bytes-read 0)
+    (when (pos? bytes-read)
       (let [nbuf (byte-array buf-size)]
         (>! out-chan (util/byte-array-head buffer bytes-read))
         (recur nbuf (norm/read-stream (:object event) nbuf buf-size))))))
