@@ -58,7 +58,7 @@
       (if event
         (do
           (when (and (= session (:session event))
-                     (= :tx-cmd-sent (:event-type event)))
+                     (= :rx-object-cmd-new (:event-type event)))
             (>! cmd-chan (norm/get-command (norm/get-local-node-id session))))
           (recur (<! ec-tap)))
         (do
