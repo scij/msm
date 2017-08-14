@@ -30,7 +30,7 @@
         (>! out-chan (util/byte-array-head buffer bytes-read))
         (recur nbuf (norm/read-stream (:object event) nbuf buf-size))))))
 
-(defn- stop-session
+(defn stop-session
   "Closes and stops the session. Releases all NORM resources and closes the
   out-channel. This function is called when the NORM stream has been closed
   on the sender side.
@@ -80,7 +80,7 @@
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
       (if event
-        (when (= session (:session event))
+        (if (= session (:session event))
           (case (:event-type event)
             :rx-object-new
             (do
@@ -94,10 +94,11 @@
             (stop-session session out-chan)
             :rx-object-aborted
             (stop-session session out-chan)
-            :event-invalid
-            nil
+            :event-invalid ;; happens when the instance is unexpectedly shut down
+            (close! out-chan)
             ;; default
-            (recur (<! ec-tap))))
+            (recur (<! ec-tap)))
+          (recur (<! ec-tap)))
         (do
           (log/trace "Exit receiver event loop")
           (untap event-chan ec-tap)))))
