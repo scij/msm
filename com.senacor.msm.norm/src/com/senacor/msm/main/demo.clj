@@ -44,7 +44,7 @@
   (let [event-chan-out (chan 5)
         event-chan-in (mult event-chan-out)
         instance (ctl/init-norm event-chan-out)]
-    (let [session (ctl/start-norm-session instance "239.192.0.1" 7100 1 :loopback true)]
+    (let [session (ctl/start-session instance "239.192.0.1" 7100 1 :loopback true)]
       (mon/mon-event-loop event-chan-in)
       (case (first args)
         "send" (sender session event-chan-in  (rest args))

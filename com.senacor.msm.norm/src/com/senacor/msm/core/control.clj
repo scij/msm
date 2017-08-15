@@ -12,7 +12,7 @@
 ;;
 
 
-(defn- event-loop
+(defn event-loop
   "Main event loop processing all events of a given instance and
   forwards them to an async channel. The loop terminates when an
   event-invalid pseudo event is received (which is posted after
@@ -50,7 +50,7 @@
     (norm/stop-instance instance)
   ))
 
-(defn start-norm-session
+(defn start-session
   "Starts a NORM session for sending and/or receiving data.
   Returns the session handle.
   address is the multicast address of the service
