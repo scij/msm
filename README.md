@@ -9,20 +9,20 @@ A Clojure library for asynchronous truely server-less communication.
 MSM is **M**icro **S**ervice **M**esh, a middleware library for server-less
 communication between microservices.
 Conventional messaging middleware relies on a central component, a messaging server
-which needs to be known by all participants in a communication relationship. Central
+which needs to be known to all participants in a communication relationship. Central
 servers are a single point of failure, a bottleneck and often overhead.
 As you introduce replication and distribution for fault tolerance and scalability you
-will find out that the CAP theorem also applies to messaging middleware.
+will learn that the CAP theorem also applies to messaging middleware.
 
 MSM avoids a central server by shifting responsibility for message distribution and
-routing down to the network layer. Senders distribute messages via IP Multicast to
+routing down to the IP network layer. Senders distribute messages via IP Multicast to
 receivers they do not have to know.
 The use of IP Multicast leads to a connection-less communication (i.e. no TCP/IP) and
 requires special protocols for transmission- and flow-control. The most popular protocols
 in this domain are PGM (and it's sister protocol EPGM) and NORM. PGM is an IP protocol and
 requires root privileges to communicate. EPGM encapsulates traffic in UDP. Both are unable
 to send and receive messages on the same host (loopback communication) which makes service
-allocation tricky. This is why we went with an alternative protocol: NORM
+allocation tricky. This is why I chose an alternative protocol: NORM
 
 ### What is NORM?
 
@@ -74,7 +74,8 @@ The lowest level is the transport layer offered by UDP/IP sockets providing non.
 The next layer is the NORM library, a C implementation of the NORM protocol. A Java JNI wrapper provides
 an object abstraction at the Java level.
 
-_com.senacor.msm_ starts above this level by wrapping the Java API into a Clojure API (which btw. gets rid of the objects and creating a limited functional flavour).
+_com.senacor.msm_ starts above this level by wrapping the Java API into a Clojure API 
+(which btw. gets rid of the objects and creating a limited functional flavour).
 The Async Adapter is made up of the three namespaces: sender and receiver map clojure.core.async channels to
 NORM streams. The channels accept and return byte arrays containing the NORM payload.
 The control namespace deals with NORM's event-loop mapping it to another async _control_ channel which

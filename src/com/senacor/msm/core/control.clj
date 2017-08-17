@@ -50,30 +50,32 @@
     (norm/stop-instance instance)
   ))
 
+
 (defn start-session
   "Starts a NORM session for sending and/or receiving data.
   Returns the session handle.
   address is the multicast address of the service
   port is the UDP network port to use
-  node-id is a numeric argument to distinguish this service
-  The following keyword args are supported
+  options is a map of additional network options as described below:
   :if-name <str> name of the network interface to bind to.
   :ttl <byte> number of hops a packet will survive.
   :tos <byte> the type of service value for all packets
-  :loopback if set will enable loopback i.e. local communication
-  on this host"
-  [instance address port node-id
-   & {:keys [if-name ttl tos loopback]}]
-  (let [session (norm/create-session instance address port node-id)]
-    (when if-name
-      (norm/set-multicast-interface session if-name))
-    (when ttl
-      (norm/set-ttl session ttl))
-    (when tos
-      (norm/set-tos session tos))
-    (when loopback
+  :loopback if set will enable loopback i.e. local communication on this host
+  :node-id <int> is a numeric argument to distinguish this service. If
+  omitted the process id will be used. Override it if you have more than
+  one session per process."
+  [instance address port options]
+  (let [session (norm/create-session instance address port (:node-id options))]
+    (log/tracef "session created %s %d %d" address port (:node-id options))
+    (when (:if-name options)
+      (norm/set-multicast-interface session (:if-name options)))
+    (when (:ttl options)
+      (norm/set-ttl session (:ttl options)))
+    (when (:tos options)
+      (norm/set-tos session (:tos options)))
+    (when (:loopback options)
       (log/trace "loopback set")
       (norm/set-loopback session true)
       (norm/set-rx-port-reuse session true))
-    (mon/register session address port node-id)
+    (mon/register session address port (:node-id options))
     session))

@@ -1,5 +1,6 @@
 (ns com.senacor.msm.core.util
-  (:require [clojure.string :as str])
+  (:require [clojure.string :as str]
+            [clojure.java.jmx :as jmx])
   (:import (java.nio Buffer ByteBuffer)))
 
 (defn dump-bytes
@@ -67,3 +68,8 @@
      mc-addr
      (Integer/parseInt port)
      ]))
+
+(defn default-node-id
+  "Returns the process id as a default value for the node id."
+  []
+  (Integer/parseInt (first (str/split (jmx/read "java.lang:type=Runtime" :Name) #"@"))))
