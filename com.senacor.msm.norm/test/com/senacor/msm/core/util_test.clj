@@ -45,3 +45,30 @@
     (is (= "hallo"
            (String. (byte-array-head (.getBytes "hallo") 5))))
     ))
+
+(deftest test-parse-network-spec
+  (testing "all elements"
+    (is (= ["en0" "239.192.0.1" 7100]
+           (parse-network-spec "en0;239.192.0.1:7100"))))
+  (testing "no interface provided"
+    (is (= ["" "239.192.0.1" 7100]
+           (parse-network-spec ";239.192.0.1:7100"))))
+  (testing "network address as interface id"
+    (is (= ["192.64.3.1" "239.192.0.1" 7100]
+           (parse-network-spec "192.64.3.1;239.192.0.1:7100"))))
+  (testing "named multicast network - unusual but possible"
+    (is (= ["" "myhost.senacor.com" 7100]
+           (parse-network-spec ";myhost.senacor.com:7100"))))
+  (testing "named port"
+    (is (thrown? NumberFormatException
+                 (parse-network-spec ";239.192.0.1:font-service"))))
+  (testing "missing port"
+    (is (thrown? NumberFormatException
+                 (parse-network-spec ";239.192.0.1:")))
+    (is (thrown? NumberFormatException
+                 (parse-network-spec ";239.192.0.1:")))
+    )
+  (testing "exchange ; and :"
+    (is (= ["" "239.192.0.1" 7100]
+           (parse-network-spec ":239.192.0.1;7100"))))
+  )

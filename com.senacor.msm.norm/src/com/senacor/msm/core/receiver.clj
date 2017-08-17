@@ -31,7 +31,7 @@
         (recur nbuf (norm/read-stream (:object event) nbuf buf-size))))))
 
 (defn stop-session
-  "Closes and stops the session. Releases all NORM resources and closes the
+  "Closes and gracefully stops the session. Releases all NORM resources and closes the
   out-channel. This function is called when the NORM stream has been closed
   on the sender side.
   session is the NORM session that is being closed.
