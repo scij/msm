@@ -2,107 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2728eb43-e098-452b-b478-f18e8b8e4c1c" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/compiler.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/copyright/profiles_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/dictionaries/jschiewe.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/leiningen.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__clojure_complete_0_2_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__log4j_1_2_17.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__mil_navy_nrl_norm_1_0_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_clojure_1_8_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_core_async_0_2_395.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_core_cache_0_6_5.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_core_memoize_0_5_9.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_data_priority_map_0_0_7.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_tools_analyzer_0_6_9.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_tools_analyzer_jvm_0_6_10.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_tools_logging_0_3_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_tools_nrepl_0_2_12.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_clojure_tools_reader_1_0_0_beta2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_ow2_asm_asm_all_4_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_zeromq_cljzmq_0_1_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__org_zeromq_jzmq_3_0_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/libraries/Leiningen__overtone_at_at_1_2_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/replstate.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/.idea/workspace.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/CHANGELOG.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/LICENSE" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/README.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/com.senacor.msm.zmq.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/doc/intro.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/project.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/resources/log4j.properties" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/src/com/senacor/msm/zmq/async.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/src/com/senacor/msm/zmq/msg.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/src/com/senacor/msm/zmq/net.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/src/com/senacor/msm/zmq/stateful_server.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/test-resources/log4j.properties" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/test/com/senacor/msm/zmq/demo.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/test/com/senacor/msm/zmq/msg_test.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.common/test/com/senacor/msm/zmq/net_test.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.jms/.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.jms/CHANGELOG.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.jms/LICENSE" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.jms/README.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.jms/doc/intro.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.jms/project.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.jms/src/com/senacor/msm/offramp/jms.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.jms/test/com/senacor/msm/offramp/jms_test.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.uic/.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.uic/CHANGELOG.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.uic/LICENSE" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.uic/README.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.uic/doc/intro.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.uic/project.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.uic/src/com/senacor/msm/offramp/uic.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.offramp.uic/test/com/senacor/msm/offramp/uic_test.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/compiler.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/copyright/profiles_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/inspectionProfiles/Project_Default.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/inspectionProfiles/profiles_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__clojure_complete_0_2_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__com_sun_mail_javax_mail_1_5_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__com_tibco_tibjms_7_0_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__javax_activation_activation_1_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__javax_javaee_api_7_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__log4j_1_2_17.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_clojure_1_8_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_core_async_0_2_395.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_core_cache_0_6_5.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_core_memoize_0_5_9.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_data_priority_map_0_0_7.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_tools_analyzer_0_6_9.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_tools_analyzer_jvm_0_6_10.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_tools_logging_0_3_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_tools_nrepl_0_2_12.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_clojure_tools_reader_1_0_0_beta2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_ow2_asm_asm_all_4_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_zeromq_cljzmq_0_1_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__org_zeromq_jzmq_3_0_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/libraries/Leiningen__overtone_at_at_1_2_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/.idea/workspace.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/CHANGELOG.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/LICENSE" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/README.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/com.senacor.msm.onramp.jms.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/doc/intro.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/project.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/core.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/jms.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/process.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/src/com/senacor/msm/onramp/jms/store.clj" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../com.senacor.msm.onramp.jms/test/com/senacor/msm/onramp/jms_test.clj" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/../README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -120,7 +22,7 @@
       <file leaf-file-name="sender.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="996">
+            <state relative-caret-position="1410">
               <caret line="94" column="9" lean-forward="false" selection-start-line="94" selection-start-column="9" selection-end-line="94" selection-end-column="9" />
               <folding />
             </state>
@@ -130,7 +32,7 @@
       <file leaf-file-name="control.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/control.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
+            <state relative-caret-position="780">
               <caret line="52" column="12" lean-forward="false" selection-start-line="52" selection-start-column="12" selection-end-line="52" selection-end-column="12" />
               <folding />
             </state>
@@ -140,7 +42,7 @@
       <file leaf-file-name="util_test.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="471">
+            <state relative-caret-position="1080">
               <caret line="72" column="26" lean-forward="false" selection-start-line="72" selection-start-column="26" selection-end-line="72" selection-end-column="26" />
               <folding />
             </state>
@@ -160,8 +62,8 @@
       <file leaf-file-name="receiver.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-782">
-              <caret line="41" column="8" lean-forward="true" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
+            <state relative-caret-position="615">
+              <caret line="41" column="8" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -170,7 +72,7 @@
       <file leaf-file-name="util.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/util.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="411">
+            <state relative-caret-position="930">
               <caret line="62" column="60" lean-forward="false" selection-start-line="62" selection-start-column="60" selection-end-line="62" selection-end-column="60" />
               <folding />
             </state>
@@ -181,7 +83,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/demo.clj">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="495">
-              <caret line="33" column="13" lean-forward="true" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
+              <caret line="33" column="13" lean-forward="false" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -190,7 +92,7 @@
       <file leaf-file-name="listen.clj" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-25">
+            <state relative-caret-position="15">
               <caret line="20" column="17" lean-forward="false" selection-start-line="20" selection-start-column="17" selection-end-line="20" selection-end-column="17" />
               <folding />
             </state>
@@ -200,7 +102,7 @@
       <file leaf-file-name="message.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/message.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3084">
+            <state relative-caret-position="75">
               <caret line="5" column="29" lean-forward="false" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
               <folding />
             </state>
@@ -230,7 +132,7 @@
     </findStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -378,6 +280,8 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -430,18 +334,17 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Java" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
     <property name="cursive.last.file.extension./Users/jschiewe/src/msm/com.senacor.msm.norm/src" value="clj" />
     <property name="cursive.last.file.extension./Users/jschiewe/src/msm/com.senacor.msm.norm/test" value="clj" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -757,25 +660,25 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.4937888" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2924071" sideWeight="0.55582523" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32736155" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32899022" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.44417477" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="CheckStyle" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32736155" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32970452" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2746365" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2786753" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32736155" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24959612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937106" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32847896" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937106" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32899022" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32736155" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -809,6 +712,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
     <MESSAGE value="NORM jetzt als eigenes Projekt" />
     <MESSAGE value="Msg-Formatierung funktioniert jetzt" />
     <MESSAGE value="Messages können jetzt aus mehreren Byte-Arrays gelesen und in Byte-Arrays geschrieben werden." />
@@ -873,7 +779,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1035">
           <caret line="69" column="16" lean-forward="false" selection-start-line="69" selection-start-column="16" selection-end-line="69" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -902,7 +807,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -917,7 +821,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -926,7 +829,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1035">
           <caret line="69" column="16" lean-forward="false" selection-start-line="69" selection-start-column="16" selection-end-line="69" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -942,7 +844,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -958,7 +859,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -974,7 +874,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="33" lean-forward="true" selection-start-line="0" selection-start-column="33" selection-end-line="0" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1024,7 +923,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="20" lean-forward="false" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1033,7 +931,6 @@
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="431">
             <caret line="76" column="16" lean-forward="false" selection-start-line="76" selection-start-column="16" selection-end-line="76" selection-end-column="16" />
-            <folding />
           </first_editor>
           <second_editor />
         </state>
@@ -1043,7 +940,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="20" lean-forward="false" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1051,7 +947,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="97" column="31" lean-forward="false" selection-start-line="97" selection-start-column="31" selection-end-line="97" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1059,7 +954,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1363">
           <caret line="174" column="22" lean-forward="true" selection-start-line="174" selection-start-column="22" selection-end-line="174" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1067,7 +961,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2849">
           <caret line="651" column="13" lean-forward="false" selection-start-line="651" selection-start-column="13" selection-end-line="651" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1075,13 +968,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="471">
           <caret line="41" column="25" lean-forward="true" selection-start-line="41" selection-start-column="25" selection-end-line="41" selection-end-column="25" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/control.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
+        <state relative-caret-position="780">
           <caret line="52" column="12" lean-forward="false" selection-start-line="52" selection-start-column="12" selection-end-line="52" selection-end-column="12" />
           <folding />
         </state>
@@ -1089,7 +981,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="471">
+        <state relative-caret-position="1080">
           <caret line="72" column="26" lean-forward="false" selection-start-line="72" selection-start-column="26" selection-end-line="72" selection-end-column="26" />
           <folding />
         </state>
@@ -1107,13 +999,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="10" column="17" lean-forward="false" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/util.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="411">
+        <state relative-caret-position="930">
           <caret line="62" column="60" lean-forward="false" selection-start-line="62" selection-start-column="60" selection-end-line="62" selection-end-column="60" />
           <folding />
         </state>
@@ -1122,22 +1013,22 @@
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/demo.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
-          <caret line="33" column="13" lean-forward="true" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
+          <caret line="33" column="13" lean-forward="false" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-782">
-          <caret line="41" column="8" lean-forward="true" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
+        <state relative-caret-position="615">
+          <caret line="41" column="8" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="996">
+        <state relative-caret-position="1410">
           <caret line="94" column="9" lean-forward="false" selection-start-line="94" selection-start-column="9" selection-end-line="94" selection-end-column="9" />
           <folding />
         </state>
@@ -1145,7 +1036,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/message.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3084">
+        <state relative-caret-position="75">
           <caret line="5" column="29" lean-forward="false" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
           <folding />
         </state>
@@ -1155,13 +1046,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="74" lean-forward="false" selection-start-line="3" selection-start-column="74" selection-end-line="3" selection-end-column="74" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-25">
+        <state relative-caret-position="15">
           <caret line="20" column="17" lean-forward="false" selection-start-line="20" selection-start-column="17" selection-end-line="20" selection-end-column="17" />
           <folding />
         </state>
