@@ -88,9 +88,9 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (chan)]
-      (with-redefs-fn {#'stop-session (fn [session out-chan]
+      (with-redefs-fn {#'close-receiver (fn [session out-chan]
                                         (>!! out-chan :stopped))
-                       #'receive-data (fn [_ _])}
+                       #'receive-data   (fn [_ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
            (close! event-chan)
@@ -100,9 +100,9 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (chan)]
-      (with-redefs-fn {#'stop-session (fn [session out-chan]
+      (with-redefs-fn {#'close-receiver (fn [session out-chan]
                                         (>!! out-chan :stopped))
-                       #'receive-data (fn [_ _])}
+                       #'receive-data   (fn [_ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
            (>!! event-chan {:session session :event-type :event-invalid})
@@ -112,9 +112,9 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'stop-session (fn [session out-chan]
+      (with-redefs-fn {#'close-receiver (fn [session out-chan]
                                         (>!! out-chan :stopped))
-                       #'receive-data (fn [_ _])}
+                       #'receive-data   (fn [_ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
            (>!! event-chan {:session session :event-type :rx-object-aborted})
@@ -125,9 +125,9 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'stop-session (fn [session out-chan]
+      (with-redefs-fn {#'close-receiver (fn [session out-chan]
                                         (>!! out-chan :stopped))
-                       #'receive-data (fn [_ _])}
+                       #'receive-data   (fn [_ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
            (>!! event-chan {:session session :event-type :rx-object-completed})
@@ -138,8 +138,8 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'stop-session (fn [_ _])
-                       #'receive-data (fn [_ _]
+      (with-redefs-fn {#'close-receiver (fn [_ _])
+                       #'receive-data   (fn [_ _]
                                         (>!! out-chan :received))}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
@@ -152,9 +152,9 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'stop-session (fn [_ _]
+      (with-redefs-fn {#'close-receiver (fn [_ _]
                                         (>!! out-chan :stopped))
-                       #'receive-data (fn [_ _])}
+                       #'receive-data   (fn [_ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
            (>!! event-chan {:session (inc session) :event-type :rx-object-completed})
@@ -167,8 +167,8 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (chan 1)]
-      (with-redefs-fn {#'stop-session (fn [_ _])
-                       #'receive-data (fn [_ _]
+      (with-redefs-fn {#'close-receiver (fn [_ _])
+                       #'receive-data   (fn [_ _]
                                         (>!! out-chan :data))}
         #(do
            (receiver-handler session (mult event-chan) out-chan)

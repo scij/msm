@@ -23,7 +23,7 @@
   [instance event-chan]
   (log/trace "Enter control event loop")
   (loop [event (norm/next-event instance)]
-    (log/trace "Event:" event)
+    (log/trace "Event received:" (norm/event->str event))
     (>!! event-chan event)
     (when (not= :event-invalid (:event-type event))
       (log/trace "wait for next event")

@@ -9,7 +9,12 @@
             [clojure.core.async :refer [chan go-loop mult <! >!]]
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
-            [clojure.string :as str]))
+            [clojure.string :as str])
+  (:import (org.apache.logging.log4j ThreadContext)))
+
+(defn init-logging
+  [app-name]
+  (ThreadContext/put "app" app-name))
 
 (def cli-options
   [["-h" "--help"]
@@ -25,6 +30,8 @@
 (defn usage
   [errors summary]
   (println (str/join "\n" errors))
+  (println "Usage: listen <options> network-spec label-re")
+  (println "  network-spec [interface];multicast-net:port")
   (println summary)
   (System/exit 1))
 
@@ -32,7 +39,7 @@
   [net-spec label options]
   (let [event-chan (chan 5)
         bytes-chan (chan 5)
-        msg-chan (chan 5)
+        msg-chan (chan 5 (filter (partial message/label-match (re-pattern label))))
         event-chan-m (mult event-chan)
         [if-name network port] (util/parse-network-spec net-spec)
         instance (control/init-norm event-chan)
@@ -52,11 +59,15 @@
 
 (defn -main
   [& args]
+  (init-logging "listen")
   (let [opt-arg (cli/parse-opts args cli-options)
         [net-spec label] (:arguments opt-arg)]
-    ;; todo --help verarbeiten
-    ;; todo anzahl argumente prüfen
-    ;; todo default für label erzeugen
+    (when (zero? (count (:arguments opt-arg)))
+      (usage ["No network specification provided"]
+             (:summary opt-arg)))
+    (when (contains? (:options opt-arg) :help)
+      (usage ["Help requested"]
+             (:summary opt-arg)))
     (when (:errors opt-arg)
       (usage (:errors opt-arg)
              (:summary opt-arg)))

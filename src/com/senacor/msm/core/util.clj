@@ -3,26 +3,57 @@
             [clojure.java.jmx :as jmx])
   (:import (java.nio Buffer ByteBuffer)))
 
+;; Based on m0smith's code at https://gist.github.com/m0smith/1684476#file-hexlify-clj
+(defprotocol Hexl
+  (hexl-hex [val])
+  (hexl-char [char]))
+
+(extend-type Number
+  Hexl
+  (hexl-hex [i]
+    (let [rtnval (Integer/toHexString (if (neg? i) (+ 256 i) i)) ]
+      (if (< (count rtnval) 2) (str "0" rtnval) rtnval)))
+  (hexl-char [b]
+    (let [v (if (neg? b) (+ 256 b) b)
+          c  (char v)]
+      (if  (and (< v 128 )(Character/isLetterOrDigit c)) (.toString c) "."))))
+
+
+
+(extend-type Character
+  Hexl
+  (hexl-hex [char]
+    (hexl-hex (int (.charValue char))))
+  (hexl-char [char]
+    (hexl-char (int (.charValue char)))))
+
+(defn hexlify
+  "Perform similar to hexlify in emacs.  Accept a seq of bytes and
+convert it into a seq of vectors.  The first element of the vector is a
+seq of 16 strings for the HEX value of each byte.  The second element
+of the vector is a seq of the printable representation of the byte and the
+third elevment of thee vector is a seq of the integer value for each
+byte.  Works for chars as well."
+  ([bytes] (hexlify bytes 16))
+  ([bytes size]
+   (let [parts (partition-all size bytes)]
+     (for [part parts]
+       [ (map hexl-hex part) (map hexl-char part) (map int part)]))))
+
+(defn hexlify-chars
+  "Convert the bytes into a string of printable chars
+   with . being used for unprintable chars"
+  [bytes]
+  (let [chars (mapcat second (hexlify bytes))]
+    (apply str chars)))
+
 (defn dump-bytes
   [b-arr]
-  (if b-arr
-    (with-out-str
-      (doseq [b b-arr]
-        (if-let [c (char-escape-string (char b))]
-          (printf "%3s " c)
-          (if (Character/isLetterOrDigit (char b))
-            (printf "  %c " (char b))
-            (printf "%03o " b)))))
-    "nil"))
-
-(defn dump-bytebuffer
-  [msg buf]
-  (print msg " ")
-  (dump-bytes (.array buf))
-  (println)
-  (printf "limit %d\n" (.limit buf))
-  (printf "remaining %d\n" (.remaining buf))
-  (printf "position %d\n" (.position buf)))
+  (if (nil? b-arr)
+    (println "nil")
+    (map #(let [[hexc charc intc] %]
+            (println hexc (apply str charc)))
+         (hexlify b-arr))))
 
 (defn cat-byte-array
   "Returns a new byte array containing the data from b1 and be

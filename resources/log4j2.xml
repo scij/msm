@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns="http://logging.apache.org/log4j/2.0/config"
+               status="info">
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%15.15t] %-5p %16.16c %x - %m%n"/>
+        </Console>
+        <File name="File" fileName="target/logs/${ctx:app}.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%15.15t] %-5p %16.16c %x - %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>

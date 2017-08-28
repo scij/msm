@@ -26,7 +26,7 @@
                        (= session (:session m)))))
       (recur (<!! chan))
       (do
-        (log/trace "Wait ends with" m)
+        (log/trace "Wait ends with" (:event-type m))
         m))))
 
 (defn command-handler

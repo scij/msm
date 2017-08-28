@@ -72,3 +72,8 @@
     (is (= ["" "239.192.0.1" 7100]
            (parse-network-spec ":239.192.0.1;7100"))))
   )
+
+(deftest test-dump-bytes
+  (testing "simple text"
+    (is = "")
+    ))

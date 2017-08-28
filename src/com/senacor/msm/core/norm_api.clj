@@ -87,6 +87,17 @@
      :node (.getNode event),
      :object (.getObject event)}))
 
+(declare get-node-name)
+
+(defn event->str
+  [event]
+  (str
+    "Event "
+    (:event-type event) " "
+    (:session event) " "
+    (get-node-name (:node event)) " "
+    (:object event)))
+
 ;;
 ;; Session
 ;;
@@ -725,6 +736,13 @@
   [^NormNode handle]
   (.freeBuffers handle))
 
+(defn get-node-name
+  "Returns a readable representation of the node consisting
+  of the socket address and the node id"
+  [^NormNode node]
+  (str (get-address node)
+       "/"
+       (get-node-id node)))
 ;;
 ;; Debug
 ;;

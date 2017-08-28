@@ -29,15 +29,15 @@
 
 (defmulti label-match
           "checks if the msg's label matches the value given by match"
-          (fn [msg match]
+          (fn [match msg]
             (class match)))
 
 (defmethod label-match Pattern
-  [msg match]
+  [match msg]
   (re-matches match (:label msg)))
 
 (defmethod label-match String
-  [msg match]
+  [match msg]
   (= match (:label msg)))
 
 (defmethod label-match nil
@@ -128,6 +128,7 @@
     (if (or (nil? b)
             (and (= b (byte \M))
                  (= (bb/take-byte buf) (byte \X))))
+      ;; todo jetzt sind wir über den Anfang hinweg.
       start-state
       (recur (bb/take-byte buf)))))
 

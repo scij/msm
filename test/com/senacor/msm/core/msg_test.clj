@@ -181,7 +181,6 @@
     (let [fix (fill-buffer-with-testdata (bb/byte-buffer (* 2 fix-buflen)) false)
           out-chan (chan 2)]
       (fill-buffer-with-testdata fix :flip)
-      (util/dump-bytebuffer "doublebuf" fix)
       (is (= parse-fixed-header (:parse-fn (process-message start-state
                                                             (.array fix)
                                                             out-chan))))
@@ -232,6 +231,8 @@
       (is (= fix-msg (<!! (split-buffer-test 5)))))
     (testing "in var header"
       (is (= fix-msg (<!! (split-buffer-test 14)))))
+    (testing "in uuid"
+      (is (= fix-msg (<!! (split-buffer-test 19)))))
     (testing "in payload"
       (is (= fix-msg (<!! (split-buffer-test 24)))))
     )
@@ -273,16 +274,16 @@
 (deftest test-label-match
   (testing "nil match"
     (let [fix (create-message "foo" "bar")]
-      (is (label-match fix nil))))
+      (is (label-match nil fix))))
   (testing "string match"
     (let [fix (create-message "foo" "bar")]
-      (is (label-match fix "foo"))
-      (is (not (label-match fix "bar")))
-      (is (not (label-match fix "f")))
-      (is (not (label-match fix "fo")))
-      (is (not (label-match fix "fooo")))))
+      (is (label-match "foo" fix))
+      (is (not (label-match "bar" fix)))
+      (is (not (label-match "f" fix)))
+      (is (not (label-match "fo" fix)))
+      (is (not (label-match "fooo" fix)))))
   (testing "regex match"
     (let [fix (create-message "com.senacor.msm.label.1" "foo.bar")]
-      (is (label-match fix #"com.+"))
-      (is (label-match fix #"com.senacor.*"))))
+      (is (label-match #"com.+" fix))
+      (is (label-match #"com.senacor.*" fix))))
   )

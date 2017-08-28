@@ -5,15 +5,13 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/core.async "0.3.442"]
-                 [org.clojure/tools.logging "0.3.1"]
+                 [org.clojure/tools.logging "0.4.0"]
                  [org.clojure/tools.cli "0.3.5"]
                  [org.clojure/java.jmx "0.3.4"]
                  [bytebuffer "0.2.0"]
                  [mil.navy.nrl/norm "1.0.0"]
-                 [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
-                                                    javax.jms/jms
-                                                    com.sun.jmdk/jmxtools
-                                                    com.sun.jmx/jmxri]]
+                 [org.apache.logging.log4j/log4j-api "2.8.2"]
+                 [org.apache.logging.log4j/log4j-core "2.8.2"]
                  ]
   :main com.senacor.msm.main.demo
   :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]

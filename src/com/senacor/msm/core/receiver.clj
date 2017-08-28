@@ -19,18 +19,18 @@
   Since there is no way to find out how much data there is in the NORM network
   buffers we repeatedly read blocks until NORM indicates that all bytes have
   been read.
-  out-chan is a channel where the consolidated message is sent
+  out-chan is a channel where the buffer is sent
   event is the NORM event containing the input stream handle."
   [out-chan event]
   (go-loop [buffer (byte-array buf-size)
             bytes-read (norm/read-stream (:object event) buffer buf-size)]
     (log/tracef "message received, len=%d" bytes-read)
     (when (pos? bytes-read)
+      (>! out-chan (util/byte-array-head buffer bytes-read))
       (let [nbuf (byte-array buf-size)]
-        (>! out-chan (util/byte-array-head buffer bytes-read))
         (recur nbuf (norm/read-stream (:object event) nbuf buf-size))))))
 
-(defn stop-session
+(defn close-receiver
   "Closes and gracefully stops the session. Releases all NORM resources and closes the
   out-channel. This function is called when the NORM stream has been closed
   on the sender side.
@@ -69,7 +69,7 @@
 (defn receiver-handler
   "Handles NORM-Events that relate to received messages. Hook this
   function to the event-chan of the control loop. It starts a go-loop
-  and returns immediately
+  and immediately returns.
   session is the session where we receive data.
   event-chan is the control loop event channel.
   out-chan is the channel where received data will be written. The channel
@@ -84,16 +84,16 @@
           (case (:event-type event)
             :rx-object-new
             (do
-              (log/trace "new stream opened")
+              (log/info "new stream opened:" (norm/event->str event))
               (recur (<! ec-tap)))
             :rx-object-updated
             (do
               (receive-data out-chan event)
               (recur (<! ec-tap)))
-            :rx-object-completed
-            (stop-session session out-chan)
-            :rx-object-aborted
-            (stop-session session out-chan)
+            (:rx-object-completed :rx-object-aborted)
+            (do
+              (log/info "stream terminated:" (norm/event->str event))
+              (recur (<! ec-tap)))
             :event-invalid ;; happens when the instance is unexpectedly shut down
             (close! out-chan)
             ;; default
@@ -102,10 +102,11 @@
         (do
           (log/trace "Exit receiver event loop")
           (untap event-chan ec-tap)))))
-  session)
+    session)
 
 (defn create-receiver
-  "Creates a receiver participant in a NORM communication.
+  "Creates a receiver participant in a NORM communication. Returns
+  a function that closes the receiver and the corresponding session.
   session is the NORM session created in control.
   event-chan is the stream of NORM events from control. Remember to
     tap the channel in case you have multiple receivers or senders
@@ -123,4 +124,5 @@
   (when silent
     (norm/set-silent-receiver session true silent))
   (norm/start-receiver session (* 10 buf-size))
-  (receiver-handler session event-chan out-chan))
+  (receiver-handler session event-chan out-chan)
+  (partial close-receiver session out-chan))
