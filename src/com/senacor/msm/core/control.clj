@@ -43,12 +43,7 @@
 
 (defn finit-norm
   [instance]
-  (let [secs 20]
-    (log/tracef "shutdown NORM in %d seconds" secs)
-    (Thread/sleep (* secs 1000))
-    (log/trace "shutdown now")
-    (norm/stop-instance instance)
-  ))
+  (norm/stop-instance instance))
 
 
 (defn start-session

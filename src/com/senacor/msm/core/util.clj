@@ -1,6 +1,8 @@
 (ns com.senacor.msm.core.util
   (:require [clojure.string :as str]
-            [clojure.java.jmx :as jmx])
+            [clojure.java.jmx :as jmx]
+            [clojure.core.async :refer [<!! >!!]]
+            [clojure.tools.logging :as log])
   (:import (java.nio Buffer ByteBuffer)))
 
 ;; Based on m0smith's code at https://gist.github.com/m0smith/1684476#file-hexlify-clj
@@ -34,11 +36,10 @@ seq of 16 strings for the HEX value of each byte.  The second element
 of the vector is a seq of the printable representation of the byte and the
 third elevment of thee vector is a seq of the integer value for each
 byte.  Works for chars as well."
-  ([bytes] (hexlify bytes 16))
-  ([bytes size]
-   (let [parts (partition-all size bytes)]
-     (for [part parts]
-       [ (map hexl-hex part) (map hexl-char part) (map int part)]))))
+  [bytes]
+  (let [parts (partition-all 16 bytes)]
+    (for [part parts]
+      [ (map hexl-hex part) (map hexl-char part) (map int part)])))
 
 (defn hexlify-chars
   "Convert the bytes into a string of printable chars
@@ -52,7 +53,8 @@ byte.  Works for chars as well."
   (if (nil? b-arr)
     (println "nil")
     (map #(let [[hexc charc intc] %]
-            (println hexc (apply str charc)))
+            (println (partition-all 4 hexc)
+                     (partition-all 4 (apply str charc))))
          (hexlify b-arr))))
 
 (defn cat-byte-array
@@ -104,3 +106,20 @@ byte.  Works for chars as well."
   "Returns the process id as a default value for the node id."
   []
   (Integer/parseInt (first (str/split (jmx/read "java.lang:type=Runtime" :Name) #"@"))))
+
+(defn wait-for-events
+  "Pseudo-blocks waiting for one or more events.
+  chan is the event channel where the events are received.
+  session is the session to which the events related.
+  event-types is a set of event-type keys the wait is expecting to receive.
+  Returns the first event that matched the condition"
+  [chan session event-types]
+  (log/trace "Wait for events" event-types)
+  (loop [m (<!! chan)]
+    (if (and m
+             (not (and (contains? event-types (:event-type m))
+                       (= session (:session m)))))
+      (recur (<!! chan))
+      (do
+        (log/trace "Wait ends with" (:event-type m))
+        m))))

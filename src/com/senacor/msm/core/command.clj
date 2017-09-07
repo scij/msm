@@ -1,7 +1,10 @@
 (ns com.senacor.msm.core.command
   (:require [bytebuffer.buff :as bb]
             [clojure.string :as str]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [clojure.core.async :refer [chan sliding-buffer tap untap go-loop <! >!]]
+            [com.senacor.msm.core.norm-api :as norm]
+            [com.senacor.msm.core.util :as util])
   (:import (java.nio Buffer ByteBuffer)))
 
 
@@ -9,6 +12,38 @@
   "A stateful process sends this command to inform it's peers that it is still alive and processing" 1)
 (def ^:const CMD_SL_PROCESSED
   "A stateless process sends this command to inform it's peers that it has processed a given message" 2)
+
+(defn command-sender
+  "Receive commands as byte array messages from cmd-chan and send them
+  to all NORM receivers of this session. Use event-chan to receive
+  confirmation that messages have been sent."
+  [session event-chan cmd-chan]
+  (let [ec-tap (chan (sliding-buffer 5))]
+    (go-loop [cmd (<! cmd-chan)]
+      (when cmd
+        (tap event-chan ec-tap)
+        (norm/send-command session cmd (count cmd) true)
+        (util/wait-for-events ec-tap session #{:tx-cmd-sent})
+        (untap event-chan ec-tap)
+        (recur (<! cmd-chan)))))
+  cmd-chan)
+
+(defn command-receiver
+  "Receive NORM commands and publish them as byte arrays on a channel.
+  session is the NORM session on which the commands are broadcasted.
+  event-chan is a mult of the control event channel where inbound commands
+  are notified.
+  cmd-chan is a channel of byte array to which the events are published."
+  [session event-chan cmd-chan]
+  (let [ec-tap (chan 20)
+        node-id (norm/get-local-node-id session)]
+    (tap event-chan ec-tap)
+    (go-loop [event (<! ec-tap)]
+      (when (and (= :rx-object-cmd-new (:event-type event))
+                 (= session (:session event)))
+        (>! cmd-chan (norm/get-command node-id))
+        (recur (<! ec-tap))))))
+
 
 ;; Command Structure
 ;;

@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [clojure.core.async :refer [chan <!!]]
             [com.senacor.msm.core.control :refer :all]
-            [com.senacor.msm.core.norm-api :as norm]))
+            [com.senacor.msm.core.norm-api :as norm]
+            [clojure.tools.logging :as log]))
 
 (deftest test-event-loop
   (let [count (atom 0)]
@@ -11,7 +12,8 @@
                                          (case @count
                                            1 {:session 1, :event-type :rx-object-new}
                                            2 {:session 1, :event-type :event-invalid}
-                                           ))}
+                                           {:session 1, :event-type :zzz})
+                                         )}
       #(let [event-chan (chan 1)
              evt (future (event-loop 1 event-chan))]
          (is (= {:session 1, :event-type :rx-object-new} (<!! event-chan)))
@@ -34,11 +36,11 @@
                    #'norm/set-rx-port-reuse (fn [_ v]
                                               (swap! options assoc :port-reuse v))}
     #(do
-       (start-session 1 "239.192.0.1" 7100 1
-                      :if-name "en0"
-                      :ttl 10
-                      :tos 40
-                      :loopback true)
+       (start-session 1 "239.192.0.1" 7100
+                      {:if-name "en0",
+                       :ttl 10,
+                       :tos 40,
+                      :loopback true})
        (is (= "en0" (:if-name @options)))
        (is (= 10 (:ttl @options)))
        (is (= 40 (:tos @options)))

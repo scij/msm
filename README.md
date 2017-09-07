@@ -86,15 +86,16 @@ protocol layer) during transmission. While sending is simply done by serializing
 array, receiving consumes a channel of byte arrays and fills another channel of messages.
 
 At the top there are three modes of transport:
-1. Topic refers to the JMS concept of a Topic. A message is sent by one or more producer and
+
+1. **Topic** refers to the JMS concept of a Topic. A message is sent by one or more producer and
 it is delivered to all consumers that have subscribed to this particular message label.
-2. Stateful is more Queue-like. A message is sent by one or more message producers and received
+2. **Stateful** is more Queue-like. A message is sent by one or more message producers and received
 by exactly one active consumer. In case this consumer fails processing is taken over by one of
 the passive consumers. This mode should be used when message processing updates some sort of local
 state.
-3. Stateless is also providing truely JMS-queue-like abstraction. All consumers are active and
-a message is guaranteed to be delivered and processed by exactly one of them. When a consumer fails
-while it is processing this message it is resent to another consumer.
+3. **Stateless** is also providing truely JMS-queue-like abstraction. All messages are received by
+all consumers and each message is guaranteed to be delivered and processed by exactly one of them. 
+When a consumer fails while it is processing a message the message is resent to another consumer.
 
 An important difference to JMS is the lack of persistent storage. Since there is no central server
 there is also no storage of undelivered messages. When all consumers fail simultaneously messages will

@@ -65,6 +65,14 @@
 (def ^:const version-major 1)
 (def ^:const version-minor 0)
 
+(def ^:const msg-prefix-m (byte \M))
+(def ^:const msg-prefix-x (byte \X))
+
+(def ^:const ascii-soh (byte 1))
+(def ^:const ascii-stx (byte 2))
+(def ^:const ascii-etx (byte 3))
+(def ^:const ascii-eot (byte 4))
+
 (def ^:const hdr-len 10)
 
 (defn message-length
@@ -90,8 +98,8 @@
         b-array (byte-array (message-length b-label b-corr-id b-payload))]
     (doto (ByteBuffer/wrap b-array)
       ;; Fixed header
-      (bb/put-byte (byte \M))
-      (bb/put-byte (byte \X))
+      (bb/put-byte msg-prefix-m)
+      (bb/put-byte msg-prefix-x)
       (bb/put-byte version-major)
       (bb/put-byte version-minor)
       (bb/put-short (+ 1 (count b-label) 1 (count b-corr-id)))
@@ -108,12 +116,20 @@
 (defn take-string
   "Reads a string of a given length from a byte buffer
   returning the string"
-  [length buf]
-  (let [b (byte-array length)]
-    (.get buf b 0 length)
-    (String. b)))
+  ([buf]
+   (if (pos? (.remaining buf))
+     (let [net-len (min (bb/take-byte buf) (.remaining buf))
+           b (byte-array net-len)]
+       (.get buf b 0 net-len)
+       (String. b))
+     ""))
+  ([len buf]
+   (let [net-len (min len (.remaining buf))
+         b (byte-array net-len)]
+     (.get buf b 0 net-len)
+     (String. b))))
 
-(declare parse-var-hdr)
+(declare parse-var-header)
 (declare parse-payload)
 (declare send-message)
 (declare parse-fixed-header)
@@ -124,13 +140,26 @@
   message prefix is detected"
   [state buf out-chan]
   (log/trace "Skipping")
-  (loop [b (bb/take-byte buf)]
-    (if (or (nil? b)
-            (and (= b (byte \M))
-                 (= (bb/take-byte buf) (byte \X))))
-      ;; todo jetzt sind wir über den Anfang hinweg.
-      start-state
-      (recur (bb/take-byte buf)))))
+  (.mark buf)
+  ;; todo mark und reset einbauen
+  (loop [step :scan]
+    (if (.hasRemaining buf)
+      (let [b (bb/take-byte buf)]
+        (cond
+          (and (= step :scan) (= b msg-prefix-m)) (recur :has-m)
+          (and (= step :has-m) (= b msg-prefix-x)) (do
+                                           (.reset buf)
+                                           start-state)
+          (and (= step :has-m) (not= b msg-prefix-x)) (do
+                                              (.mark buf)
+                                              (recur :scan))
+          :else (do
+                  (.mark buf)
+                  (recur :scan))
+          ))
+      state)
+    )
+  )
 
 (defn parse-fixed-header
   "Parse the fixed part of the header from buf and return an
@@ -147,38 +176,58 @@
     (log/tracef "hdr %d %d %d.%d hdr-len=%d payload-len=%d"
                 magic1 magic2 major-v minor-v
                 hdr-var-length payload-length)
-    (if (or (not= magic1 (byte \M)) (not= magic2 (byte \X)))
+    (if (or (not= magic1 msg-prefix-m) (not= magic2 msg-prefix-x))
       (do
         (log/errorf "Invalid magic msg prefix: %d %d" magic1 magic2)
         {:valid? false,
          :complete? false,
-         :parse-fn skip-to-next-msg-prefix}
-        )
+         :parse-fn skip-to-next-msg-prefix})
       (if (or (not= version-major major-v) (< minor-v version-minor))
         (do
           (log/errorf "Invalid msg version: %d %d" major-v minor-v)
           {:valid? false,
            :complete? false,
-           :parse-fn skip-to-next-msg-prefix}
-          )
-        {:valid? true,
-         :hdr-var-length hdr-var-length,
-         :payload-length payload-length,
-         :bytes-required hdr-var-length,
-         :parse-fn parse-var-hdr,
-         :complete? false
-         }
-        ))))
+           :parse-fn skip-to-next-msg-prefix})
+        (if (< hdr-var-length 4)
+          (do
+            (log/errorf "Invalid var header length %d" hdr-var-length)
+            {:valid? false,
+             :complete? false,
+             :parse-fn skip-to-next-msg-prefix})
+          (if (neg? payload-length)
+            (do
+              (log/errorf "Payload length must be >= 0: %d" payload-length)
+              {:valid? false,
+               :complete? false,
+               :parse-fn skip-to-next-msg-prefix})
+            {:valid?         true,
+             :hdr-var-length hdr-var-length,
+             :payload-length payload-length,
+             :bytes-required hdr-var-length,
+             :parse-fn       parse-var-header,
+             :complete?      false
+             }
+            ))))))
 
-(defn parse-var-hdr
+(defn parse-var-header
   "Parse the var length metadata from the message header."
   [state buf _]
-  {:label          (take-string (bb/take-byte buf) buf),
-   :corr-id        (take-string (bb/take-byte buf) buf),
-   :bytes-required (:payload-length state),
-   :parse-fn       parse-payload,
-   :complete?      false
-   })
+  (let [label (take-string buf)
+        corr-id (take-string buf)]
+    (if (= corr-id "")
+      (do
+        (log/errorf "Corr-id is empty, label is %s" label)
+        {:valid?    false,
+         :complete? false,
+         :parse-fn  skip-to-next-msg-prefix})
+      (do
+        (log/tracef "Var header is %s %s" label corr-id)
+        {:label          label,
+         :corr-id        corr-id,
+         :bytes-required (:payload-length state),
+         :parse-fn       parse-payload,
+         :complete?      false
+         }))))
 
 (defn parse-payload
   "Reads as many payload bytes from the buf as specified in the
@@ -197,8 +246,7 @@
 (defn send-message
   [state buf out-chan]
   (>!! out-chan (->Message (:label state) (:corr-id state) (:payload state)))
-  start-state
-  )
+  start-state)
 
 (def start-state
   "Returns the initial state of the message processing state engine"
@@ -231,7 +279,7 @@
   (let [state (atom start-state)]
     (go-loop [old-arr (-> "" String. .getBytes)
               ^bytes new-arr (<! in-chan)]
-      (log/tracef "Message received: >%s<" (util/dump-bytes new-arr))
+      (log/trace "Message received:" (util/dump-bytes new-arr))
       (if new-arr
         (if (>= (+ (count new-arr) (count old-arr)) (:bytes-required @state))
           (do

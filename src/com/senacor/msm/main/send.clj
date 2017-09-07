@@ -63,9 +63,8 @@
 (defn start-sending
   [net-spec label message options]
   (let [event-chan (chan 5)
-        bytes-chan (chan 50 (map message/Message->bytes))
-        cmd-chan (chan (sliding-buffer 1))
         event-chan-m (mult event-chan)
+        msg-chan (chan 50 (map message/Message->bytes))
         [if-name network port] (util/parse-network-spec net-spec)
         instance (control/init-norm event-chan)
         session (control/start-session instance network port options)]
@@ -73,12 +72,13 @@
       (norm/set-multicast-interface session if-name))
     (monitor/mon-event-loop event-chan-m)
     (sender/create-sender session (:node-id options)
-                          event-chan-m bytes-chan cmd-chan
+                          event-chan-m msg-chan
                           (:size options))
     (if (:file options)
-      (start-file-message-source label (:file options) bytes-chan)
-      (start-message-source label message (:repeat options) bytes-chan))
-    ;todo (control/finit-norm instance)
+      (start-file-message-source label (:file options) msg-chan)
+      (start-message-source label message (:repeat options) msg-chan))
+    ; todo finit-norm darf erst aufgerufen werden, wenn die session geschlossen ist
+    ;(control/finit-norm instance)
     ))
 
 (defn -main

@@ -108,31 +108,25 @@
            (>!! event-chan {:session session :event-type :event-invalid})
            (is (nil? (<!! out-chan)))
            ))))
-  (testing "handle closing session (aborted)"
+  (testing "handle closing stream (aborted)"
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'close-receiver (fn [session out-chan]
-                                        (>!! out-chan :stopped))
-                       #'receive-data   (fn [_ _])}
+      (with-redefs-fn {#'receive-data   (fn [_ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
            (>!! event-chan {:session session :event-type :rx-object-aborted})
-           (is (= :stopped (<!! out-chan)))
-           (is (nil? (<!! out-chan)))
+           (is (nil? (poll! out-chan)))
            ))))
-  (testing "handle closing session (complete)"
+  (testing "handle closing stream (complete)"
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'close-receiver (fn [session out-chan]
-                                        (>!! out-chan :stopped))
-                       #'receive-data   (fn [_ _])}
+      (with-redefs-fn {#'receive-data   (fn [_ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
            (>!! event-chan {:session session :event-type :rx-object-completed})
-           (is (= :stopped (<!! out-chan)))
-           (is (nil? (<!! out-chan)))
+           (is (nil? (poll! out-chan)))
            ))))
   (testing "handle unknown event type"
     (let [session 1
@@ -152,16 +146,11 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'close-receiver (fn [_ _]
-                                        (>!! out-chan :stopped))
-                       #'receive-data   (fn [_ _])}
+      (with-redefs-fn {#'receive-data   (fn [_ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan)
            (>!! event-chan {:session (inc session) :event-type :rx-object-completed})
            (is (nil? (poll! out-chan)))
-           (>!! event-chan {:session session :event-type :rx-object-completed})
-           (is (= :stopped (<!! out-chan)))
-           (<!! out-chan)
            ))))
   (testing "receive some data"
     (let [session 1

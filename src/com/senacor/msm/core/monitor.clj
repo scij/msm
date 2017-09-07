@@ -36,7 +36,6 @@
     (log/trace "Enter mon event loop")
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
-      (log/trace "Event:" event)
       (if event
         (do
           (update-mon-status event)

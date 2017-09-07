@@ -5,49 +5,6 @@
             [com.senacor.msm.core.norm-api :as norm]
             [clojure.tools.logging :as log]))
 
-(deftest test-wait-for-events
-  (testing "gleich ein treffer"
-    (let [event {:session 1 :event-type 1}
-          test-c (chan 1)]
-      (>!! test-c event)
-      (close! test-c)
-      (is (= event (wait-for-events test-c 1 #{1})))))
-  (testing "gleich ein treffer aus vielen"
-    (let [event {:session 1 :event-type 1}
-          test-c (chan 1)]
-      (>!! test-c event)
-      (close! test-c)
-      (is (= event (wait-for-events test-c 1 #{1 2})))))
-  (testing "gleich geschlossen"
-    (let [test-c (chan 1)]
-      (close! test-c)
-      (is (nil? (wait-for-events test-c 1 #{1})))))
-  (testing "nicht die passende session"
-    (let [event {:session 1 :event-type 1}
-          test-c (chan 1)]
-      (>!! test-c event)
-      (close! test-c)
-      (is (nil? (wait-for-events test-c 2 #{1})))))
-  (testing "nicht der passende event"
-    (let [event {:session 1 :event-type 1}
-          test-c (chan 1)]
-      (>!! test-c event)
-      (close! test-c)
-      (is (nil? (wait-for-events test-c 1 #{2})))))
-  (testing "nicht der passende event aus mehreren"
-    (let [event {:session 1 :event-type 1}
-          test-c (chan 1)]
-      (>!! test-c event)
-      (close! test-c)
-      (is (nil? (wait-for-events test-c 1 #{2 3})))))
-  (testing "beides passt nicht"
-    (let [event {:session 1 :event-type 1}
-          test-c (chan 1)]
-      (>!! test-c event)
-      (close! test-c)
-      (is (nil? (wait-for-events test-c 2 #{2})))))
-  )
-
 (deftest test-command-handler
   (let [session 1
         event-chan (chan 1)
@@ -75,6 +32,7 @@
         (with-redefs-fn {#'norm/write-stream (fn [stream b-arr b-offs b-len] (>!! test-chan b-arr) b-len),
                          #'norm/start-sender (fn [_ _ _ _ _ _]),
                          #'norm/open-stream  (fn [_ _] 99),
+                         #'norm/mark-eom     (fn [_])
                          #'stop-sender       (fn [_ _ _](>!! test-chan true))}
           #(do
              (create-sender session instance-id (mult event-chan) in-chan cmd-chan 128)
@@ -97,6 +55,7 @@
                                                b-len)
                          #'norm/start-sender (fn [_ _ _ _ _ _])
                          #'norm/open-stream  (fn [_ _] 99)
+                         #'norm/mark-eom     (fn [_])
                          #'stop-sender       (fn [_ _ _] (>!! test-chan true))}
           #(do
              (create-sender session instance-id (mult event-chan) in-chan cmd-chan 128)
@@ -120,7 +79,8 @@
                                                8),
                          #'norm/start-sender (fn [_ _ _ _ _ _]),
                          #'norm/open-stream  (fn [_ _] 99),
-                         #'stop-sender  (fn [_ _ _] (>!! test-chan true))}
+                         #'norm/mark-eom     (fn [_]),
+                         #'stop-sender       (fn [_ _ _] (>!! test-chan true))}
           #(do
              (create-sender session instance-id (mult event-chan) in-chan cmd-chan 128)
              (>!! in-chan (.getBytes (apply str (repeat 20 "abcdefg "))))

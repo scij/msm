@@ -5,7 +5,8 @@
             [com.senacor.msm.core.util :as util]
             [clojure.core.async :refer [>!! >! <! tap untap go-loop chan close!]]
             [clojure.tools.logging :as log])
-  (:import (java.nio ByteBuffer)))
+  (:import (java.nio ByteBuffer)
+           (mil.navy.nrl.norm.enums NormSyncPolicy)))
 
 ;;
 ;; Receive messages across a norm stream
@@ -85,6 +86,7 @@
             :rx-object-new
             (do
               (log/info "new stream opened:" (norm/event->str event))
+              (norm/seek-message-start (:object event))
               (recur (<! ec-tap)))
             :rx-object-updated
             (do
@@ -124,5 +126,6 @@
   (when silent
     (norm/set-silent-receiver session true silent))
   (norm/start-receiver session (* 10 buf-size))
+  (norm/set-default-sync-policy session :stream)
   (receiver-handler session event-chan out-chan)
   (partial close-receiver session out-chan))

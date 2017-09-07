@@ -1,5 +1,6 @@
 (ns com.senacor.msm.core.norm-api
-  (:require [clojure.tools.logging :as log])
+  (:require [clojure.tools.logging :as log]
+            [clojure.string :as str])
   (:import (mil.navy.nrl.norm NormInstance NormSession NormEvent NormData NormObject NormNode NormStream)
            (java.nio ByteBuffer)
            (mil.navy.nrl.norm.enums NormEventType NormProbingMode NormAckingStatus NormSyncPolicy NormNackingMode NormRepairBoundary NormObjectType NormFlushMode)
@@ -91,12 +92,12 @@
 
 (defn event->str
   [event]
-  (str
-    "Event "
-    (:event-type event) " "
-    (:session event) " "
-    (get-node-name (:node event)) " "
-    (:object event)))
+  (str/join " "
+            ["Event"
+             (or (:event-type event) "")
+             (or (:session event) "")
+             (or (get-node-name (:node event)) "")
+             (or (:object event) "")]))
 
 ;;
 ;; Session
@@ -549,11 +550,13 @@
 (defn ^NormSession set-default-sync-policy
   "Sets the syncing behaviour of the client. :current receives all objects
   currently in transmission and new objects sent later. :all requests all
-  objects held in sender buffers for retransmission"
+  objects held in sender buffers for retransmission and :stream ensures
+  reception of all data stored in the current stream"
   [^NormSession handle sync-policy]
   (.setDefaultSyncPolicy handle (case sync-policy
                                   :current NormSyncPolicy/NORM_SYNC_ALL
-                                  :all NormSyncPolicy/NORM_SYNC_ALL))
+                                  :stream  NormSyncPolicy/NORM_SYNC_STREAM
+                                  :all     NormSyncPolicy/NORM_SYNC_ALL))
   handle)
 
 (defn- ^NormNackingMode key->nacking-mode
@@ -740,9 +743,11 @@
   "Returns a readable representation of the node consisting
   of the socket address and the node id"
   [^NormNode node]
-  (str (get-address node)
-       "/"
-       (get-node-id node)))
+  (if node
+    (str (get-address node)
+         "/"
+         (get-node-id node))
+    ""))
 ;;
 ;; Debug
 ;;
