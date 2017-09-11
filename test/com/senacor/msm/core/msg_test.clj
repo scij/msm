@@ -358,20 +358,19 @@
       ))
   (testing "Msg - Trunk Msg - Msg - Msg"
     ; should find the fourth message
-    (let [bb (bb/byte-buffer (* fix-buflen 4))
+    (let [bb (bb/byte-buffer (* fix-buflen 20))
           fix (fill-buffer-with-testdata bb :no-flip)
-          trunc (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip)
           in-chan (chan 2)
           out-chan (chan 2)]
-      (.put fix (util/byte-array-head (.array trunc) 10))
+      (bb/with-buffer fix
+                      (bb/put-byte (byte \a))
+                      (bb/put-byte (byte \a)))
       (fill-buffer-with-testdata fix :no-flip)
       (fill-buffer-with-testdata fix)
       (bytes->Messages in-chan out-chan)
       (>!! in-chan (.array fix))
       (close! in-chan)
       (is (= fix-msg (<!! out-chan)))
-      ;; todo - take-string konsumiert über das Ende der Message hinaus
-      ;; todo - siehe auch norm/seek-message-start
       (is (= fix-msg (<!! out-chan)))
       (is (nil? (<!! out-chan))))
     ))

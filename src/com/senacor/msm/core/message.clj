@@ -141,7 +141,7 @@
   [state buf out-chan]
   (log/trace "Skipping")
   (.mark buf)
-  ;; todo mark und reset einbauen
+  ;; todo besser mit den EOM anspringen und den vorliegenden Buffer verbrauchen
   (loop [step :scan]
     (if (.hasRemaining buf)
       (let [b (bb/take-byte buf)]
@@ -277,7 +277,7 @@
   returns the out-chan."
   [in-chan out-chan]
   (let [state (atom start-state)]
-    (go-loop [old-arr (-> "" String. .getBytes)
+    (go-loop [old-arr (.getBytes "")
               ^bytes new-arr (<! in-chan)]
       (log/trace "Message received:" (util/dump-bytes new-arr))
       (if new-arr

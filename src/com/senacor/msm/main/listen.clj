@@ -22,6 +22,7 @@
    ["-i" "--node-id NODE-ID" "Node ID"
     :default (util/default-node-id)
     :parse-fn #(Integer/parseInt %)]
+   ["-o" "--output FILE" "Output file name"]
    ["-s" "--tos TOS" "Type of service"
     :parse-fn #(Integer/parseInt %)]
    ["-t" "--ttl HOPS" "Number of hops"
@@ -34,6 +35,12 @@
   (println "  network-spec [interface];multicast-net:port")
   (println summary)
   (System/exit 1))
+
+(defn- wrt
+  [writer line]
+  (when writer
+    (binding [*out* writer]
+      (println line))))
 
 (defn start-listening
   [net-spec label options]
