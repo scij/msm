@@ -12,7 +12,6 @@
         cmd-chan (chan 1)]
     (with-redefs-fn {#'norm/send-command (fn [session cmd cmd-len _] (>!! test-chan cmd))}
       #(do
-         (is (command-handler session (mult event-chan) cmd-chan))
          (>!! cmd-chan "hallo")
          (>!! event-chan {:event-type :tx-cmd-sent :session 1})
          (is (= "hallo" (<!! test-chan)))

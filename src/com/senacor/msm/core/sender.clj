@@ -23,6 +23,7 @@
     (norm/flush-stream stream true :passive)
     (norm/close-stream stream true)
     (norm/stop-sender session)
+    ; todo vielleicht brauchen wir die session noch?
     (norm/destroy-session session)
     (mon/unregister session)
     (log/trace "session and stream closed")
@@ -50,6 +51,7 @@
         (do
           (log/tracef "stream write len=%d, offs=%d" b-len b-offs)
           (let [bytes-sent (norm/write-stream stream b-arr b-offs b-len)]
+            (mon/record-bytes-sent session bytes-sent)
             (if (= bytes-sent b-len)
               (do ; message completely sent.
                 (norm/mark-eom stream)

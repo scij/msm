@@ -7,12 +7,14 @@
 ;; Maps sessions to JMX bean names.
 (def session-names (atom {}))
 
+; todo for each session poll the tx-rate every second and update the bean
+
 (defn- jmx-write
   [mbean prop value]
   (log/tracef "jmx write %s" (str prop))
   (jmx/write! mbean prop value))
 
-(defn- update-mon-status
+(defn update-mon-status
   [event]
   (let [session (:session event)
         mbean (get @session-names session)]
@@ -24,6 +26,18 @@
       ;; default
       nil
       )))
+
+(defn record-bytes-sent
+  "Record the number of bytes sent by this session"
+  [session bytes-sent]
+  (let [mbean (get @session-names session)]
+    (jmx-write mbean :bytes-sent (+ (or (jmx/read mbean :bytes-sent) 0) bytes-sent))))
+
+(defn record-bytes-received
+  "Record the number of bytes received by this session"
+  [session bytes-received]
+  (let [mbean (get @session-names session)]
+    (jmx-write mbean :bytes-received (+ (or (jmx/read mbean :bytes-received) 0) bytes-received))))
 
 (defn mon-event-loop
   "Event handler for monitoring events. Subscribes to
@@ -52,9 +66,11 @@
                     "name=" address "/" port "/" node-id)]
     (swap! session-names assoc session s-name)
     (jmx/register-mbean mbean s-name)
-    (log/tracef "JMX Session bean registered: %s" s-name)))
+    (log/tracef "JMX Session bean registered: %s" s-name)
+    mbean))
 
 (defn unregister
   [session]
   (log/tracef "JMX session unregistered: %s" (get @session-names session))
-  (jmx/unregister-mbean (get @session-names session)))
+  (jmx/unregister-mbean (get @session-names session))
+  (swap! session-names dissoc session))

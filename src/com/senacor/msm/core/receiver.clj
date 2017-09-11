@@ -25,6 +25,7 @@
   [out-chan event]
   (go-loop [buffer (byte-array buf-size)
             bytes-read (norm/read-stream (:object event) buffer buf-size)]
+    (mon/record-bytes-received (:session event) bytes-read)
     (log/tracef "message received, len=%d" bytes-read)
     (when (pos? bytes-read)
       (>! out-chan (util/byte-array-head buffer bytes-read))
@@ -44,29 +45,6 @@
   (mon/unregister session)
   (close! out-chan))
 
-(defn command-handler
-  "Listens to command events from the control loop, reads commands and
-  sends them to the provided command channel
-  session is the session where we listen to commands
-  event-chan is the event channel with events from the control loop
-  cmd-chan is the channel where received commands will be sent. The commands
-    are plain byte arrays. Since commands are length restricted they will
-    always fit into one block."
-  [session event-chan cmd-chan]
-  (let [ec-tap (chan 5)]
-    (tap event-chan ec-tap)
-    (go-loop [event (<! ec-tap)]
-      (if event
-        (do
-          (when (and (= session (:session event))
-                     (= :rx-object-cmd-new (:event-type event)))
-            (>! cmd-chan (norm/get-command (norm/get-local-node-id session))))
-          (recur (<! ec-tap)))
-        (do
-          (untap event ec-tap)
-          (close! cmd-chan))
-        ))))
-
 (defn receiver-handler
   "Handles NORM-Events that relate to received messages. Hook this
   function to the event-chan of the control loop. It starts a go-loop
@@ -83,9 +61,21 @@
       (if event
         (if (= session (:session event))
           (case (:event-type event)
+            :remote-sender-new
+            (do
+              (log/info "New sender:" (norm/event->str event))
+              (recur (<! ec-tap)))
+            :remote-sender-active
+            (do
+              (log/info "Remote sender active" (norm/event->str event))
+              (recur (<! ec-tap)))
+            :remote-sender-inactive
+            (do
+              (log/info "Remote sender inactive" (norm/event->str event))
+              (recur (<! ec-tap)))
             :rx-object-new
             (do
-              (log/info "new stream opened:" (norm/event->str event))
+              (log/info "New stream opened:" (norm/event->str event))
               (norm/seek-message-start (:object event))
               (recur (<! ec-tap)))
             :rx-object-updated
