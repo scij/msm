@@ -163,7 +163,7 @@
 
 (defn parse-fixed-header
   "Parse the fixed part of the header from buf and return an
-  array of header-is-valid, length-of-header-var-part"
+  updated state map"
   [state buf _]
   (log/trace "parse fixed header" buf)
   (let [magic1 (bb/take-byte buf)

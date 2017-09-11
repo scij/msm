@@ -3,7 +3,8 @@
             [com.senacor.msm.core.util :as util]
             [clojure.test :refer :all]
             [bytebuffer.buff :as bb]
-            [clojure.core.async :refer [<!! >!! <! >! chan to-chan timeout close!]])
+            [clojure.core.async :refer [<!! >!! <! >! chan to-chan timeout close!]]
+            [clojure.tools.logging :as log])
   (:import (java.nio ByteBuffer)))
 
 (def fix-msg (create-message "label" "uuid" "payload"))
@@ -357,7 +358,6 @@
       (is (nil? (<!! out-chan)))
       ))
   (testing "Msg - Trunk Msg - Msg - Msg"
-    ; should find the fourth message
     (let [bb (bb/byte-buffer (* fix-buflen 20))
           fix (fill-buffer-with-testdata bb :no-flip)
           in-chan (chan 2)
@@ -372,8 +372,27 @@
       (close! in-chan)
       (is (= fix-msg (<!! out-chan)))
       (is (= fix-msg (<!! out-chan)))
-      (is (nil? (<!! out-chan))))
-    ))
+      (is (nil? (<!! out-chan)))
+      ))
+  (testing "2 buffers - msg trunk msg msg"
+    (let [fix1 (fill-buffer-with-testdata (bb/byte-buffer (* fix-buflen 3)) :no-flip)
+          fix2 (fill-buffer-with-testdata (bb/byte-buffer (* fix-buflen 3)) :no-flip)
+          in-chan (chan 2)
+          out-chan (chan 2)]
+      (bytes->Messages in-chan out-chan)
+      (bb/with-buffer fix1
+                      (bb/put-byte (byte \a))
+                      (bb/put-byte (byte \a)))
+      (>!! in-chan (.array fix1))
+      (fill-buffer-with-testdata fix2)
+      (>!! in-chan (.array fix2))
+      (close! in-chan)
+      (is (= fix-msg (<!! out-chan)))
+      (is (= fix-msg (<!! out-chan)))
+      (is (= fix-msg (<!! out-chan)))
+      (is (nil? (<!! out-chan)))
+      ))
+    )
 
 (deftest test-parse-var-header
   "Broken message and parse var header actually hits a new message header"
