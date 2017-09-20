@@ -147,32 +147,6 @@
       (is (= "hi" (<!! c)))
       (is (nil? (<!! c))))))
 
-(deftest test-take-string
-  (testing "take string"
-    (let [buf (bb/byte-buffer 5)]
-      (bb/put-byte buf 4)
-      (bb/put-byte buf (byte \a))
-      (bb/put-byte buf (byte \b))
-      (bb/put-byte buf (byte \c))
-      (bb/put-byte buf (byte \d))
-      (.flip buf)
-      (is (= (take-string buf) "abcd"))))
-  (testing "take string length exceeded"
-    (let [buf (bb/byte-buffer 5)]
-      (bb/put-byte buf 5)
-      (bb/put-byte buf (byte \a))
-      (bb/put-byte buf (byte \b))
-      (bb/put-byte buf (byte \c))
-      (bb/put-byte buf (byte \d))
-      (.flip buf)
-      (is (= (take-string buf) "abcd"))))
-  (testing "empty buffer"
-    (let [buf (bb/byte-buffer 1)]
-      (bb/put-byte buf 0)
-      (.flip buf)
-      (bb/take-byte buf)
-      (is (= "" (take-string buf))))))
-
 (deftest test-process-message
   (testing "One message, one buffer"
     (let [fix (.array (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip))

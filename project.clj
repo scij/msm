@@ -10,13 +10,15 @@
                  [org.clojure/java.jmx "0.3.4"]
                  [bytebuffer "0.2.0"]
                  [mil.navy.nrl/norm "1.0.0"]
+                 [me.raynes/moments "0.1.1"]
                  [org.apache.logging.log4j/log4j-api "2.8.2"]
                  [org.apache.logging.log4j/log4j-core "2.8.2"]
                  ]
   :main com.senacor.msm.main.demo
   :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]
   :profiles {:test   {:resource-paths ["test-resources"]}
-             :user   {:plugins [[lein-kibit "0.1.5"]]}
+             :user   {:plugins [[lein-kibit "0.1.5"]
+                                [lein-cloverage "1.0.9"]]}
              :run    {:aot      :all
                       :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]}}
   )

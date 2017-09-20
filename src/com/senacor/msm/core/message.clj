@@ -68,11 +68,6 @@
 (def ^:const msg-prefix-m (byte \M))
 (def ^:const msg-prefix-x (byte \X))
 
-(def ^:const ascii-soh (byte 1))
-(def ^:const ascii-stx (byte 2))
-(def ^:const ascii-etx (byte 3))
-(def ^:const ascii-eot (byte 4))
-
 (def ^:const hdr-len 10)
 
 (defn message-length
@@ -112,22 +107,6 @@
       (.put b-payload)
       (.flip))
     b-array))
-
-(defn take-string
-  "Reads a string of a given length from a byte buffer
-  returning the string"
-  ([buf]
-   (if (pos? (.remaining buf))
-     (let [net-len (min (bb/take-byte buf) (.remaining buf))
-           b (byte-array net-len)]
-       (.get buf b 0 net-len)
-       (String. b))
-     ""))
-  ([len buf]
-   (let [net-len (min len (.remaining buf))
-         b (byte-array net-len)]
-     (.get buf b 0 net-len)
-     (String. b))))
 
 (declare parse-var-header)
 (declare parse-payload)
@@ -212,8 +191,8 @@
 (defn parse-var-header
   "Parse the var length metadata from the message header."
   [state buf _]
-  (let [label (take-string buf)
-        corr-id (take-string buf)]
+  (let [label (util/take-string buf)
+        corr-id (util/take-string buf)]
     (if (= corr-id "")
       (do
         (log/errorf "Corr-id is empty, label is %s" label)
@@ -236,7 +215,7 @@
   the next message. The buffer is compacted to make room for
   another message"
   [state buf _]
-  (let [result {:payload       (take-string (:payload-length state) buf)
+  (let [result {:payload       (util/take-string (:payload-length state) buf)
                 :parse-fn       send-message,
                 :bytes-required 0,
                 :complete?      true

@@ -8,10 +8,9 @@
   (:import (java.nio Buffer ByteBuffer)))
 
 
-(def ^:const CMD_SF_ALIVE
-  "A stateful process sends this command to inform it's peers that it is still alive and processing" 1)
-(def ^:const CMD_SL_PROCESSED
-  "A stateless process sends this command to inform it's peers that it has processed a given message" 2)
+(def ^:const CMD_ALIVE
+  "A stateful or stateless process sends this command to inform it's peers
+  that it is still alive and processing" 1)
 
 (defn command-sender
   "Receive commands as byte array messages from cmd-chan and send them
@@ -52,26 +51,19 @@
 ;; magic-number   2 bytes "CX"
 ;; major version  1 byte
 ;; minor version  1 byte
-;; node id        4 bytes
 ;; command type   1 byte
 ;; payload-length short
 ;; -- end of fixed part (6 bytes)
 ;; payload payload-length bytes
 ;; -- end of message
 
-(defn length
-  "Returns the length of the command array in bytes for a given command payload string"
-  [& payload]
-  (+ 9 (reduce + (map count payload)) (count payload)))
-
 (defn put-fixed-header
-  [buf node-id command-type]
+  [buf command-type]
   (bb/with-buffer buf
-                  (bb/put-byte \C)
-                  (bb/put-byte \X)
+                  (bb/put-byte (byte \C))
+                  (bb/put-byte (byte \X))
                   (bb/put-byte 1)
                   (bb/put-byte 0)
-                  (bb/put-int node-id)
                   (bb/put-byte command-type))
   buf)
 
@@ -83,33 +75,53 @@
 
 (defn alive
   "Creates an ALIVE command message informing all participating SF processes that the
-  current node is alive and kicking
-  node-id is the NORM node id of this node.
+  current node is alive and kicking. The command is returned as a byte array.
+  session-id is the current session.
   subscription is the message label the consumer is listening to. It is either a String
   or the String representing the regex.
   active is true when this consumer assumes to be the active instance and false otherwise"
-  [node-id subscription active]
-  (let [result (bb/byte-buffer (length subscription))]
-    (put-fixed-header result node-id CMD_SF_ALIVE)
+  [session-id subscription active]
+  (let [result (bb/byte-buffer 256)]
+    (put-fixed-header result CMD_ALIVE)
     (bb/put-byte result (if active 1 0))
-    (put-string result (str subscription))))
-
-(defn processed [node-id uuid]
-  (let [result (bb/byte-buffer (length uuid))]
-    (put-fixed-header result node-id CMD_SL_PROCESSED)
-    (put-string result (str uuid))))
+    (put-string result (norm/get-node-name (norm/get-local-node-id session-id)))
+    (put-string result (str subscription))
+    (util/byte-array-head (.array result) (.position result))))
 
 (defn parse-fixed-header
   [buf]
-  (let [magic1  (bb/take-byte buf)
-        magic2  (bb/take-byte buf)
-        major   (bb/take-byte buf)
-        minor   (bb/take-byte buf)
-        node-id (bb/take-int buf)
-        command (bb/take-byte (buf))]
-    (log/tracef "Parse command. Magic %c %c, Version %d.%d, src node %d command %d")
-    (when (and (= magic1 \C) (= magic2 \X))
-      (log/errorf "Unexpected control magic %c &c" magic1 magic2))
-    (when (and (= 1 major) (>= 0 minor))
-      (log/errorf "Incompatible command version. Expected 1.0, received %d.%d" major minor))
-    ))
+  (if (> (.remaining buf) 5)
+    (let [magic1  (bb/take-byte buf)
+          magic2  (bb/take-byte buf)
+          major   (bb/take-byte buf)
+          minor   (bb/take-byte buf)
+          command (bb/take-byte buf)]
+      (log/tracef "Parse command. Magic %c %c, Version %d.%d, command %d"
+                  (char magic1) (char magic2) major minor command)
+      (if (and (= magic1 (byte \C)) (= magic2 (byte \X)))
+        (if (and (= 1 major) (>= 0 minor))
+          command
+          (do
+            (log/errorf "Incompatible command version. Expected 1.0, received %d.%d" major minor)
+            nil))
+        (do
+          (log/errorf "Unexpected command magic %c %c" (char magic1) (char magic2))
+          nil)))
+    (do
+      (log/errorf "Command too short %s" (.array buf)))))
+
+(defn parse-alive-var-part
+  [buf]
+  {:node-id (util/take-string buf),
+   :subscription (util/take-string buf)})
+
+(defn parse-command
+  [b-arr]
+  (let [buf (ByteBuffer/wrap b-arr)
+        cmd (parse-fixed-header buf)]
+    (merge {:cmd cmd}
+           (case cmd
+             CMD_ALIVE (parse-alive-var-part buf)
+             (do
+               (log/errorf "Unknown command type %d" cmd)
+               nil)))))

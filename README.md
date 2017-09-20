@@ -53,55 +53,6 @@ Details can be found at [The clojure.core.async github page](https://github.com/
           (close! out-chan))))
         
 
-
-
-
-FIXME
-
-## Architecture
-
-| Function||||
-| ---- | --- | --- | --- |
-| Reliable Messaging | com.senacor.msm.topic | com.senacor.msm.stateful | com.senacor.msm.stateless |
-| Simple Messages | com.senacor.msm.message  |
-| Async adapter | com.senacor.msm.control, sender, receiver, command |
-| Clojure NORM API | com.senacor.msm.norm-api  |
-| Java NORM API | mil.navy.nrl.norm |
-| NORM Implementation | C Library |
-| Transport | UDP Sockets |
-
-The lowest level is the transport layer offered by UDP/IP sockets providing non.reliable data transmission.
-The next layer is the NORM library, a C implementation of the NORM protocol. A Java JNI wrapper provides
-an object abstraction at the Java level.
-
-_com.senacor.msm_ starts above this level by wrapping the Java API into a Clojure API 
-(which btw. gets rid of the objects and creating a limited functional flavour).
-The Async Adapter is made up of the three namespaces: sender and receiver map clojure.core.async channels to
-NORM streams. The channels accept and return byte arrays containing the NORM payload.
-The control namespace deals with NORM's event-loop mapping it to another async _control_ channel which
-is consumed by the sender and receiver.
-The msg namespace creates and parses message objects and takes care of the fact that a serialized
-message object may have been split into several byte arrays (or UDP packets as we get down to the
-protocol layer) during transmission. While sending is simply done by serializing the message into a byte
-array, receiving consumes a channel of byte arrays and fills another channel of messages.
-
-At the top there are three modes of transport:
-
-1. **Topic** refers to the JMS concept of a Topic. A message is sent by one or more producer and
-it is delivered to all consumers that have subscribed to this particular message label.
-2. **Stateful** is more Queue-like. A message is sent by one or more message producers and received
-by exactly one active consumer. In case this consumer fails processing is taken over by one of
-the passive consumers. This mode should be used when message processing updates some sort of local
-state.
-3. **Stateless** is also providing truely JMS-queue-like abstraction. All messages are received by
-all consumers and each message is guaranteed to be delivered and processed by exactly one of them. 
-When a consumer fails while it is processing a message the message is resent to another consumer.
-
-An important difference to JMS is the lack of persistent storage. Since there is no central server
-there is also no storage of undelivered messages. When all consumers fail simultaneously messages will
-be lost. This is an intended feature of MSM and part of the trade-off between reliability and
-performance and throughput.
-
 ## Related work
 
 My search on server-less middleware returned two working open source projects: ZeroMQ and NanoMsg (the latter
@@ -113,7 +64,7 @@ to be broken. NanoMsg has the same troubles and lacks multicast support.
 
 ## License
 
-Copyright © 2017 FIXME
+Copyright © 2017 Jürgen Schiewe
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

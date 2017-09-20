@@ -2,7 +2,8 @@
   (:require [clojure.string :as str]
             [clojure.java.jmx :as jmx]
             [clojure.core.async :refer [<!! >!!]]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [bytebuffer.buff :as bb])
   (:import (java.nio Buffer ByteBuffer)))
 
 ;; Based on m0smith's code at https://gist.github.com/m0smith/1684476#file-hexlify-clj
@@ -87,6 +88,24 @@ byte.  Works for chars as well."
     (let [result (byte-array len)]
       (System/arraycopy b-arr 0 result 0 len)
       result)))
+
+(defn take-string
+  "Reads a string from a byte buffer. The first variant reads
+  a one byte length field from the buffer, the second takes
+  an additional length argument and reads as many bytes from
+  the buffer as specified in length."
+  ([buf]
+   (if (pos? (.remaining buf))
+     (let [net-len (min (bb/take-byte buf) (.remaining buf))
+           b (byte-array net-len)]
+       (.get buf b 0 net-len)
+       (String. b))
+     ""))
+  ([len buf]
+   (let [net-len (min len (.remaining buf))
+         b (byte-array net-len)]
+     (.get buf b 0 net-len)
+     (String. b))))
 
 (defn parse-network-spec
   "Parses the network spec into its three elements

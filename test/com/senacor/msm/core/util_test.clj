@@ -1,7 +1,9 @@
 (ns com.senacor.msm.core.util-test
   (:require [clojure.test :refer :all]
             [clojure.core.async :refer [chan >!! close!]]
-            [com.senacor.msm.core.util :refer :all]))
+            [com.senacor.msm.core.util :refer :all]
+            [bytebuffer.buff :as bb])
+  (:import (java.nio ByteBuffer)))
 
 (deftest test-concat
   (testing "array cat"
@@ -121,3 +123,30 @@
       (close! test-c)
       (is (nil? (wait-for-events test-c 2 #{2})))))
   )
+
+(deftest test-take-string
+  (testing "take string"
+    (let [buf (bb/byte-buffer 5)]
+      (bb/put-byte buf 4)
+      (bb/put-byte buf (byte \a))
+      (bb/put-byte buf (byte \b))
+      (bb/put-byte buf (byte \c))
+      (bb/put-byte buf (byte \d))
+      (.flip buf)
+      (is (= (take-string buf) "abcd"))))
+  (testing "take string length exceeded"
+    (let [buf (bb/byte-buffer 5)]
+      (bb/put-byte buf 5)
+      (bb/put-byte buf (byte \a))
+      (bb/put-byte buf (byte \b))
+      (bb/put-byte buf (byte \c))
+      (bb/put-byte buf (byte \d))
+      (.flip buf)
+      (is (= (take-string buf) "abcd"))))
+  (testing "empty buffer"
+    (let [buf (bb/byte-buffer 1)]
+      (bb/put-byte buf 0)
+      (.flip buf)
+      (bb/take-byte buf)
+      (is (= "" (take-string buf))))))
+

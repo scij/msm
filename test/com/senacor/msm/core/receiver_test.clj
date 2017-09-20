@@ -40,49 +40,6 @@
         )))
   )
 
-(deftest test-command-handler
-  (testing "one single command"
-    (let [session 1
-          event-chan (chan 1)
-          cmd-chan (timeout 100)]
-      (with-redefs-fn {#'norm/get-command (fn [_] (.getBytes "hallo"))
-                       #'norm/get-local-node-id (fn [_] 1)}
-        #(do
-           (command-handler session (mult event-chan) cmd-chan)
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "hallo" (String. ^bytes (<!! cmd-chan))))
-           (Thread/sleep 100)
-           )))
-    )
-  (testing "multiple commands"
-    (let [session 1
-          cmd-count (atom 4)
-          event-chan (chan 1)
-          cmd-chan (timeout 100)]
-      (with-redefs-fn {#'norm/get-command (fn [_]
-                                            (swap! cmd-count dec)
-                                            (cond (pos? @cmd-count)
-                                                  (.getBytes "hallo")
-                                                  (zero? @cmd-count)
-                                                  (.getBytes "end bag")
-                                                  :else
-                                                  nil))
-                       #'norm/get-local-node-id (fn [_] 1)}
-        #(do
-           (command-handler session (mult event-chan) cmd-chan)
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "hallo" (String. ^bytes (<!! cmd-chan))))
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "hallo" (String. ^bytes (<!! cmd-chan))))
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "hallo" (String. ^bytes (<!! cmd-chan))))
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "end bag" (String. ^bytes (<!! cmd-chan))))
-           ))
-      )
-    )
-  )
-
 (deftest test-receiver-handler
   (testing "handle immediate close without an event"
     (let [session 1

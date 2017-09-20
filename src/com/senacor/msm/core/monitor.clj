@@ -8,6 +8,8 @@
 (def session-names (atom {}))
 
 ; todo for each session poll the tx-rate every second and update the bean
+; todo use me.raynes/moments for scheduling: https://github.com/Raynes/moments
+; todo Sekunden- und Minutensummen pro Session sammeln und einmal pro Minute/Sekunde an JMX publizieren
 
 (defn- jmx-write
   [mbean prop value]
