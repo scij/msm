@@ -112,7 +112,8 @@
 
 (defn parse-alive-var-part
   [buf]
-  {:node-id (util/take-string buf),
+  {:active (= 1 (bb/take-byte buf))
+   :node-id (util/take-string buf),
    :subscription (util/take-string buf)})
 
 (defn parse-command
@@ -120,8 +121,8 @@
   (let [buf (ByteBuffer/wrap b-arr)
         cmd (parse-fixed-header buf)]
     (merge {:cmd cmd}
-           (case cmd
-             CMD_ALIVE (parse-alive-var-part buf)
-             (do
-               (log/errorf "Unknown command type %d" cmd)
-               nil)))))
+           (cond
+             (= cmd CMD_ALIVE) (parse-alive-var-part buf)
+             :else (do
+                     (log/errorf "Unknown command type %d" cmd)
+                     nil)))))

@@ -168,8 +168,9 @@
                       (bb/put-byte (byte \e))
                       (bb/put-byte (byte \f)))
       (.flip fix)
-      (= {:cmd CMD_ALIVE,
-          :node-id "ab",
-          :subscription "ef"}
-         (parse-command (.array fix)))))
+      (is (= {:active true,
+              :cmd CMD_ALIVE,
+              :node-id "ab",
+              :subscription "ef"}
+             (parse-command (.array fix))))))
   )
