@@ -41,6 +41,11 @@
   (let [mbean (get @session-names session)]
     (jmx-write mbean :bytes-received (+ (or (jmx/read mbean :bytes-received) 0) bytes-received))))
 
+(defn record-number-of-sl-receivers
+  [session sl-receivers]
+  (let [mbean (get @session-names session)]
+    (jmx-write mbean :sl-receiver-count sl-receivers)))
+
 (defn mon-event-loop
   "Event handler for monitoring events. Subscribes to
   event-chan and uses all monitoring related events

@@ -18,11 +18,18 @@
 
 (def cli-options
   [["-h" "--help"]
-   ["-l" "--loopback"]
    ["-i" "--node-id NODE-ID" "Node ID"
     :default (util/default-node-id)
     :parse-fn #(Integer/parseInt %)]
+   ["-l" "--loopback"]
    ["-o" "--output FILE" "Output file name"]
+   ["-r" "--receive MODE" "Receiver mode"
+    :parse-fn #(case %
+                 "stateful" :stateful
+                 "stateless" :stateless
+                 "topic" :topic)
+    :validate [#(contains? #{"stateful" "stateless" "topic"} %)
+               "Mode must be \"stateful\", \"stateless\" or \"topic\"" ]]
    ["-s" "--tos TOS" "Type of service"
     :parse-fn #(Integer/parseInt %)]
    ["-t" "--ttl HOPS" "Number of hops"
