@@ -111,9 +111,8 @@
                             (fn []
                               (>!! cmd-chan-out (command/alive session subscription true))))
     (handle-receiver-status session subscription cmd-chan-in session-receivers my-session-index receiver-count)
-    ; todo reactivate housekeeping
-    ;(moments/schedule-every sl-exec alive-interval
-    ;                        (partial receiver-status-housekeeping session session-receivers receiver-count my-session-index))
+    (moments/schedule-every sl-exec alive-interval
+                            (partial receiver-status-housekeeping session session-receivers receiver-count my-session-index))
     (command/command-receiver session event-chan cmd-chan-in)
     (receiver/create-receiver session event-chan bytes-chan)
     (message/bytes->Messages bytes-chan raw-msg-chan)
