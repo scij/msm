@@ -67,9 +67,7 @@
         msg-chan (chan 50 (map message/Message->bytes))
         [if-name network port] (util/parse-network-spec net-spec)
         instance (control/init-norm event-chan)
-        session (control/start-session instance network port options)]
-    (when if-name
-      (norm/set-multicast-interface session if-name))
+        session (control/start-session instance if-name network port options)]
     (monitor/mon-event-loop event-chan-m)
     (sender/create-sender session (:node-id options)
                           event-chan-m msg-chan

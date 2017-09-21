@@ -2,14 +2,16 @@
   (:require [clojure.test :refer :all]
             [clojure.core.async :refer [chan close! mult poll! timeout <!! >!!]]
             [com.senacor.msm.core.receiver :refer :all]
-            [com.senacor.msm.core.norm-api :as norm]))
+            [com.senacor.msm.core.norm-api :as norm]
+            [com.senacor.msm.core.monitor :as monitor]))
 
 (deftest test-receive-data
   (testing "one single message"
     (let [out-chan (timeout 100)]
       (with-redefs-fn {#'norm/read-stream (fn [stream buffer size]
                                             (System/arraycopy (.getBytes "hallo") 0 buffer 0 5)
-                                            5)}
+                                            5)
+                       #'monitor/record-bytes-received (fn [_ _])}
         #(do
            (receive-data out-chan {:object 1})
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
@@ -28,7 +30,8 @@
                                                   (do
                                                     (System/arraycopy (.getBytes "end bag") 0 buffer 0 7)
                                                     7)
-                                                  :else 0))}
+                                                  :else 0))
+                       #'monitor/record-bytes-received (fn [_ _])}
         #(do
            (receive-data out-chan {:object 1})
            (is (= "hallo" (String. ^bytes (<!! out-chan))))

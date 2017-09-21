@@ -23,12 +23,13 @@
     (let [session 1
           event-chan (chan 1)
           cmd-chan (timeout 100)]
-      (with-redefs-fn {#'norm/get-command       (fn [_] (.getBytes "hallo"))
-                       #'norm/get-local-node-id (fn [_] 1)}
+      (with-redefs-fn {#'norm/get-command       (fn [_] (.getBytes "hallo"))}
         #(do
            (command-receiver session (mult event-chan) cmd-chan)
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "hallo" (String. ^bytes (<!! cmd-chan))))
+           (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
+           (let [cmd-msg (<!! cmd-chan)]
+             (is (= 1234 (:node-id cmd-msg)))
+             (is (= "hallo" (String. ^bytes (:cmd cmd-msg)))))
            (Thread/sleep 100)
            )))
     )
@@ -44,54 +45,44 @@
                                                   (zero? @cmd-count)
                                                   (.getBytes "end bag")
                                                   :else
-                                                  nil))
-                       #'norm/get-local-node-id (fn [_] 1)}
+                                                  nil))}
         #(do
            (command-receiver session (mult event-chan) cmd-chan)
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "hallo" (String. ^bytes (<!! cmd-chan))))
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "hallo" (String. ^bytes (<!! cmd-chan))))
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "hallo" (String. ^bytes (<!! cmd-chan))))
-           (>!! event-chan {:session session :event-type :rx-object-cmd-new})
-           (is (= "end bag" (String. ^bytes (<!! cmd-chan))))
+           (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
+           (is (= "hallo" (String. ^bytes (:cmd (<!! cmd-chan)))))
+           (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
+           (is (= "hallo" (String. ^bytes (:cmd (<!! cmd-chan)))))
+           (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
+           (is (= "hallo" (String. ^bytes (:cmd (<!! cmd-chan)))))
+           (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
+           (is (= "end bag" (String. ^bytes (:cmd (<!! cmd-chan)))))
            ))
       )
     )
   )
 
 (deftest test-alive
-  (with-redefs-fn {#'norm/get-local-node-id (fn [_])
-                   #'norm/get-node-name (fn [_] "efgh")}
-    #(let [fix (ByteBuffer/wrap (alive 1 "abcd" true))]
-       (bb/with-buffer fix
-                       (is (= (byte \C) (bb/take-byte)))
-                       (is (= (byte \X) (bb/take-byte)))
-                       (is (= 1 (bb/take-byte)))
-                       (is (= 0 (bb/take-byte)))
-                       (is (= CMD_ALIVE (bb/take-byte)))
-                       (is (= 1 (bb/take-byte)))
-                       (is (= 4 (bb/take-byte)))
-                       (is (= (byte \e) (bb/take-byte)))
-                       (is (= (byte \f) (bb/take-byte)))
-                       (is (= (byte \g) (bb/take-byte)))
-                       (is (= (byte \h) (bb/take-byte)))
-                       (is (= 4 (bb/take-byte)))
-                       (is (= (byte \a) (bb/take-byte)))
-                       (is (= (byte \b) (bb/take-byte)))
-                       (is (= (byte \c) (bb/take-byte)))
-                       (is (= (byte \d) (bb/take-byte))))
-       (is (= 16 (.limit fix)))
-       )))
+  (let [fix (ByteBuffer/wrap (alive 1 "abcd" true))]
+    (bb/with-buffer fix
+                    (is (= (byte \C) (bb/take-byte)))
+                    (is (= (byte \X) (bb/take-byte)))
+                    (is (= 1 (bb/take-byte)))
+                    (is (= 0 (bb/take-byte)))
+                    (is (= CMD_ALIVE (bb/take-byte)))
+                    (is (= 1 (bb/take-byte)))
+                    (is (= 4 (bb/take-byte)))
+                    (is (= (byte \a) (bb/take-byte)))
+                    (is (= (byte \b) (bb/take-byte)))
+                    (is (= (byte \c) (bb/take-byte)))
+                    (is (= (byte \d) (bb/take-byte))))
+    (is (= 11 (.limit fix)))
+    ))
 
 
 (deftest test-command-sender
   (let [sent-msg-chan (timeout 10)]
     (with-redefs-fn {#'norm/send-command (fn [_ buf len _]
-                                           (>!! sent-msg-chan [buf len]))
-                     #'norm/get-local-node-id (fn [_])
-                     #'norm/get-node-name (fn [_] "efgh")}
+                                           (>!! sent-msg-chan [buf len]))}
       #(let [session 1
              event-chan (chan 1)
              cmd-chan (chan 2)
@@ -101,7 +92,7 @@
          (>!! event-chan {:session session, :event-type :tx-cmd-sent})
          (let [result (<!! sent-msg-chan)]
            (is (not (nil? result)))
-           (is (= 16 (second result))))
+           (is (= 11 (second result))))
          ))))
 
 (deftest test-parse-fixed-header
@@ -163,14 +154,10 @@
                       (bb/put-byte 1)
                       (bb/put-byte 2)
                       (bb/put-byte (byte \a))
-                      (bb/put-byte (byte \b))
-                      (bb/put-byte 2)
-                      (bb/put-byte (byte \e))
-                      (bb/put-byte (byte \f)))
+                      (bb/put-byte (byte \b)))
       (.flip fix)
       (is (= {:active true,
               :cmd CMD_ALIVE,
-              :node-id "ab",
-              :subscription "ef"}
+              :subscription "ab"}
              (parse-command (.array fix))))))
   )

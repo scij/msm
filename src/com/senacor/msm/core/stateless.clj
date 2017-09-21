@@ -26,6 +26,7 @@
 (defn alive-sessions
   "Returns the map with all items removed where val->:expires is in the past"
   [sessions now]
+  (log/trace "Alive sessions" sessions)
   (into (sorted-map)
         (filter (fn [rec]
                   (< now (:expires (second rec))))
@@ -34,6 +35,7 @@
 (defn session-is-alive
   "Returns a map of sessions with the given session having its lifetimer extended"
   [sessions remote-node-id subscription now]
+  (log/tracef "Session is alive. Node=%s, Subscription=%s" remote-node-id subscription)
   (merge sessions {remote-node-id {:expires (+ expiry-threshold now),
                                    :subscription subscription}}))
 
@@ -48,31 +50,29 @@
   (.indexOf (keys @sessions) my-node-name))
 
 (defn handle-receiver-status
-  [session label cmd-chan-in my-session-index receiver-count]
-  (let [me (norm/get-node-name (norm/get-local-node-id session))
-        session-receivers (atom (sorted-map me {:expires Long/MAX_VALUE,
-                                                :subscription label}))]
-    (go-loop [cmd (command/parse-command (<! cmd-chan-in))]
-      (when cmd
-        (let [{remote-node-id :node-id remote-label :subscription} cmd
-              now (System/currentTimeMillis)]
-          (when (= remote-label label)
-            (swap! session-receivers session-is-alive remote-node-id remote-label now))
-          )
-        (recur (<! cmd-chan-in))))
-    (moments/schedule-every sl-exec alive-interval
-                            (fn []
-                              (log/trace "Enter housekeeping")
-                              (swap! session-receivers alive-sessions (System/currentTimeMillis))
-                              (log/trace "After alive-sessions" @session-receivers)
-                              (swap! receiver-count number-of-sessions-alive @session-receivers)
-                              (log/tracef "After count sessions %d" @receiver-count)
-                              (monitor/record-number-of-sl-receivers session @receiver-count)
-                              (swap! my-session-index find-my-index session-receivers me)
-                              (log/tracef "After my-index %d" @my-session-index)
-                              (log/trace "Exit housekeeoping")
-                              ))
-    ))
+  [session me label cmd-chan-in session-receivers my-session-index receiver-count]
+  (go-loop [cmd (<! cmd-chan-in)]
+    (when cmd
+      (log/trace "Command received" cmd)
+      (let [remote-label (:subscription (command/parse-command (:cmd cmd)))
+            remote-node-id (:node-id cmd)
+            now (System/currentTimeMillis)]
+        (when (= remote-label label)
+          (swap! session-receivers session-is-alive remote-node-id remote-label now))
+        )
+      (recur (<! cmd-chan-in)))))
+
+(defn receiver-status-housekeeping
+  [session me session-receivers receiver-count my-session-index]
+  (log/trace "Enter housekeeping")
+  (swap! session-receivers alive-sessions (System/currentTimeMillis))
+  (log/trace "After alive-sessions" @session-receivers)
+  (swap! receiver-count number-of-sessions-alive @session-receivers)
+  (log/tracef "After count sessions %d" @receiver-count)
+  (monitor/record-number-of-sl-receivers session @receiver-count)
+  (swap! my-session-index find-my-index session-receivers me)
+  (log/tracef "After my-index %d" @my-session-index)
+  (log/trace "Exit housekeeoping"))
 
 (defn filter-my-messages
   "Return true if the message label matches the subscription and if the
@@ -98,20 +98,26 @@
         cmd-chan-in  (chan 5)
         bytes-chan (chan 5)
         raw-msg-chan (chan 5)
+        me (str "local:" (norm/get-local-node-id session))
+        session-receivers (atom (sorted-map me {:expires Long/MAX_VALUE,
+                                                :subscription subscription}))
         my-session-index (atom 0)
         receiver-count (atom 1)]
+    (norm/start-sender session (norm/get-local-node-id session) 2048 256 64 16)
+    (command/command-sender session event-chan cmd-chan-out)
     (moments/schedule-every sl-exec alive-interval 10
                             (fn []
                               (>!! cmd-chan-out (command/alive session subscription true))))
-    (command/command-sender session event-chan cmd-chan-out)
-    (handle-receiver-status session subscription cmd-chan-in my-session-index receiver-count)
+    (handle-receiver-status session me subscription cmd-chan-in session-receivers my-session-index receiver-count)
+    (moments/schedule-every sl-exec alive-interval
+                            (partial receiver-status-housekeeping me session session-receivers receiver-count my-session-index))
     (command/command-receiver session event-chan cmd-chan-in)
     (receiver/create-receiver session event-chan bytes-chan)
     (message/bytes->Messages bytes-chan raw-msg-chan)
     (pipeline 1 msg-chan (partial filter-my-messages subscription my-session-index receiver-count) raw-msg-chan)
   ))
 
-(defn create-stateless
+(defn create-session
   "Create a stateless session consuming matching messages in specified session
   instance is the NORM instance handle
   netspec is string specifying the session network address like eth0;239.192.0.1:7100
@@ -121,8 +127,7 @@
   options is a map of network control options used to create the session"
   [instance netspec subscription event-chan msg-chan options]
   (let [[if-name network port] (util/parse-network-spec netspec)
-        session (control/start-session instance network port options)]
-    (when (if-name)
-      (norm/set-multicast-interface session if-name))
+        session (control/start-session instance if-name network port options)]
+    (log/infof "Create stateless session on interface %s, address %s, port %d" if-name network port)
     (stateless-session-handler session subscription event-chan msg-chan)
     ))

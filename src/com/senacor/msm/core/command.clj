@@ -34,13 +34,13 @@
   are notified.
   cmd-chan is a channel of byte array to which the events are published."
   [session event-chan cmd-chan]
-  (let [ec-tap (chan 20)
-        node-id (norm/get-local-node-id session)]
+  (let [ec-tap (chan 20)]
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
       (when (and (= :rx-object-cmd-new (:event-type event))
                  (= session (:session event)))
-        (>! cmd-chan (norm/get-command node-id))
+        (>! cmd-chan {:cmd (norm/get-command (:node event))
+                      :node-id (:node event)})
         (recur (<! ec-tap))))))
 
 
@@ -84,7 +84,6 @@
   (let [result (bb/byte-buffer 256)]
     (put-fixed-header result CMD_ALIVE)
     (bb/put-byte result (if active 1 0))
-    (put-string result (norm/get-node-name (norm/get-local-node-id session-id)))
     (put-string result (str subscription))
     (util/byte-array-head (.array result) (.position result))))
 
@@ -113,7 +112,6 @@
 (defn parse-alive-var-part
   [buf]
   {:active (= 1 (bb/take-byte buf))
-   :node-id (util/take-string buf),
    :subscription (util/take-string buf)})
 
 (defn parse-command

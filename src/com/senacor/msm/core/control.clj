@@ -59,11 +59,11 @@
   :node-id <int> is a numeric argument to distinguish this service. If
   omitted the process id will be used. Override it if you have more than
   one session per process."
-  [instance address port options]
+  [instance if-name address port options]
   (let [session (norm/create-session instance address port (:node-id options))]
     (log/tracef "session created %s %d %d" address port (:node-id options))
-    (when (:if-name options)
-      (norm/set-multicast-interface session (:if-name options)))
+    (when (not (str/blank? if-name))
+      (norm/set-multicast-interface session if-name))
     (when (:ttl options)
       (norm/set-ttl session (:ttl options)))
     (when (:tos options)

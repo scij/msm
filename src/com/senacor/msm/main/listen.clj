@@ -6,6 +6,8 @@
             [com.senacor.msm.core.message :as message]
             [com.senacor.msm.core.monitor :as monitor]
             [com.senacor.msm.core.norm-api :as norm]
+            [com.senacor.msm.core.stateless :as stateless]
+            [com.senacor.msm.core.topic :as topic]
             [clojure.core.async :refer [chan go-loop mult <! >!]]
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
@@ -27,9 +29,11 @@
     :parse-fn #(case %
                  "stateful" :stateful
                  "stateless" :stateless
-                 "topic" :topic)
-    :validate [#(contains? #{"stateful" "stateless" "topic"} %)
-               "Mode must be \"stateful\", \"stateless\" or \"topic\"" ]]
+                 "topic" :topic
+                 nil)
+    :validate [#(contains? #{:stateful :stateless :topic} %)
+               "Mode must be \"stateful\", \"stateless\" or \"topic\"" ]
+    :default "topic"]
    ["-s" "--tos TOS" "Type of service"
     :parse-fn #(Integer/parseInt %)]
    ["-t" "--ttl HOPS" "Number of hops"
@@ -52,17 +56,14 @@
 (defn start-listening
   [net-spec label options]
   (let [event-chan (chan 5)
-        bytes-chan (chan 5)
-        msg-chan (chan 5 (filter (partial message/label-match (re-pattern label))))
         event-chan-m (mult event-chan)
-        [if-name network port] (util/parse-network-spec net-spec)
-        instance (control/init-norm event-chan)
-        session (control/start-session instance network port options)]
-    (when if-name
-      (norm/set-multicast-interface session if-name))
+        msg-chan (chan 5)
+        instance (control/init-norm event-chan)]
     (monitor/mon-event-loop event-chan-m)
-    (receiver/create-receiver session event-chan-m bytes-chan)
-    (message/bytes->Messages bytes-chan msg-chan)
+    (case (:receive options)
+      :stateless (stateless/create-session instance net-spec label event-chan-m msg-chan options)
+      :stateful  (log/error "Stateful sessions not yet implemented")
+      (topic/create-session instance net-spec label event-chan-m msg-chan options))
     (go-loop [msg (<! msg-chan)]
       (if msg
         (do

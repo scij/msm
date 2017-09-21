@@ -472,7 +472,9 @@
   :invalid the node id is not on the acking list
   :failure the node has not responded or not all addressed nodes have answered
   :pending the node has not responded yet
-  :success the node has acknowledged"
+  :success the node has acknowledged
+  handle is the NORM session handle.
+  node-id is the NORM node handle of the remote node."
   ([^NormSession handle ^Long node-id]
    (case (.getAckingStatus handle node-id)
      NormAckingStatus/NORM_ACK_FAILURE :failure
@@ -484,10 +486,15 @@
 
 (defn ^Boolean send-command
   "Sends an application defined command. A :tx-cmd-sent event is generated
-  when the command has been sent."
-  [^NormSession handle ^bytes buffer ^Integer length ^Boolean robust]
-  (assert (<= 256 length) "Command max size 256 bytes")
-  (.sendCommand handle bytes 0 length robust)
+  when the command has been sent.
+  handle is the NORM session handle
+  buffer is a byte array containing the command data.
+  length is the number of bytes used in the buffer.
+  robust shall be true to indicate that NORM will make sure that all receivers
+  have received the command and false otherwise."
+  [handle buffer length robust]
+  (assert (<= length 256) "Command max size 256 bytes")
+  (.sendCommand handle buffer 0 length robust)
   handle)
 
 (defn ^NormSession cancel-command
