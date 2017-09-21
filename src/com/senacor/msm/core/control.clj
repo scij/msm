@@ -26,7 +26,6 @@
     (log/trace "Event received:" (norm/event->str event))
     (>!! event-chan event)
     (when (not= :event-invalid (:event-type event))
-      (log/trace "wait for next event")
       (recur (norm/next-event instance))))
   (close! event-chan)
   (log/trace "Exit control event loop")

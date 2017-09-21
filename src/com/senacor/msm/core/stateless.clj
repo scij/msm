@@ -16,12 +16,14 @@
 
 (def ^:const alive-interval
   "Interval in ms to report that a receiver is alive"
-  100)
+  1000)
 
 (def ^:const expiry-threshold
   "Interval in ms after which a receiver should have reported alive and is considered
   dead otherwise. Must be greater than alive-interval"
   (* 2 alive-interval))
+
+(def ^:const my-session "me")
 
 (defn alive-sessions
   "Returns the map with all items removed where val->:expires is in the past"
@@ -46,17 +48,17 @@
 
 (defn find-my-index
   "Returns the index of the current session in the sessions table"
-  [_ sessions my-node-name]
-  (log/trace "Find my index" my-node-name sessions)
-  (.indexOf (keys sessions) my-node-name))
+  [_ sessions]
+  (log/trace "Find my index" sessions)
+  (.indexOf (keys sessions) my-session))
 
 (defn handle-receiver-status
-  [session me label cmd-chan-in session-receivers my-session-index receiver-count]
+  [session label cmd-chan-in session-receivers my-session-index receiver-count]
   (go-loop [cmd (<! cmd-chan-in)]
     (when cmd
       (log/trace "Command received" cmd)
       (let [remote-label (:subscription (command/parse-command (:cmd cmd)))
-            remote-node-id (:node-id cmd)
+            remote-node-id (norm/get-node-name (:node-id cmd))
             now (System/currentTimeMillis)]
         (when (= remote-label label)
           (swap! session-receivers session-is-alive remote-node-id remote-label now))
@@ -64,16 +66,16 @@
       (recur (<! cmd-chan-in)))))
 
 (defn receiver-status-housekeeping
-  [session me session-receivers receiver-count my-session-index]
+  [session session-receivers receiver-count my-session-index]
   (log/trace "Enter housekeeping")
   (swap! session-receivers alive-sessions (System/currentTimeMillis))
   (log/trace "After alive-sessions" @session-receivers)
   (swap! receiver-count number-of-sessions-alive @session-receivers)
   (log/tracef "After count sessions %d" @receiver-count)
-  (monitor/record-number-of-sl-receivers session @receiver-count)
-  (swap! my-session-index find-my-index @session-receivers me)
+  ;(monitor/record-number-of-sl-receivers session @receiver-count)
+  (swap! my-session-index find-my-index @session-receivers)
   (log/tracef "After my-index %d" @my-session-index)
-  (log/trace "Exit housekeeoping"))
+  (log/trace "Exit housekeeping"))
 
 (defn filter-my-messages
   "Return true if the message label matches the subscription and if the
@@ -99,9 +101,8 @@
         cmd-chan-in  (chan 5)
         bytes-chan (chan 5)
         raw-msg-chan (chan 5)
-        me (str "local:" (norm/get-local-node-id session))
-        session-receivers (atom (sorted-map me {:expires Long/MAX_VALUE,
-                                                :subscription subscription}))
+        session-receivers (atom (sorted-map my-session {:expires Long/MAX_VALUE,
+                                                        :subscription subscription}))
         my-session-index (atom 0)
         receiver-count (atom 1)]
     (norm/start-sender session (norm/get-local-node-id session) 2048 256 64 16)
@@ -109,13 +110,19 @@
     (moments/schedule-every sl-exec alive-interval 10
                             (fn []
                               (>!! cmd-chan-out (command/alive session subscription true))))
-    (handle-receiver-status session me subscription cmd-chan-in session-receivers my-session-index receiver-count)
-    (moments/schedule-every sl-exec alive-interval
-                            (partial receiver-status-housekeeping me session session-receivers receiver-count my-session-index))
+    (handle-receiver-status session subscription cmd-chan-in session-receivers my-session-index receiver-count)
+    ; todo reactivate housekeeping
+    ;(moments/schedule-every sl-exec alive-interval
+    ;                        (partial receiver-status-housekeeping session session-receivers receiver-count my-session-index))
     (command/command-receiver session event-chan cmd-chan-in)
     (receiver/create-receiver session event-chan bytes-chan)
     (message/bytes->Messages bytes-chan raw-msg-chan)
-    (pipeline 1 msg-chan (partial filter-my-messages subscription my-session-index receiver-count) raw-msg-chan)
+    ;(pipeline 1 msg-chan (partial filter-my-messages subscription my-session-index receiver-count) raw-msg-chan)
+    (pipeline 1
+              msg-chan
+              (fn [msg]
+                (filter-my-messages subscription my-session-index receiver-count msg))
+              raw-msg-chan)
   ))
 
 (defn create-session

@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2728eb43-e098-452b-b478-f18e8b8e4c1c" name="Default" comment="">
+    <list default="true" id="2728eb43-e098-452b-b478-f18e8b8e4c1c" name="Default" comment="Sessions now see each other.&#10;TODO:">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/command.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/command.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/control.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/control.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" afterPath="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" afterPath="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -23,8 +27,8 @@
       <file leaf-file-name="monitor.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="609">
-              <caret line="70" column="13" lean-forward="false" selection-start-line="70" selection-start-column="8" selection-end-line="70" selection-end-column="13" />
+            <state relative-caret-position="126">
+              <caret line="17" column="25" lean-forward="false" selection-start-line="17" selection-start-column="25" selection-end-line="17" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -33,18 +37,8 @@
       <file leaf-file-name="command.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/command.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-696">
-              <caret line="27" column="11" lean-forward="true" selection-start-line="27" selection-start-column="11" selection-end-line="27" selection-end-column="11" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="listen.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="56" column="26" lean-forward="true" selection-start-line="56" selection-start-column="26" selection-end-line="56" selection-end-column="26" />
+            <state relative-caret-position="1655">
+              <caret line="117" column="10" lean-forward="false" selection-start-line="117" selection-start-column="10" selection-end-line="117" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -53,8 +47,18 @@
       <file leaf-file-name="norm_api.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4662">
-              <caret line="497" column="0" lean-forward="false" selection-start-line="497" selection-start-column="0" selection-end-line="497" selection-end-column="0" />
+            <state relative-caret-position="472">
+              <caret line="741" column="12" lean-forward="false" selection-start-line="741" selection-start-column="12" selection-end-line="741" selection-end-column="12" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="command_test.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="414">
+              <caret line="65" column="22" lean-forward="true" selection-start-line="65" selection-start-column="22" selection-end-line="65" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -63,8 +67,18 @@
       <file leaf-file-name="stateless.clj" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="625">
-              <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+            <state relative-caret-position="522">
+              <caret line="113" column="5" lean-forward="false" selection-start-line="113" selection-start-column="5" selection-end-line="113" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="receiver.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="876">
+              <caret line="109" column="21" lean-forward="false" selection-start-line="109" selection-start-column="11" selection-end-line="109" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -73,18 +87,8 @@
       <file leaf-file-name="stateless_test.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-440">
-              <caret line="32" column="52" lean-forward="true" selection-start-line="32" selection-start-column="52" selection-end-line="32" selection-end-column="52" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="receiver_test.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="43" column="3" lean-forward="true" selection-start-line="43" selection-start-column="3" selection-end-line="43" selection-end-column="3" />
+            <state relative-caret-position="223">
+              <caret line="67" column="22" lean-forward="false" selection-start-line="67" selection-start-column="22" selection-end-line="67" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -93,8 +97,8 @@
       <file leaf-file-name="control.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/control.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="624">
-              <caret line="65" column="53" lean-forward="true" selection-start-line="65" selection-start-column="53" selection-end-line="65" selection-end-column="53" />
+            <state relative-caret-position="336">
+              <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -147,6 +151,8 @@
       <find>get-local-node-id</find>
       <find>get-local</find>
       <find>get-comm</find>
+      <find>:me</find>
+      <find>get-c</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -194,16 +200,16 @@
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/message.clj" />
         <option value="$PROJECT_DIR$/project.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/sender_test.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/control.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/topic.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj" />
-        <option value="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/command.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/control_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/control.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/command.clj" />
+        <option value="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
       </list>
@@ -391,7 +397,7 @@
       <recent name="$PROJECT_DIR$/src/com/senacor/msm" />
     </key>
   </component>
-  <component name="ReplState" timestamp="1506009509453">{:repl-history {:ide [], :local [{:command &quot;3&quot;, :offset 1} {:command &quot;(contains? #{3 2} 1)&quot;, :offset 19, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(contains? #{3 2} 2)&quot;, :offset 19, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(def a (atom 0))&quot;, :offset 14, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(swap! a inc)&quot;, :offset 12, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;@a&quot;, :offset 2, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(repeat 20 \&quot;hallo\&quot;)&quot;, :offset 18, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(pos? 0)&quot;, :offset 7, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(neg? 0)&quot;, :offset 7, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;en0;239.192.0.1:7100\&quot; #\&quot;(.*);(.+):(\\d+)\&quot;)&quot;, :offset 51, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;en0;239.192.0.1:7100\&quot; #\&quot;.*;.+:\\d+\&quot;)&quot;, :offset 45, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;en0;239.192.0.1:7100\&quot; #\&quot;.*;.+:.+\&quot;)&quot;, :offset 43, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;\&quot;)&quot;, :offset 12} {:command &quot;(str/split \&quot;en0;239.192.0.1:7100\&quot; #\&quot;[;:]\&quot;)&quot;, :offset 40, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;;239.192.0.1:7100\&quot; #\&quot;[;:]\&quot;)&quot;, :offset 12, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[a b c] [\&quot;a\&quot; \&quot;b\&quot;]]\n  (println a b c))&quot;, :offset 41, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(System/getProperty \&quot;sun.java.process\&quot;)&quot;, :offset 37, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(System/getProperties)&quot;, :offset 21, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(System/getProperty \&quot;sun.java.command \&quot;)&quot;, :offset 38, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(System/getProperty \&quot;sun.java.command\&quot;)&quot;, :offset 37, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char-escape-string \\ä)&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(byte -61)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (byte -61))&quot;, :offset 17, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (short (byte -61)))&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (+ 127 61))&quot;, :offset 15, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (+ 128 61))&quot;, :offset 12, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(byte \\ä)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(Character/valueOf \\ä)&quot;, :offset 21, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char 132)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char 0132)&quot;, :offset 7, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char 228)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(byte 228)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(pprint (.getBytes \&quot;Änderung\&quot;))&quot;, :offset 29, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(pprint (.getBytes \&quot;änderung\&quot;))&quot;, :offset 21, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(apply str [\&quot;a\&quot; \&quot;b\&quot; \&quot;c\&quot;])&quot;, :offset 23, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(util/dump-bytes (.getBytes\&quot;hallo\&quot;))&quot;, :offset 33, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(util/hexlify (.getBytes \&quot;hallo\&quot;))&quot;, :offset 32, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;hallo\&quot;)))]\n  (print hexc)\n  )&quot;, :offset 81, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;hallo\&quot;)))]\n  (print hexc)\n  (print (apply str charc))\n  )&quot;, :offset 108, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;hallo\&quot;)))]\n  (println hexc (apply str charc))\n  )&quot;, :offset 83, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;hallöchen\&quot;)))]\n  (println hexc (apply str charc))\n  )&quot;, :offset 66, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(byte 38)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char(byte 38))&quot;, :offset 15, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;17 hallöchen\&quot;)))]\n  (println hexc (apply str charc))\n  )&quot;, :offset 102, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partition 4 (range 15))&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partition 4 (range 16))&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(first (partition 4 (range 16)))&quot;, :offset 32, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;17 hallöchen\&quot;)))]\n  (println hexc (partition 4 (apply str charc)))\n  )&quot;, :offset 123, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partitio)&quot;, :offset 9} {:command &quot;(partition 4 4 (range 15) [0 0 0 0])&quot;, :offset 34, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partition 4 0 (range 15) [0 0 0 0])&quot;, :offset 14, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partition-all 4 (range 15))&quot;, :offset 14, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(prn 2)&quot;, :offset 6, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(print 2)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(pr 2)&quot;, :offset 5, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/join [\&quot;a\&quot; \&quot;b\&quot; \&quot;c\&quot;] \&quot; \&quot;)&quot;, :offset 27, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/join \&quot; \&quot; [\&quot;a\&quot; \&quot;b\&quot; \&quot;c\&quot;])&quot;, :offset 26, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/join \&quot; \&quot; [\&quot;a\&quot; \&quot;b\&quot; \&quot;c\&quot; :d])&quot;, :offset 29, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(norm/event-&gt;str {:event-type :event-invalid,\n                  :session 1})&quot;, :offset 74, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(count nil)&quot;, :offset 11, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(count 1)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(norm/event-&gt;str {:event-type :xyz})&quot;, :offset 34, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(def c (chan 1))&quot;, :offset 16, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(def c (chan 1 (filter zero?)))&quot;, :offset 31, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(async/go-loop [m (async/&lt;! c)]\n  (when m\n    (println m)\n    (recur (async/&lt;! c))))&quot;, :offset 84, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(&gt;!! c 2)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(&gt;!! c 0)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(&gt;!! c 1)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(async/onto-chan c (range 100))&quot;, :offset 29, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(async/close! c)&quot;, :offset 15, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(\&quot;\&quot; .getBytes)&quot;, :offset 13, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.getBytes \&quot;\&quot;)&quot;, :offset 1, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(jmx/mbean-names \&quot;com.senacor.msm:type=Session\&quot;)&quot;, :offset 46, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(jmx/mbean-names \&quot;com.senacor.msm:*\&quot;)&quot;, :offset 35, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(jmx/read \&quot;com.senacor.msm:type=Session,name=239.192.0.1/7100/clojure.lang.Atom@2b238e28\&quot; :bytes-sent)&quot;, :offset 101, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(conj '() [\&quot;abc\&quot; 17])&quot;, :offset 19, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(count '())&quot;, :offset 10, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(Character/valueOf (byte \\C))&quot;, :offset 27, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (byte \\C))&quot;, :offset 16, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(+ 1 2)&quot;, :offset 6, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;CMD_ALIVE&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [cmd command/CMD_ALIVE]\n  (case cmd\n    command/CMD_ALIVE (println \&quot;ja\&quot;)\n    (println \&quot;nein)\&quot;)))&quot;, :offset 97, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [cmd command/CMD_ALIVE]\n  (case cmd\n    command/CMD_ALIVE (println \&quot;ja\&quot;)\n    (println \&quot;nein\&quot;)))&quot;, :offset 100, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(do\n  (let [cmd command/CMD_ALIVE]\n    (case cmd\n      command/CMD_ALIVE (println \&quot;ja\&quot;)\n      (println \&quot;nein\&quot;))))&quot;, :offset 94, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(case 1\n  (command/CMD_ALIVE (println \&quot;ja\&quot;))\n  (println \&quot;nein\&quot;))&quot;, :offset 62, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(case 1\n  command/CMD_ALIVE (println \&quot;ja\&quot;)\n  (println \&quot;nein\&quot;))&quot;, :offset 62, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(case 1\n  command/CMD_ALIVE (println \&quot;ja\&quot;)\n  1 (println \&quot;fast \&quot;)\n  (println \&quot;nein\&quot;))&quot;, :offset 62, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;command/CMD_ALIVE&quot;, :offset 17, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(= command/CMD_ALIVE 1)&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(symbol command/CMD_ALIVE)&quot;, :offset 25, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(symbol 'command/CMD_ALIVE)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(import java.util.concurrent ScheduledThreadPoolExecutor)&quot;, :offset 56, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(require com.senacor.msm.core.stateless :as stateless)&quot;, :offset 53, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.getCompletedTaskCount com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 24, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.getActiveCount com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 16, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.getTaskCount com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 14, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(merge (sorted-map :a 1 :c 3) {:b 2})&quot;, :offset 35, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(class (merge (sorted-map :a 1 :c 3) {:b 2}))&quot;, :offset 45, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.shutdown com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 41, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(def sl-exec\n  ;Scheduled executor to run keep alive and house keeping\n  (moments/executor 2))&quot;, :offset 94, :ns &quot;com.senacor.msm.core.stateless&quot;} {:command &quot;(.getQueue com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 10, :ns &quot;com.senacor.msm.main.demo&quot;}], :remote []}}</component>
+  <component name="ReplState" timestamp="1506015273909">{:repl-history {:ide [], :local [{:command &quot;3&quot;, :offset 1} {:command &quot;(contains? #{3 2} 1)&quot;, :offset 19, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(contains? #{3 2} 2)&quot;, :offset 19, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(def a (atom 0))&quot;, :offset 14, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(swap! a inc)&quot;, :offset 12, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;@a&quot;, :offset 2, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(repeat 20 \&quot;hallo\&quot;)&quot;, :offset 18, :ns &quot;com.senacor.msm.norm.main.demo&quot;} {:command &quot;(pos? 0)&quot;, :offset 7, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(neg? 0)&quot;, :offset 7, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;en0;239.192.0.1:7100\&quot; #\&quot;(.*);(.+):(\\d+)\&quot;)&quot;, :offset 51, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;en0;239.192.0.1:7100\&quot; #\&quot;.*;.+:\\d+\&quot;)&quot;, :offset 45, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;en0;239.192.0.1:7100\&quot; #\&quot;.*;.+:.+\&quot;)&quot;, :offset 43, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;\&quot;)&quot;, :offset 12} {:command &quot;(str/split \&quot;en0;239.192.0.1:7100\&quot; #\&quot;[;:]\&quot;)&quot;, :offset 40, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/split \&quot;;239.192.0.1:7100\&quot; #\&quot;[;:]\&quot;)&quot;, :offset 12, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[a b c] [\&quot;a\&quot; \&quot;b\&quot;]]\n  (println a b c))&quot;, :offset 41, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(System/getProperty \&quot;sun.java.process\&quot;)&quot;, :offset 37, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(System/getProperties)&quot;, :offset 21, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(System/getProperty \&quot;sun.java.command \&quot;)&quot;, :offset 38, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(System/getProperty \&quot;sun.java.command\&quot;)&quot;, :offset 37, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char-escape-string \\ä)&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(byte -61)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (byte -61))&quot;, :offset 17, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (short (byte -61)))&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (+ 127 61))&quot;, :offset 15, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (+ 128 61))&quot;, :offset 12, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(byte \\ä)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(Character/valueOf \\ä)&quot;, :offset 21, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char 132)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char 0132)&quot;, :offset 7, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char 228)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(byte 228)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(pprint (.getBytes \&quot;Änderung\&quot;))&quot;, :offset 29, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(pprint (.getBytes \&quot;änderung\&quot;))&quot;, :offset 21, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(apply str [\&quot;a\&quot; \&quot;b\&quot; \&quot;c\&quot;])&quot;, :offset 23, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(util/dump-bytes (.getBytes\&quot;hallo\&quot;))&quot;, :offset 33, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(util/hexlify (.getBytes \&quot;hallo\&quot;))&quot;, :offset 32, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;hallo\&quot;)))]\n  (print hexc)\n  )&quot;, :offset 81, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;hallo\&quot;)))]\n  (print hexc)\n  (print (apply str charc))\n  )&quot;, :offset 108, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;hallo\&quot;)))]\n  (println hexc (apply str charc))\n  )&quot;, :offset 83, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;hallöchen\&quot;)))]\n  (println hexc (apply str charc))\n  )&quot;, :offset 66, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(byte 38)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char(byte 38))&quot;, :offset 15, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;17 hallöchen\&quot;)))]\n  (println hexc (apply str charc))\n  )&quot;, :offset 102, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partition 4 (range 15))&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partition 4 (range 16))&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(first (partition 4 (range 16)))&quot;, :offset 32, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [[hexc charc intc] (first (util/hexlify (.getBytes \&quot;17 hallöchen\&quot;)))]\n  (println hexc (partition 4 (apply str charc)))\n  )&quot;, :offset 123, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partitio)&quot;, :offset 9} {:command &quot;(partition 4 4 (range 15) [0 0 0 0])&quot;, :offset 34, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partition 4 0 (range 15) [0 0 0 0])&quot;, :offset 14, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(partition-all 4 (range 15))&quot;, :offset 14, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(prn 2)&quot;, :offset 6, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(print 2)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(pr 2)&quot;, :offset 5, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/join [\&quot;a\&quot; \&quot;b\&quot; \&quot;c\&quot;] \&quot; \&quot;)&quot;, :offset 27, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/join \&quot; \&quot; [\&quot;a\&quot; \&quot;b\&quot; \&quot;c\&quot;])&quot;, :offset 26, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(str/join \&quot; \&quot; [\&quot;a\&quot; \&quot;b\&quot; \&quot;c\&quot; :d])&quot;, :offset 29, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(norm/event-&gt;str {:event-type :event-invalid,\n                  :session 1})&quot;, :offset 74, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(count nil)&quot;, :offset 11, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(count 1)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(norm/event-&gt;str {:event-type :xyz})&quot;, :offset 34, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(def c (chan 1))&quot;, :offset 16, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(def c (chan 1 (filter zero?)))&quot;, :offset 31, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(async/go-loop [m (async/&lt;! c)]\n  (when m\n    (println m)\n    (recur (async/&lt;! c))))&quot;, :offset 84, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(&gt;!! c 2)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(&gt;!! c 0)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(&gt;!! c 1)&quot;, :offset 8, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(async/onto-chan c (range 100))&quot;, :offset 29, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(async/close! c)&quot;, :offset 15, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(\&quot;\&quot; .getBytes)&quot;, :offset 13, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.getBytes \&quot;\&quot;)&quot;, :offset 1, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(jmx/mbean-names \&quot;com.senacor.msm:type=Session\&quot;)&quot;, :offset 46, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(jmx/mbean-names \&quot;com.senacor.msm:*\&quot;)&quot;, :offset 35, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(jmx/read \&quot;com.senacor.msm:type=Session,name=239.192.0.1/7100/clojure.lang.Atom@2b238e28\&quot; :bytes-sent)&quot;, :offset 101, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(conj '() [\&quot;abc\&quot; 17])&quot;, :offset 19, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(count '())&quot;, :offset 10, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(Character/valueOf (byte \\C))&quot;, :offset 27, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(char (byte \\C))&quot;, :offset 16, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(+ 1 2)&quot;, :offset 6, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;CMD_ALIVE&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [cmd command/CMD_ALIVE]\n  (case cmd\n    command/CMD_ALIVE (println \&quot;ja\&quot;)\n    (println \&quot;nein)\&quot;)))&quot;, :offset 97, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(let [cmd command/CMD_ALIVE]\n  (case cmd\n    command/CMD_ALIVE (println \&quot;ja\&quot;)\n    (println \&quot;nein\&quot;)))&quot;, :offset 100, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(do\n  (let [cmd command/CMD_ALIVE]\n    (case cmd\n      command/CMD_ALIVE (println \&quot;ja\&quot;)\n      (println \&quot;nein\&quot;))))&quot;, :offset 94, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(case 1\n  (command/CMD_ALIVE (println \&quot;ja\&quot;))\n  (println \&quot;nein\&quot;))&quot;, :offset 62, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(case 1\n  command/CMD_ALIVE (println \&quot;ja\&quot;)\n  (println \&quot;nein\&quot;))&quot;, :offset 62, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(case 1\n  command/CMD_ALIVE (println \&quot;ja\&quot;)\n  1 (println \&quot;fast \&quot;)\n  (println \&quot;nein\&quot;))&quot;, :offset 62, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;command/CMD_ALIVE&quot;, :offset 17, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(= command/CMD_ALIVE 1)&quot;, :offset 22, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(symbol command/CMD_ALIVE)&quot;, :offset 25, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(symbol 'command/CMD_ALIVE)&quot;, :offset 9, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(import java.util.concurrent ScheduledThreadPoolExecutor)&quot;, :offset 56, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(require com.senacor.msm.core.stateless :as stateless)&quot;, :offset 53, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.getCompletedTaskCount com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 24, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.getActiveCount com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 16, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.getTaskCount com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 14, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(merge (sorted-map :a 1 :c 3) {:b 2})&quot;, :offset 35, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(class (merge (sorted-map :a 1 :c 3) {:b 2}))&quot;, :offset 45, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(.shutdown com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 41, :ns &quot;com.senacor.msm.main.demo&quot;} {:command &quot;(def sl-exec\n  ;Scheduled executor to run keep alive and house keeping\n  (moments/executor 2))&quot;, :offset 94, :ns &quot;com.senacor.msm.core.stateless&quot;} {:command &quot;(.getQueue com.senacor.msm.core.stateless/sl-exec)&quot;, :offset 10, :ns &quot;com.senacor.msm.main.demo&quot;}], :remote []}}</component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -754,7 +760,14 @@
       <option name="project" value="LOCAL" />
       <updated>1506008487555</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Hunting stuck stateless.&#10;* make mbean an atom iso ref to coordinate access&#10;* logging in find-my-index (which is never called)">
+      <created>1506009566894</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1506009566894</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TodoView">
@@ -806,7 +819,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
-    <MESSAGE value="Messages können jetzt aus mehreren Byte-Arrays gelesen und in Byte-Arrays geschrieben werden." />
     <MESSAGE value="Umbau msg-Interface auf byte-array.&#10;ByteBuffer wird nur noch intern verwendet" />
     <MESSAGE value="Sender und Receiver record entfernt.&#10;Kein Instance-State mehr in control.&#10;JMX Monitoring angefangen.&#10;&#10;Offenes Problem: Receiver empfängt ein dgram mit zwei Nachrichten und &#10;danach keine weitere." />
     <MESSAGE value="Übertragung funktioniert jetzt mit norm-demo.&#10;JMX eingebaut.&#10;&#10;TODO: Abbau der Session funktioniert auf beiden Seiten noch nicht." />
@@ -831,7 +843,8 @@
     <MESSAGE value="Fixed broken test-parse-command" />
     <MESSAGE value="stateless tests working, ready to integrate with listen" />
     <MESSAGE value="All tests up again. Open issue: stateless gets stuck on reading command from itself" />
-    <option name="LAST_COMMIT_MESSAGE" value="All tests up again. Open issue: stateless gets stuck on reading command from itself" />
+    <MESSAGE value="Hunting stuck stateless.&#10;* make mbean an atom iso ref to coordinate access&#10;* logging in find-my-index (which is never called)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Hunting stuck stateless.&#10;* make mbean an atom iso ref to coordinate access&#10;* logging in find-my-index (which is never called)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1070,14 +1083,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="103" column="23" lean-forward="false" selection-start-line="103" selection-start-column="23" selection-end-line="103" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="507">
@@ -1094,30 +1099,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-301">
-          <caret line="27" column="59" lean-forward="false" selection-start-line="27" selection-start-column="59" selection-end-line="27" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4662">
-          <caret line="497" column="0" lean-forward="false" selection-start-line="497" selection-start-column="0" selection-end-line="497" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/command.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-696">
-          <caret line="27" column="11" lean-forward="true" selection-start-line="27" selection-start-column="11" selection-end-line="27" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="292">
@@ -1130,14 +1111,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="43" column="3" lean-forward="true" selection-start-line="43" selection-start-column="3" selection-end-line="43" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/control.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="624">
-          <caret line="65" column="53" lean-forward="true" selection-start-line="65" selection-start-column="53" selection-end-line="65" selection-end-column="53" />
           <folding />
         </state>
       </provider>
@@ -1160,24 +1133,64 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="609">
-          <caret line="70" column="13" lean-forward="false" selection-start-line="70" selection-start-column="8" selection-end-line="70" selection-end-column="13" />
+        <state relative-caret-position="126">
+          <caret line="17" column="25" lean-forward="false" selection-start-line="17" selection-start-column="25" selection-end-line="17" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="876">
+          <caret line="109" column="21" lean-forward="false" selection-start-line="109" selection-start-column="11" selection-end-line="109" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/control.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="65" column="22" lean-forward="true" selection-start-line="65" selection-start-column="22" selection-end-line="65" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/command.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1655">
+          <caret line="117" column="10" lean-forward="false" selection-start-line="117" selection-start-column="10" selection-end-line="117" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="472">
+          <caret line="741" column="12" lean-forward="false" selection-start-line="741" selection-start-column="12" selection-end-line="741" selection-end-column="12" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-440">
-          <caret line="32" column="52" lean-forward="true" selection-start-line="32" selection-start-column="52" selection-end-line="32" selection-end-column="52" />
+        <state relative-caret-position="223">
+          <caret line="67" column="22" lean-forward="false" selection-start-line="67" selection-start-column="22" selection-end-line="67" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+        <state relative-caret-position="522">
+          <caret line="113" column="5" lean-forward="false" selection-start-line="113" selection-start-column="5" selection-end-line="113" selection-end-column="5" />
           <folding />
         </state>
       </provider>

@@ -735,10 +735,11 @@
   [^NormNode handle]
   (let [cmd (byte-array 256)
         len (.getCommand handle cmd 0 256)]
-    (when (neg? len)
-      (let [result [byte-array len]]
+    (if (< len 256)
+      (let [result (byte-array len)]
         (System/arraycopy cmd 0 result 0 len)
-        result))))
+        result)
+      cmd)))
 
 (defn ^NormNode free-buffers
   "Returns the buffers associated with a given node. New buffers will be allocated

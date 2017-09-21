@@ -59,6 +59,19 @@
            ))
       )
     )
+  (testing "command from a different session"
+    (let [cmd-chan (timeout 100)
+          event-chan (chan 3)]
+      (with-redefs-fn {#'norm/get-command (fn [_]
+                                            (.getBytes "hallo"))}
+        #(do
+           (command-receiver 1 (mult event-chan) cmd-chan)
+           (>!! event-chan {:session 1 :event-type :rx-object-cmd-new :node 1234})
+           (is (= "hallo" (String. ^bytes (:cmd (<!! cmd-chan)))))
+           (>!! event-chan {:session 2 :event-type :rx-object-cmd-new :node 4321})
+           (>!! event-chan {:session 1 :event-type :rx-object-cmd-new :node 1234})
+           (is (= "hallo" (String. ^bytes (:cmd (<!! cmd-chan)))))
+           (is (nil? (<!! cmd-chan)))))))
   )
 
 (deftest test-alive

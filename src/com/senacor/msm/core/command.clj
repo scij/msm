@@ -18,12 +18,11 @@
   confirmation that messages have been sent."
   [session event-chan cmd-chan]
   (let [ec-tap (chan (sliding-buffer 5))]
+    (tap event-chan ec-tap)
     (go-loop [cmd (<! cmd-chan)]
       (when cmd
-        (tap event-chan ec-tap)
         (norm/send-command session cmd (count cmd) true)
         (util/wait-for-events ec-tap session #{:tx-cmd-sent})
-        (untap event-chan ec-tap)
         (recur (<! cmd-chan)))))
   cmd-chan)
 
@@ -39,9 +38,9 @@
     (go-loop [event (<! ec-tap)]
       (when (and (= :rx-object-cmd-new (:event-type event))
                  (= session (:session event)))
-        (>! cmd-chan {:cmd (norm/get-command (:node event))
-                      :node-id (:node event)})
-        (recur (<! ec-tap))))))
+        (>! cmd-chan {:cmd (norm/get-command (:node event)),
+                      :node-id (:node event)}))
+      (recur (<! ec-tap)))))
 
 
 ;; Command Structure

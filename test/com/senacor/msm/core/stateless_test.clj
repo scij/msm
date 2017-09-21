@@ -34,30 +34,39 @@
   )
 
 (deftest test-find-my-index
-    (let [fix (sorted-map "n2" {:expires 100, :subscription "s100"}
-                                "n1" {:expires 200, :subscription "s200"}
-                                "n9" {:expires 900, :subscription "s900"}
-                                "n4" {:expires 400, :subscription "s400"})]
-      (is (= 0 (find-my-index 0 fix "n1")))
-      (is (= 1 (find-my-index 0 fix "n2")))
-      (is (= 2 (find-my-index 0 fix "n4")))
-      (is (= 3 (find-my-index 0 fix "n9")))))
+  (testing "one entry"
+    (let [fix (sorted-map my-session {:expires 500, :subscription "smy"})]
+      (is (= 0 (find-my-index 0 fix)))))
+  (testing "two entries, my session 2nd"
+    (let [fix (sorted-map my-session {:expires 500, :subscription "smy"}
+                          "a-session" {:expires 600, :subscription "s600"})]
+      (is (= 1 (find-my-index 0 fix)))))
+  (testing "two entries, my session 1st"
+    (let [fix (sorted-map my-session {:expires 500, :subscription "smy"}
+                          "new-session" {:expires 600, :subscription "s600"})]
+      (is (= 0 (find-my-index 0 fix)))))
+  (testing "three entries, my session in the middle"
+    (let [fix (sorted-map my-session {:expires 500, :subscription "smy"}
+                          "new-session" {:expires 600, :subscription "s600"}
+                          "a-session" {:expires 300, :subscription "s300"})]
+      (is (= 1 (find-my-index 0 fix))))))
 
 (deftest test-handle-receiver-status
   (with-redefs-fn {#'norm/get-local-node-id (fn [sess] sess),
+                   #'norm/get-node-name (fn [node] (str node)),
                    #'monitor/record-number-of-sl-receivers (fn [_ _])}
     #(do
        (testing "add another receiver"
          (let [my-session-index (atom 0)
                receiver-count (atom 1)
-               session-receivers (atom {"local:1234" {:expires Long/MAX_VALUE}})
+               session-receivers (atom {my-session {:expires Long/MAX_VALUE}})
                cmd-chan-in (chan 1)
-               task (handle-receiver-status 1 "local:1234" "label" cmd-chan-in session-receivers my-session-index receiver-count)]
+               task (handle-receiver-status 1 "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (Thread/sleep 10)
            (is (= 1 @receiver-count))
            (>!! cmd-chan-in {:cmd (command/alive 2 "label" true) :node-id "remote:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
-           (receiver-status-housekeeping 1 "local:1234" session-receivers receiver-count my-session-index)
+           (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 0 @my-session-index))
            (is (= 2 @receiver-count))
            (close! cmd-chan-in)
@@ -65,14 +74,14 @@
        (testing "add another receiver with a lower session id"
          (let [my-session-index (atom 0)
                receiver-count (atom 1)
-               session-receivers (atom {"local:1234" {:expires Long/MAX_VALUE}})
+               session-receivers (atom {my-session {:expires Long/MAX_VALUE}})
                cmd-chan-in (chan 1)
-               task (handle-receiver-status 2 "local:1234" "label" cmd-chan-in session-receivers my-session-index receiver-count)]
+               task (handle-receiver-status 2 "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (Thread/sleep 10)
            (is (= 1 @receiver-count))
            (>!! cmd-chan-in {:cmd (command/alive 1 "label" true) :node-id "aaa:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
-           (receiver-status-housekeeping 1 "local:1234" session-receivers receiver-count my-session-index)
+           (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 1 @my-session-index))
            (is (= 2 @receiver-count))
            (close! cmd-chan-in)
@@ -80,16 +89,16 @@
        (testing "expire another receiver"
          (let [my-session-index (atom 0)
                receiver-count (atom 1)
-               session-receivers (atom {"local:1234" {:expires Long/MAX_VALUE}})
+               session-receivers (atom {my-session {:expires Long/MAX_VALUE}})
                cmd-chan-in (chan 1)
-               task (handle-receiver-status 2 "local:1234" "label" cmd-chan-in session-receivers my-session-index receiver-count)]
+               task (handle-receiver-status 2  "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (>!! cmd-chan-in {:cmd (command/alive 1 "label" true) :node-id "remote:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
-           (receiver-status-housekeeping 1 "local:1234" session-receivers receiver-count my-session-index)
+           (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 2 @receiver-count))
            (is (= 0 @my-session-index))
            (Thread/sleep (+ expiry-threshold 10))
-           (receiver-status-housekeeping 1 "local:1234" session-receivers receiver-count my-session-index)
+           (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 1 @receiver-count))
            (is (= 0 @my-session-index))
            ))

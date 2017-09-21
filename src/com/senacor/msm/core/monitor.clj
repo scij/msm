@@ -14,7 +14,8 @@
 (defn- jmx-write
   [mbean prop value]
   (log/tracef "jmx write %s" (str prop))
-  (jmx/write! mbean prop value))
+  (jmx/write! mbean prop value)
+  (log/trace "jmx written"))
 
 (defn update-mon-status
   [event]
