@@ -47,7 +47,8 @@
 (defn find-my-index
   "Returns the index of the current session in the sessions table"
   [_ sessions my-node-name]
-  (.indexOf (keys @sessions) my-node-name))
+  (log/trace "Find my index" my-node-name sessions)
+  (.indexOf (keys sessions) my-node-name))
 
 (defn handle-receiver-status
   [session me label cmd-chan-in session-receivers my-session-index receiver-count]
@@ -70,7 +71,7 @@
   (swap! receiver-count number-of-sessions-alive @session-receivers)
   (log/tracef "After count sessions %d" @receiver-count)
   (monitor/record-number-of-sl-receivers session @receiver-count)
-  (swap! my-session-index find-my-index session-receivers me)
+  (swap! my-session-index find-my-index @session-receivers me)
   (log/tracef "After my-index %d" @my-session-index)
   (log/trace "Exit housekeeoping"))
 

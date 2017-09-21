@@ -34,10 +34,10 @@
   )
 
 (deftest test-find-my-index
-    (let [fix (atom (sorted-map "n2" {:expires 100, :subscription "s100"}
+    (let [fix (sorted-map "n2" {:expires 100, :subscription "s100"}
                                 "n1" {:expires 200, :subscription "s200"}
                                 "n9" {:expires 900, :subscription "s900"}
-                                "n4" {:expires 400, :subscription "s400"}))]
+                                "n4" {:expires 400, :subscription "s400"})]
       (is (= 0 (find-my-index 0 fix "n1")))
       (is (= 1 (find-my-index 0 fix "n2")))
       (is (= 2 (find-my-index 0 fix "n4")))

@@ -68,7 +68,7 @@
 
 (defn register
   [session address port node-id]
-  (let [mbean (jmx/create-bean (ref {}))
+  (let [mbean (jmx/create-bean (atom {}))
         s-name (str "com.senacor.msm:type=Session,"
                     "name=" address "/" port "/" node-id)]
     (swap! session-names assoc session s-name)
