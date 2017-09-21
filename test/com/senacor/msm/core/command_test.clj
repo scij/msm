@@ -150,3 +150,26 @@
       (.flip fix)
       (is (nil? (parse-fixed-header fix)))))
   )
+
+(deftest test-parse-command
+  (testing "well formed command"
+    (let [fix (bb/byte-buffer 256)]
+      (bb/with-buffer fix
+                      (bb/put-byte (byte \C))
+                      (bb/put-byte (byte \X))
+                      (bb/put-byte 1)
+                      (bb/put-byte 0)
+                      (bb/put-byte CMD_ALIVE)
+                      (bb/put-byte 1)
+                      (bb/put-byte 2)
+                      (bb/put-byte (byte \a))
+                      (bb/put-byte (byte \b))
+                      (bb/put-byte 2)
+                      (bb/put-byte (byte \e))
+                      (bb/put-byte (byte \f)))
+      (.flip fix)
+      (= {:cmd CMD_ALIVE,
+          :node-id "ab",
+          :subscription "ef"}
+         (parse-command (.array fix)))))
+  )
