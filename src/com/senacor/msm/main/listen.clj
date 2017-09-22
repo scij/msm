@@ -67,6 +67,7 @@
     (go-loop [msg (<! msg-chan)]
       (if msg
         (do
+          ; todo write to file - (:output options)
           (println msg)
           (recur (<! msg-chan)))
         (control/finit-norm instance)

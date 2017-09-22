@@ -38,6 +38,7 @@
   "Returns a map of sessions with the given session having its lifetimer extended"
   [sessions remote-node-id subscription now]
   (log/tracef "Session is alive. Node=%s, Subscription=%s" remote-node-id subscription)
+  ; todo gnothi seauton
   (merge sessions {remote-node-id {:expires (+ expiry-threshold now),
                                    :subscription subscription}}))
 
@@ -72,7 +73,7 @@
   (log/trace "After alive-sessions" @session-receivers)
   (swap! receiver-count number-of-sessions-alive @session-receivers)
   (log/tracef "After count sessions %d" @receiver-count)
-  ;(monitor/record-number-of-sl-receivers session @receiver-count)
+  ; todo (monitor/record-number-of-sl-receivers session @receiver-count)
   (swap! my-session-index find-my-index @session-receivers)
   (log/tracef "After my-index %d" @my-session-index)
   (log/trace "Exit housekeeping"))
@@ -116,10 +117,11 @@
     (command/command-receiver session event-chan cmd-chan-in)
     (receiver/create-receiver session event-chan bytes-chan)
     (message/bytes->Messages bytes-chan raw-msg-chan)
+    ; todo which variant is more efficient?
     ;(pipeline 1 msg-chan (partial filter-my-messages subscription my-session-index receiver-count) raw-msg-chan)
     (pipeline 1
               msg-chan
-              (fn [msg]
+              (fn [msg]Zij
                 (filter-my-messages subscription my-session-index receiver-count msg))
               raw-msg-chan)
   ))

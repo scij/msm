@@ -26,7 +26,7 @@ allocation tricky. This is why I chose an alternative protocol: NORM
 
 ### What is NORM?
 
-NORM means **N**ACK-**O**riented **R**eliable **M**ulticast, a UDP-based multicast
+NORM means **N**ACK **O**riented **R**eliable **M**ulticast, a UDP-based multicast
 protocol with transport guarantees and bandwidth management.
 
 NORM is specified in [RFC 5740](https://tools.ietf.org/html/rfc5740) and

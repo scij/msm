@@ -121,3 +121,7 @@
     (testing "only one receiver"
       (is (filter-my-messages "abc" zero one fix)))
     ))
+
+(deftest test-msg-filter-pipeline
+  ;todo test für die messagefilter pipeline fehlt
+  (is false "not yet implemented"))
