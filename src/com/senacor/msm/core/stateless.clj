@@ -1,5 +1,5 @@
 (ns com.senacor.msm.core.stateless
-  (:require [clojure.core.async :refer [go-loop chan pipeline <! >!!]]
+  (:require [clojure.core.async :refer [go-loop chan pipeline <! >! >!!]]
             [me.raynes.moments :as moments]
             [com.senacor.msm.core.util :as util]
             [com.senacor.msm.core.control :as control]
@@ -119,11 +119,10 @@
     (message/bytes->Messages bytes-chan raw-msg-chan)
     ; todo which variant is more efficient?
     ;(pipeline 1 msg-chan (partial filter-my-messages subscription my-session-index receiver-count) raw-msg-chan)
-    (pipeline 1
-              msg-chan
-              (fn [msg]Zij
-                (filter-my-messages subscription my-session-index receiver-count msg))
-              raw-msg-chan)
+    (go-loop [msg (<! raw-msg-chan)]
+      (when (and msg (filter-my-messages subscription my-session-index receiver-count msg))
+        (>! msg-chan msg)
+        (recur (<! raw-msg-chan))))
   ))
 
 (defn create-session
