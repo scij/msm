@@ -16,7 +16,7 @@
 
 (def ^:const alive-interval
   "Interval in ms to report that a receiver is alive"
-  1000)
+  100)
 
 (def ^:const expiry-threshold
   "Interval in ms after which a receiver should have reported alive and is considered
@@ -78,10 +78,10 @@
   (log/tracef "After my-index %d" @my-session-index)
   (log/trace "Exit housekeeping"))
 
-(defn filter-my-messages
-  "Return true if the message label matches the subscription and if the
-  the message correlation id matches the shard key given by my-index and
-  false otherwise.
+(defn is-my-message
+  "Returns a transducer returning true if the message label matches the
+  subscription and if the message correlation id matches the shard key
+  given by my-index and false otherwise.
   message is a msm message record
   subscription is a regex
   my-index and receiver count are the ingredients to compute the sharding key."
@@ -118,9 +118,9 @@
     (receiver/create-receiver session event-chan bytes-chan)
     (message/bytes->Messages bytes-chan raw-msg-chan)
     ; todo which variant is more efficient?
-    ;(pipeline 1 msg-chan (partial filter-my-messages subscription my-session-index receiver-count) raw-msg-chan)
+    ;(pipeline 1 msg-chan (filter (partial is-my-messages subscription my-session-index receiver-count)) raw-msg-chan)
     (go-loop [msg (<! raw-msg-chan)]
-      (when (and msg (filter-my-messages subscription my-session-index receiver-count msg))
+      (when (and msg (is-my-message subscription my-session-index receiver-count msg))
         (>! msg-chan msg)
         (recur (<! raw-msg-chan))))
   ))

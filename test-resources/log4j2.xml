@@ -13,5 +13,9 @@
         <Root level="trace">
             <AppenderRef ref="STDOUT"/>
         </Root>
+        <Logger name="com.senacor.msm.core.command"
+                level="INFO">
+            <AppenderRef ref=""></AppenderRef>
+        </Logger>
     </Loggers>
 </Configuration>

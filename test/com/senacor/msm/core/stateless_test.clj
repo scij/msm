@@ -1,7 +1,7 @@
 (ns com.senacor.msm.core.stateless-test
   (:require [clojure.test :refer :all]
             [com.senacor.msm.core.stateless :refer :all]
-            [clojure.core.async :refer [close! chan timeout poll! <!! >!!]]
+            [clojure.core.async :refer [onto-chan close! chan timeout pipeline poll! <!! >!!]]
             [com.senacor.msm.core.command :as command]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.message :as message]
@@ -111,17 +111,50 @@
         four (atom 4)
         one (atom 1)]
     (testing "match"
-      (is (filter-my-messages "abc" one four fix)))
+      (is (is-my-message "abc" one four fix)))
     (testing "match regex"
-      (is (filter-my-messages #"ab." one four fix)))
+      (is (is-my-message #"ab." one four fix)))
     (testing "wrong label"
-      (is (not (filter-my-messages #"xyz" one four fix))))
+      (is (not (is-my-message #"xyz" one four fix))))
     (testing "wrong index"
-      (is (not (filter-my-messages #"abc" two four fix))))
+      (is (not (is-my-message #"abc" two four fix))))
     (testing "only one receiver"
-      (is (filter-my-messages "abc" zero one fix)))
+      (is (is-my-message "abc" zero one fix)))
     ))
 
 (deftest test-msg-filter-pipeline
-  ;todo test für die messagefilter pipeline fehlt
-  (is false "not yet implemented"))
+  (testing "simple pipeline"
+    (let [c-in (chan 10)
+          c-out (chan 10)]
+      (pipeline 1 c-out (filter even?) c-in)
+      (onto-chan c-in (range 10))
+      (is (= (<!! c-out) 0))
+      (is (= (<!! c-out) 2))
+      (is (= (<!! c-out) 4))
+      (is (= (<!! c-out) 6))
+      (is (= (<!! c-out) 8))
+      (close! c-in)
+      (is (nil? (<!! c-out)))
+     ))
+  (testing "filter auf array"
+    (let [msg1 (message/create-message "abc" "def" "payload")
+          msg2 (message/create-message "abc" "ghi" "payload")
+          one (atom 1)
+          four (atom 4)]
+      (is (= [msg1] (into [] (filter (partial is-my-message "abc" one four)) [msg1 msg2])))
+    ))
+  (testing "pipeline with message filter"
+    (let [msg1 (message/create-message "abc" "def" "payload")
+          msg2 (message/create-message "abc" "ghi" "payload")
+          c-in (chan 3)
+          c-out (chan 3)
+          one (atom 1)
+          four (atom 4)]
+      (pipeline 1 c-out (filter (partial is-my-message "abc" one four)) c-in)
+      (>!! c-in msg1)
+      (>!! c-in msg2)
+      (close! c-in)
+      (is (= msg1 (<!! c-out)))
+      (is (nil? (<!! c-out)))
+      ))
+  )
