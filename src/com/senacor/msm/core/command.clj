@@ -105,8 +105,7 @@
         (do
           (log/errorf "Unexpected command magic %c %c" (char magic1) (char magic2))
           nil)))
-    (do
-      (log/errorf "Command too short %s" (.array buf)))))
+    (log/errorf "Command too short %s" (.array buf))))
 
 (defn parse-alive-var-part
   [buf]

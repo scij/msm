@@ -61,7 +61,7 @@
   [instance if-name address port options]
   (let [session (norm/create-session instance address port (:node-id options))]
     (log/tracef "session created %s %d %d" address port (:node-id options))
-    (when (not (str/blank? if-name))
+    (when-not (str/blank? if-name)
       (norm/set-multicast-interface session if-name))
     (when (:ttl options)
       (norm/set-ttl session (:ttl options)))

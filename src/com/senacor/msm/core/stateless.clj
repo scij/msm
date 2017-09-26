@@ -79,12 +79,12 @@
   (log/trace "Exit housekeeping"))
 
 (defn is-my-message
-  "Returns a transducer returning true if the message label matches the
+  "Returns true if the message label matches the
   subscription and if the message correlation id matches the shard key
-  given by my-index and false otherwise.
+  and false otherwise.
   message is a msm message record
   subscription is a regex
-  my-index and receiver count are the ingredients to compute the sharding key."
+  my-index and receiver-count are the ingredients to compute the sharding key."
   [subscription my-index receiver-count message]
   (and
     (message/label-match subscription message)

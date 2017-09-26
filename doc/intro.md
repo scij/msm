@@ -2,18 +2,10 @@
 
 ## Architecture
 
-| Function||||
-| ---- | --- | --- | --- |
-| Reliable Messaging | com.senacor.msm.topic | com.senacor.msm.stateful | com.senacor.msm.stateless |
-| Simple Messages | com.senacor.msm.message |
-| Async adapter | com.senacor.msm.control, sender, receiver, command |
-| Clojure NORM API | com.senacor.msm.norm-api  |
-| Java NORM API | mil.navy.nrl.norm |
-| NORM Implementation | C Library |
-| Transport | UDP Sockets |
+![MSM Component View](Components.png)
 
 The lowest level is the transport layer offered by UDP/IP sockets providing non.reliable data transmission.
-The next layer is the NORM library, a C implementation of the NORM protocol. A Java JNI wrapper provides
+The next layer is the NORM library, a C++ implementation of the NORM protocol. A Java JNI wrapper provides
 an object abstraction at the Java level.
 
 _com.senacor.msm_ starts above this level by wrapping the Java API into a Clojure API 
@@ -26,6 +18,7 @@ The message namespace creates and parses message objects and takes care of the f
 message object may have been split into several byte arrays (or UDP packets as we get down to the
 protocol layer) during transmission. While sending is simply done by serializing the message into a byte
 array, receiving consumes a channel of byte arrays and fills another channel of messages.
+The monitor namespace creates and updates JMX mbeans for status reporting on data transmission.
 
 At the top there are three modes of transport:
 

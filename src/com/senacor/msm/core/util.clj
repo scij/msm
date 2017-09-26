@@ -19,7 +19,7 @@
   (hexl-char [b]
     (let [v (if (neg? b) (+ 256 b) b)
           c  (char v)]
-      (if  (and (< v 128 )(Character/isLetterOrDigit c)) (.toString c) "."))))
+      (if  (and (< v 128 )(Character/isLetterOrDigit c)) (str c) "."))))
 
 
 
@@ -47,7 +47,7 @@ byte.  Works for chars as well."
    with . being used for unprintable chars"
   [bytes]
   (let [chars (mapcat second (hexlify bytes))]
-    (apply str chars)))
+    (str/join chars)))
 
 (defn dump-bytes
   [b-arr]
@@ -55,7 +55,7 @@ byte.  Works for chars as well."
     (println "nil")
     (map #(let [[hexc charc intc] %]
             (println (partition-all 4 hexc)
-                     (partition-all 4 (apply str charc))))
+                     (partition-all 4 (str/join charc))))
          (hexlify b-arr))))
 
 (defn cat-byte-array

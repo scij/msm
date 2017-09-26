@@ -76,6 +76,9 @@
             :rx-object-new
             (do
               (log/info "New stream opened:" (norm/event->str event))
+              ;; todo multi sender: handle new stream here.
+              ;; Maybe we should start a new go-loop to handle :rx-object-updated for
+              ;; one particular stream.
               (norm/seek-message-start (:object event))
               (recur (<! ec-tap)))
             :rx-object-updated
