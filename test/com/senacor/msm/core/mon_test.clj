@@ -2,13 +2,14 @@
   (:require [clojure.test :refer :all]
             [com.senacor.msm.core.monitor :refer :all]
             [clojure.java.jmx :as jmx]
-            [com.senacor.msm.core.norm-api :as norm]))
+            [com.senacor.msm.core.norm-api :as norm])
+  (:import (clojure.java.jmx Bean)))
 
 (deftest test-register
   (testing "register/unregister"
     (let [node-id (System/currentTimeMillis)
           fix (register 1 "239.192.0.1" 7100 node-id)]
-      (is (instance? clojure.java.jmx.Bean fix))
+      (is (instance? Bean fix))
       (is (= (str "com.senacor.msm:type=Session,name=239.192.0.1/7100/" node-id) (get @session-names 1)))
       (unregister 1)
       (is (nil? (get @session-names 1)))

@@ -15,7 +15,7 @@
   [session event-chan args]
   (let [out-chan (chan)
         cmd-chan (chan)
-        sndr (snd/create-sender session 0 event-chan out-chan cmd-chan 128)
+        sndr (snd/create-sender session 0 event-chan out-chan 128)
         count (if (and (not (empty args)) (re-matches #"\d+" (first args))) (Integer/parseInt (first args)) 10)]
     (doseq [i (range 1 (inc count))]
       (log/tracef "Sending msg %d" i)

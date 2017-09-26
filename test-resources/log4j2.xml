@@ -15,7 +15,7 @@
         </Root>
         <Logger name="com.senacor.msm.core.command"
                 level="INFO">
-            <AppenderRef ref=""></AppenderRef>
+            <AppenderRef ref=""/>
         </Logger>
     </Loggers>
 </Configuration>
