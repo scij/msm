@@ -12,10 +12,6 @@
             [clojure.java.io :as io])
   (:import (org.apache.logging.log4j ThreadContext)))
 
-(defn init-logging
-  [app-name]
-  (ThreadContext/put "app" app-name))
-
 (def cli-options
   [["-f" "--file FILE" "Read messages from file"]
    ["-h" "--help"]
@@ -81,7 +77,7 @@
 
 (defn -main
   [& args]
-  (init-logging "send")
+  (util/init-logging "send")
   (let [opt-arg (cli/parse-opts args cli-options)
         [net-spec label message] (:arguments opt-arg)]
     (when (and (not= 2 (count (:arguments opt-arg)))

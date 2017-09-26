@@ -14,10 +14,6 @@
             [clojure.string :as str])
   (:import (org.apache.logging.log4j ThreadContext)))
 
-(defn init-logging
-  [app-name]
-  (ThreadContext/put "app" app-name))
-
 (def cli-options
   [["-h" "--help"]
    ["-i" "--node-id NODE-ID" "Node ID"
@@ -75,7 +71,7 @@
 
 (defn -main
   [& args]
-  (init-logging "listen")
+  (util/init-logging "listen")
   (let [opt-arg (cli/parse-opts args cli-options)
         [net-spec label] (:arguments opt-arg)]
     (when (zero? (count (:arguments opt-arg)))

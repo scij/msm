@@ -17,7 +17,7 @@
   :main com.senacor.msm.main.demo
   :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]
   :profiles {:test   {:resource-paths ["test-resources"]}
-             :user   {:plugins [[lein-kibit "0.1.5"]
+             :qa     {:plugins [[lein-kibit "0.1.5"]
                                 [lein-cloverage "1.0.9"]]}
              :run    {:aot      :all
                       :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]}}

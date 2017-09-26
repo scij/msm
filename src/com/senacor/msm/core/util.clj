@@ -4,7 +4,8 @@
             [clojure.core.async :refer [<!! >!!]]
             [clojure.tools.logging :as log]
             [bytebuffer.buff :as bb])
-  (:import (java.nio Buffer ByteBuffer)))
+  (:import (java.nio Buffer ByteBuffer)
+           (org.apache.logging.log4j ThreadContext)))
 
 ;; Based on m0smith's code at https://gist.github.com/m0smith/1684476#file-hexlify-clj
 (defprotocol Hexl
@@ -142,3 +143,7 @@ byte.  Works for chars as well."
       (do
         (log/trace "Wait ends with" (:event-type m))
         m))))
+
+(defn init-logging
+  [app-name]
+  (ThreadContext/put "app" app-name))

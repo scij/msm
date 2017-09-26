@@ -23,10 +23,6 @@
     (close! out-chan)
     ))
 
-(defn init-log
-  [app-name]
-  (ThreadContext/put "app" app-name))
-
 (defn receiver
   [session event-chan args]
   (let [bytes-chan (chan 5)
@@ -48,8 +44,8 @@
   (let [event-chan-out (chan 5)
         event-chan-in (mult event-chan-out)
         instance (ctl/init-norm event-chan-out)]
-    (init-log "demo")
-    (let [session (ctl/start-session instance "239.192.0.1" 7100
+    (util/init-logging "demo")
+    (let [session (ctl/start-session instance "" "239.192.0.1" 7100
                                      {:loopback true, :node-id (util/default-node-id) })]
       (mon/mon-event-loop event-chan-in)
       (case (first args)
