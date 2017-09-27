@@ -7,9 +7,10 @@
 ;; Maps sessions to JMX bean names.
 (def session-names (atom {}))
 
-; todo for each session poll the tx-rate every second and update the bean
-; todo use me.raynes/moments for scheduling: https://github.com/Raynes/moments
-; todo Sekunden- und Minutensummen pro Session sammeln und einmal pro Minute/Sekunde an JMX publizieren
+; todo implement minute and second-based sampling
+; for each session poll the tx-rate every second and update the bean
+; use me.raynes/moments for scheduling: https://github.com/Raynes/moments
+; use net.mikera/timeline to store and maintain the samples: https://github.com/mikera/timeline
 
 (defn- jmx-write
   [mbean prop value]

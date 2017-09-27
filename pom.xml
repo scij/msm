@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.senacor.msm.norm</groupId>
-  <artifactId>com.senacor.msm.norm</artifactId>
+  <groupId>com.senacor.msm</groupId>
+  <artifactId>com.senacor.msm</artifactId>
   <packaging>jar</packaging>
   <version>0.1.0-SNAPSHOT</version>
-  <name>com.senacor.msm.norm</name>
+  <name>com.senacor.msm</name>
   <description>NORM-based messaging infrastructure</description>
   <url>http://bitbucket.senacor.com/jschiewe/msm</url>
   <licenses>
@@ -13,6 +13,11 @@
       <url>http://www.eclipse.org/legal/epl-v10.html</url>
     </license>
   </licenses>
+  <scm>
+    <tag>57e1ba39f312964a756e8a2ff629ca90399a8fa5
+</tag>
+    <url/>
+  </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
@@ -66,23 +71,18 @@
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
-      <artifactId>tools.logging</artifactId>
-      <version>0.3.1</version>
-    </dependency>
-    <dependency>
-      <groupId>mil.navy.nrl</groupId>
-      <artifactId>norm</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>bytebuffer</groupId>
-      <artifactId>bytebuffer</artifactId>
-      <version>0.2.0</version>
+      <artifactId>core.async</artifactId>
+      <version>0.3.442</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
-      <artifactId>core.async</artifactId>
-      <version>0.3.442</version>
+      <artifactId>tools.logging</artifactId>
+      <version>0.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>tools.cli</artifactId>
+      <version>0.3.5</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -90,27 +90,29 @@
       <version>0.3.4</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.mail</groupId>
-          <artifactId>mail</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.jms</groupId>
-          <artifactId>jms</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jmdk</groupId>
-          <artifactId>jmxtools</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jmx</groupId>
-          <artifactId>jmxri</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>bytebuffer</groupId>
+      <artifactId>bytebuffer</artifactId>
+      <version>0.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>mil.navy.nrl</groupId>
+      <artifactId>norm</artifactId>
+      <version>1.5.6</version>
+    </dependency>
+    <dependency>
+      <groupId>me.raynes</groupId>
+      <artifactId>moments</artifactId>
+      <version>0.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.8.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.8.2</version>
     </dependency>
   </dependencies>
 </project>

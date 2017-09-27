@@ -37,9 +37,14 @@ there is also no storage of undelivered messages. When all consumers fail simult
 be lost. This is an intended feature of MSM and part of the trade-off between reliability and
 performance and throughput.
 
+Message distribution modes are implemented on the receiver side. One of the goals of asynchronous
+communication is to make the sender unaware of the receivers. Therefor the sender does not know
+how many receivers have subscribed to a particular channel, if they are stateful or stateless
+or if there are no receivers at all.
+
 ### Stateless receiver
 
-Stateless communication is only implemented on the receiver side. Each stateless receiver
+Stateless communication is implemented on the receiver side. Each stateless receiver
 posts NORM command messages with containing it's node id (which is unique in a session) to
 all receivers on this session. Each receiver updates a map of active receivers and sets an
 expiry date for this receiver. Once the receiver has expired (which happens automatically

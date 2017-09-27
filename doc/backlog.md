@@ -1,30 +1,20 @@
 # MSM Backlog
 
-## Queues einbauen
-
-Bis jetzt verhält sich MSM immer wie ein Topic. Jede Nachricht geht an alle
-Receiver, die sich auf das Label angemeldet haben.
-
-Mit Queues wird jede Nachricht nur noch von einem Receiver verarbeitet. Das
-soll aber dynamisch sein, d.h. ich will neue Receiver einbringen oder bestehende
-stoppen können, ohne das ich das System neu konfigurieren muss.
-Ich will auch den (oder die) Sender nicht damit belasten.
-
-Lösungsansatz:
-
-Sharding. Die Receiver kennen einander und teilen sich die Nachrichten nach
-einem Sharding-Schema auf. Jetzt müssen wir nur noch das Problem der
-dynamischen Veränderung lösen. Wenn ein Receiver aussteigt, sollen die anderen
-das merken und das Sharding neu ausbalancieren.
-Das sichern wir schlauerweise über eine out-of-band-Signalisierung ab,
-mit der jeder Receiver sagt, dass er noch lebt und welche Nachricht er zuletzt
-verarbeitet hat. Wenn jetzt ein Receiver aussteigt, wird die Verteilung von
-jedem Receiver neu berechnet und jeder Receiver arbeitet die nach dem letzten
-Count aufgelaufenen Nachrichten nach soweit er dafür zuständig ist.
-
 ## Stateful queues einbauen.
 
 Analog zu Tibco FT Groups.
+Jeder Receiver empfängt alle einlaufenden Nachrichten. Sie werden aber nur
+insoweit verarbeitet, wie dies ohne Seiteneffekte möglich ist. Nur der aktive
+Prozess darf auch Seiteneffekte erzeugen. Wenn der ausfällt, übernimmt ein
+anderer Prozess.
+
+### Lösungsansatz
+
+Auch hier machen wir eine Out-of-band-Signalisierung über commands. Jeder
+Teilnehmer kennt alle anderen Teilnehmer. Wenn der aktive ausfällt, wird
+der erste Nachrücker der aktive Teilnehmer (analog zu stateless ist die
+Sortierung der Receiver für alle Clients gleich).
+Wie beim stateless werden alle Nachrichten seit dem letzten OK nachverarbeitet.
 
 ## Router bauen
 
@@ -47,4 +37,11 @@ Ich möchte den Traffic überwachen können.
 
 ## Benchmark
 
-Vergleich JMS (verschiedene Implementierungen und Konfigurationen) mit MSM
+Vergleich JMS (verschiedene Implementierungen und Konfigurationen) mit MSM.
+Besonders interessant ist ein Szenario mit vielen Subscribern.
+
+## Docker
+
+* Funktioniert das überhaupt auf Docker? 
+* Performance messen. 
+* Generierung der Docker-Images im Build.
