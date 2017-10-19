@@ -249,70 +249,9 @@
       (is (label-match #"com.senacor.*" fix))))
   )
 
-(deftest test-skip-message
-  (testing "isolated skipping test"
-    (let [bb (bb/byte-buffer (* 2 fix-buflen))]
-      (bb/put-byte bb (byte \a))
-      (bb/put-byte bb (byte \b))
-      (bb/put-byte bb (byte \c))
-      (let [fix (fill-buffer-with-testdata bb)]
-        (is (zero? (.position fix)))
-        (is (.hasRemaining fix))
-        (is (= start-state (skip-to-next-msg-prefix {} fix nil)))
-        (is (= 3 (.position fix))))))
-  (testing "isolated skipping test with single M before message"
-    (let [bb (bb/byte-buffer (* 2 fix-buflen))]
-      (bb/put-byte bb (byte \a))
-      (bb/put-byte bb msg-prefix-m)
-      (bb/put-byte bb (byte \c))
-      (let [fix (fill-buffer-with-testdata bb)]
-        (is (zero? (.position fix)))
-        (is (.hasRemaining fix))
-        (is (= start-state (skip-to-next-msg-prefix {} fix nil)))
-        (is (= 3 (.position fix))))))
-  (testing "no new message in buffer"
-    (let [bb (bb/byte-buffer 4)]
-      (bb/put-byte bb (byte \a))
-      (bb/put-byte bb (byte \b))
-      (bb/put-byte bb (byte \c))
-      (bb/put-byte bb (byte \d))
-      (.flip bb)
-      (is (zero? (.position bb)))
-      (is (.hasRemaining bb))
-      (is (= {} (skip-to-next-msg-prefix {} bb nil)))
-      (is (not (.hasRemaining bb)))))
-  (testing "Msg - Trunk Msg - Msg"
-    ; expected to skip the message following the truncated one.
-    (let [bb (bb/byte-buffer (* fix-buflen 3))
-          fix (fill-buffer-with-testdata bb :no-flip)
-          trunc (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :flip)
-          in-chan (chan 2)
-          out-chan (chan 4)]
-      (.put fix (util/byte-array-head (.array trunc) 10))
-      (fill-buffer-with-testdata fix)
-      (is (= fix-msg (first (into [] (align-byte-arrays) [(.array fix)]))))
-      (is (= 1 (count (into [] (align-byte-arrays) [(.array fix)]))))
-      ))
-  (testing "Msg - Trunk Msg - Msg - Msg"
-    (let [bb (bb/byte-buffer (* fix-buflen 20))
-          fix (fill-buffer-with-testdata bb :no-flip)
-          in-chan (chan 2)
-          out-chan (chan 2)]
-      (bb/with-buffer fix
-                      (bb/put-byte (byte \a))
-                      (bb/put-byte (byte \a)))
-      (fill-buffer-with-testdata fix :no-flip)
-      (fill-buffer-with-testdata fix)
-      (is (= 2 (count (into [] (align-byte-arrays) [(.array fix)]))))
-      ))
-    )
-
-(deftest test-parse-var-header
-  "Broken message and parse var header actually hits a new message header"
-  (let [bb (bb/byte-buffer fix-buflen)
-        fix (fill-buffer-with-testdata bb :flip)]
-    (is (= {:parse-fn skip-to-next-msg-prefix,
-            :complete? false,
-            :valid? false}
-           (parse-var-header {:payload-length 0} fix nil)))))
+(deftest test-parse-message
+  (testing "well formed message"
+    (let [bb (bb/byte-buffer fix-buflen)
+          fix (fill-buffer-with-testdata bb)]
+      (is (= fix-msg (parse-message (.array bb)))))))
 

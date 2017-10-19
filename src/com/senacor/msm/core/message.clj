@@ -114,80 +114,6 @@
 (declare parse-fixed-header)
 (declare start-state)
 
-(defn skip-to-next-msg-prefix
-  "Reads data from the buffer until the next valid
-  message prefix is detected"
-  [state buf out-chan]
-  (log/trace "Skipping")
-  (.mark buf)
-  ;; todo besser mit den EOM anspringen und den vorliegenden Buffer verbrauchen
-  (loop [step :scan]
-    (if (.hasRemaining buf)
-      (let [b (bb/take-byte buf)]
-        (cond
-          (and (= step :scan) (= b msg-prefix-m)) (recur :has-m)
-          (and (= step :has-m) (= b msg-prefix-x)) (do
-                                           (.reset buf)
-                                           start-state)
-          (and (= step :has-m) (not= b msg-prefix-x)) (do
-                                              (.mark buf)
-                                              (recur :scan))
-          :else (do
-                  (.mark buf)
-                  (recur :scan))
-          ))
-      state)
-    )
-  )
-
-;(defn parse-fixed-header
-;  "Parse the fixed part of the header from buf and return an
-;  updated state map"
-;  [state buf _]
-;  (log/trace "parse fixed header" buf)
-;  (let [magic1 (bb/take-byte buf)
-;        magic2 (bb/take-byte buf)
-;        major-v (bb/take-byte buf)
-;        minor-v (bb/take-byte buf)
-;        hdr-var-length (bb/take-short buf)
-;        payload-length (bb/take-int buf)]
-;    (.mark buf)
-;    (log/tracef "hdr %d %d %d.%d hdr-len=%d payload-len=%d"
-;                magic1 magic2 major-v minor-v
-;                hdr-var-length payload-length)
-;    (if (or (not= magic1 msg-prefix-m) (not= magic2 msg-prefix-x))
-;      (do
-;        (log/errorf "Invalid magic msg prefix: %d %d" magic1 magic2)
-;        {:valid? false,
-;         :complete? false,
-;         :parse-fn skip-to-next-msg-prefix})
-;      (if (or (not= version-major major-v) (< minor-v version-minor))
-;        (do
-;          (log/errorf "Invalid msg version: %d %d" major-v minor-v)
-;          {:valid? false,
-;           :complete? false,
-;           :parse-fn skip-to-next-msg-prefix})
-;        (if (< hdr-var-length 4)
-;          (do
-;            (log/errorf "Invalid var header length %d" hdr-var-length)
-;            {:valid? false,
-;             :complete? false,
-;             :parse-fn skip-to-next-msg-prefix})
-;          (if (neg? payload-length)
-;            (do
-;              (log/errorf "Payload length must be >= 0: %d" payload-length)
-;              {:valid? false,
-;               :complete? false,
-;               :parse-fn skip-to-next-msg-prefix})
-;            {:valid?         true,
-;             :hdr-var-length hdr-var-length,
-;             :payload-length payload-length,
-;             :bytes-required hdr-var-length,
-;             :parse-fn       parse-var-header,
-;             :complete?      false
-;             }
-;            ))))))
-
 (defn parse-fixed-header
   "Parse the fixed part of the header from buf and return an
   updated state map"
@@ -216,74 +142,25 @@
             (log/errorf "Invalid var header length %d" hdr-var-length)
             -1)
           (if (neg? payload-length)
-            (do
-              (log/errorf "Payload length must be >= 0: %d" payload-length)
-              {:valid? false,
-               :complete? false,
-               :parse-fn skip-to-next-msg-prefix})
-            (+ hdr-var-length payload-length)
+            (log/errorf "Payload length must be >= 0: %d" payload-length)
+            [hdr-var-length payload-length]
             ))))))
 
 (defn parse-var-header
   "Parse the var length metadata from the message header."
-  [state buf _]
+  [buf]
   (let [label (util/take-string buf)
         corr-id (util/take-string buf)]
     (if (= corr-id "")
-      (do
-        (log/errorf "Corr-id is empty, label is %s" label)
-        {:valid?    false,
-         :complete? false,
-         :parse-fn  skip-to-next-msg-prefix})
-      (do
-        (log/tracef "Var header is %s %s" label corr-id)
-        {:label          label,
-         :corr-id        corr-id,
-         :bytes-required (:payload-length state),
-         :parse-fn       parse-payload,
-         :complete?      false
-         }))))
+      (log/errorf "Corr-id is empty, label is \"%s\"" label)
+      (log/tracef "Var header is \"%s\" \"%s\"" label corr-id))
+    [label corr-id]))
 
 (defn parse-payload
-  "Reads as many payload bytes from the buf as specified in the
-  payload element of the state and returns an updated state
-  with the payload element set and the state re-initialized for
-  the next message. The buffer is compacted to make room for
-  another message"
-  [state buf _]
-  (let [result {:payload       (util/take-string (:payload-length state) buf)
-                :parse-fn       send-message,
-                :bytes-required 0,
-                :complete?      true
-               }]
-    result))
-
-(defn send-message
-  [state buf out-chan]
-  (>!! out-chan (->Message (:label state) (:corr-id state) (:payload state)))
-  start-state)
-
-(def start-state
-  "Returns the initial state of the message processing state engine"
-  {:parse-fn parse-fixed-header,
-   :bytes-required hdr-len
-   :complete? false})
-
-(defn process-state
-  [state buf out-chan]
-  (log/tracef "invoke state func %s" (:parse-fn state))
-  ((:parse-fn state) state buf out-chan))
-
-(defn process-message
-  [state byte-arr out-chan]
-  (let [buf (ByteBuffer/wrap byte-arr)]
-    (loop [st state]
-      (if (>= (.remaining buf) (:bytes-required st))
-        (recur (merge st (process-state st buf out-chan)))
-        (merge st {:rest-arr (util/byte-array-rest (.array buf) (.position buf))}) )
-      )
-    )
-  )
+  "Returns the payload string from buf. The expected payload length has been read
+  from the fixed message header"
+  [len buf]
+  (util/take-string len buf))
 
 (defn align-byte-arrays
   "Returns a transducer that takes incoming byte arrays
@@ -305,7 +182,7 @@
               (loop [n-arr arr
                      bytes-avail (count n-arr)] ; as much bytes as we need.
                 (when (>= bytes-avail hdr-len)
-                  (vreset! state {:bytes-required (+ hdr-len (parse-fixed-header n-arr)),
+                  (vreset! state {:bytes-required (reduce + hdr-len (parse-fixed-header n-arr)),
                                   :b-arr          n-arr}))
                 (if (>= bytes-avail (:bytes-required @state))
                   (let [msg (util/byte-array-head n-arr (:bytes-required @state))
@@ -319,3 +196,13 @@
                         rtn)))
                   result))
            )))))))
+
+(defn parse-message
+  "takes a byte array and returns a Message object"
+  [b-arr]
+  (let [buf (ByteBuffer/wrap b-arr)
+        hdr-buf (bb/slice-off buf hdr-len)
+        [var-hdr-len payload-len] (parse-fixed-header b-arr)
+        [label corr-id] (parse-var-header buf)
+        payload (parse-payload payload-len buf)]
+  (create-message label corr-id payload)))

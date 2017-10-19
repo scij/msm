@@ -28,7 +28,7 @@
   (let [bytes-chan (chan 5)
         msg-chan (chan 5)
         rcvr (rcv/create-receiver session event-chan bytes-chan)
-        msg-conv (msg/bytes->Messages bytes-chan msg-chan)]
+        ; todo msg-conv (msg/bytes->Messages bytes-chan msg-chan)]
     (loop [m (<!! msg-chan)
            exp-count 1]
       (when m
