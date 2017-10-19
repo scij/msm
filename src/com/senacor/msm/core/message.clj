@@ -140,12 +140,60 @@
     )
   )
 
+;(defn parse-fixed-header
+;  "Parse the fixed part of the header from buf and return an
+;  updated state map"
+;  [state buf _]
+;  (log/trace "parse fixed header" buf)
+;  (let [magic1 (bb/take-byte buf)
+;        magic2 (bb/take-byte buf)
+;        major-v (bb/take-byte buf)
+;        minor-v (bb/take-byte buf)
+;        hdr-var-length (bb/take-short buf)
+;        payload-length (bb/take-int buf)]
+;    (.mark buf)
+;    (log/tracef "hdr %d %d %d.%d hdr-len=%d payload-len=%d"
+;                magic1 magic2 major-v minor-v
+;                hdr-var-length payload-length)
+;    (if (or (not= magic1 msg-prefix-m) (not= magic2 msg-prefix-x))
+;      (do
+;        (log/errorf "Invalid magic msg prefix: %d %d" magic1 magic2)
+;        {:valid? false,
+;         :complete? false,
+;         :parse-fn skip-to-next-msg-prefix})
+;      (if (or (not= version-major major-v) (< minor-v version-minor))
+;        (do
+;          (log/errorf "Invalid msg version: %d %d" major-v minor-v)
+;          {:valid? false,
+;           :complete? false,
+;           :parse-fn skip-to-next-msg-prefix})
+;        (if (< hdr-var-length 4)
+;          (do
+;            (log/errorf "Invalid var header length %d" hdr-var-length)
+;            {:valid? false,
+;             :complete? false,
+;             :parse-fn skip-to-next-msg-prefix})
+;          (if (neg? payload-length)
+;            (do
+;              (log/errorf "Payload length must be >= 0: %d" payload-length)
+;              {:valid? false,
+;               :complete? false,
+;               :parse-fn skip-to-next-msg-prefix})
+;            {:valid?         true,
+;             :hdr-var-length hdr-var-length,
+;             :payload-length payload-length,
+;             :bytes-required hdr-var-length,
+;             :parse-fn       parse-var-header,
+;             :complete?      false
+;             }
+;            ))))))
+
 (defn parse-fixed-header
   "Parse the fixed part of the header from buf and return an
   updated state map"
-  [state buf _]
-  (log/trace "parse fixed header" buf)
-  (let [magic1 (bb/take-byte buf)
+  [b-arr]
+  (let [buf (ByteBuffer/wrap b-arr)
+        magic1 (bb/take-byte buf)
         magic2 (bb/take-byte buf)
         major-v (bb/take-byte buf)
         minor-v (bb/take-byte buf)
@@ -158,34 +206,22 @@
     (if (or (not= magic1 msg-prefix-m) (not= magic2 msg-prefix-x))
       (do
         (log/errorf "Invalid magic msg prefix: %d %d" magic1 magic2)
-        {:valid? false,
-         :complete? false,
-         :parse-fn skip-to-next-msg-prefix})
+        -1)
       (if (or (not= version-major major-v) (< minor-v version-minor))
         (do
           (log/errorf "Invalid msg version: %d %d" major-v minor-v)
-          {:valid? false,
-           :complete? false,
-           :parse-fn skip-to-next-msg-prefix})
+          -1)
         (if (< hdr-var-length 4)
           (do
             (log/errorf "Invalid var header length %d" hdr-var-length)
-            {:valid? false,
-             :complete? false,
-             :parse-fn skip-to-next-msg-prefix})
+            -1)
           (if (neg? payload-length)
             (do
               (log/errorf "Payload length must be >= 0: %d" payload-length)
               {:valid? false,
                :complete? false,
                :parse-fn skip-to-next-msg-prefix})
-            {:valid?         true,
-             :hdr-var-length hdr-var-length,
-             :payload-length payload-length,
-             :bytes-required hdr-var-length,
-             :parse-fn       parse-var-header,
-             :complete?      false
-             }
+            (+ hdr-var-length payload-length)
             ))))))
 
 (defn parse-var-header
@@ -249,24 +285,37 @@
     )
   )
 
-(defn bytes->Messages
-  "Consumes a channel of byte arrays containing messages
-  and message fragments and sends the messages to the
-  outbound channel. This function is non-blocking and
-  returns the out-chan."
-  [in-chan out-chan]
-  (let [state (atom start-state)]
-    (go-loop [old-arr (.getBytes "")
-              ^bytes new-arr (<! in-chan)]
-      (log/trace "Message received:" (util/dump-bytes new-arr))
-      (if new-arr
-        (if (>= (+ (count new-arr) (count old-arr)) (:bytes-required @state))
-          (do
-            (log/trace "Processing message")
-            (swap! state process-message (util/cat-byte-array old-arr new-arr) out-chan)
-            (recur (:rest-arr @state) (<! in-chan)))
-          (recur (util/cat-byte-array old-arr new-arr) (<! in-chan)))
-        (close! out-chan))
-      )
-    )
-  out-chan)
+(defn align-byte-arrays
+  "Returns a transducer that takes incoming byte arrays
+  and returns new byte arrays broken at message boundaries."
+  []
+  (fn [step]
+    (let [state (volatile! {:bytes-required hdr-len,
+                            :b-arr          (byte-array 0)})]
+      (fn
+         ([] step)
+         ([result] (step result))
+         ([result input]
+          (let [arr (util/cat-byte-array (:b-arr @state) input)]
+            (if (< (count arr) (:bytes-required @state))
+              (do ; not enough bytes available
+                (vreset! state {:bytes-required (- (:bytes-required @state) (count input)),
+                                :b-arr          arr})
+                result)
+              (loop [n-arr arr
+                     bytes-avail (count n-arr)] ; as much bytes as we need.
+                (when (>= bytes-avail hdr-len)
+                  (vreset! state {:bytes-required (+ hdr-len (parse-fixed-header n-arr)),
+                                  :b-arr          n-arr}))
+                (if (>= bytes-avail (:bytes-required @state))
+                  (let [msg (util/byte-array-head n-arr (:bytes-required @state))
+                        b-rest (util/byte-array-rest n-arr (:bytes-required @state))
+                        n-bytes-avail (count b-rest)]
+                    (vreset! state {:bytes-required hdr-len,
+                                    :b-arr          b-rest})
+                    (let [rtn (step result msg)]
+                      (if (>= n-bytes-avail (:bytes-required @state))
+                        (recur b-rest n-bytes-avail)
+                        rtn)))
+                  result))
+           )))))))

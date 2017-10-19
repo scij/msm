@@ -22,15 +22,15 @@
   been read.
   out-chan is a channel where the buffer is sent
   event is the NORM event containing the input stream handle."
-  [out-chan event]
+  [session stream out-chan]
   (go-loop [buffer (byte-array buf-size)
-            bytes-read (norm/read-stream (:object event) buffer buf-size)]
-    (mon/record-bytes-received (:session event) bytes-read)
+            bytes-read (norm/read-stream stream buffer buf-size)]
+    (mon/record-bytes-received session bytes-read)
     (log/tracef "message received, len=%d" bytes-read)
     (when (pos? bytes-read)
       (>! out-chan (util/byte-array-head buffer bytes-read))
       (let [nbuf (byte-array buf-size)]
-        (recur nbuf (norm/read-stream (:object event) nbuf buf-size))))))
+        (recur nbuf (norm/read-stream stream nbuf buf-size))))))
 
 (defn close-receiver
   "Closes and gracefully stops the session. Releases all NORM resources and closes the
@@ -44,6 +44,32 @@
   (norm/destroy-session session)
   (mon/unregister session)
   (close! out-chan))
+
+(defn stream-handler
+  "Handles receiving from a particular stream."
+  ; todo This will send byte arrays from different streams to the same chan
+  ; solution could be to turn bytes->message into a transducer
+  ; and pass the transducer down which would maintain decoupling
+  ; of layers
+  [session stream event-chan out-chan]
+  (norm/seek-message-start stream)
+  (let [ec-tap (chan 5)]
+    (tap event-chan ec-tap)
+    (go-loop [event (<! ec-tap)]
+      (if event
+        (if (and (= session (:session event))
+                 (= stream (:object event)))
+          (case (:event-type event-chan)
+            :rx-object-updated
+            (do
+              (receive-data session stream out-chan)
+              (recur (<! ec-tap)))
+            (:rx-object-completed :rx-object-aborted)
+            (log/info "Stream closed" (norm/event->str event))
+            ;default
+            (recur (<! ec-tap)))
+          (recur (<! ec-tap)))
+        (untap event-chan ec-tap)))))
 
 (defn receiver-handler
   "Handles NORM-Events that relate to received messages. Hook this
@@ -76,18 +102,9 @@
             :rx-object-new
             (do
               (log/info "New stream opened:" (norm/event->str event))
-              ;; todo multi sender: handle new stream here.
+              (stream-handler session (:object event) event-chan out-chan)
               ;; Maybe we should start a new go-loop to handle :rx-object-updated for
               ;; one particular stream.
-              (norm/seek-message-start (:object event))
-              (recur (<! ec-tap)))
-            :rx-object-updated
-            (do
-              (receive-data out-chan event)
-              (recur (<! ec-tap)))
-            (:rx-object-completed :rx-object-aborted)
-            (do
-              (log/info "stream terminated:" (norm/event->str event))
               (recur (<! ec-tap)))
             :event-invalid ;; happens when the instance is unexpectedly shut down
             (close! out-chan)

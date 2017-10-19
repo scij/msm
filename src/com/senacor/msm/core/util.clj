@@ -90,6 +90,24 @@ byte.  Works for chars as well."
       (System/arraycopy b-arr 0 result 0 len)
       result)))
 
+(defn byte-array-equal
+  "Returns true if the content of two byte arrays matches"
+  [ba1 ba2]
+  (or
+    (= ba1 ba2)
+    (and
+      (= (count ba1) (count ba2))
+      (not (nil? ba1))
+      (not (nil? ba2))
+      (loop [i 0
+             b1 (get ba1 i)
+             b2 (get ba2 i)]
+        (if (= b1 b2)
+          (if (= i (count ba1))
+            true
+            (recur (inc i) (get ba1 i) (get ba2 i)))
+          false)))))
+
 (defn take-string
   "Reads a string from a byte buffer. The first variant reads
   a one byte length field from the buffer, the second takes

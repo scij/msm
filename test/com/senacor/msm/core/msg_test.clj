@@ -147,124 +147,89 @@
       (is (= "hi" (<!! c)))
       (is (nil? (<!! c))))))
 
-(deftest test-process-message
-  (testing "One message, one buffer"
-    (let [fix (.array (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip))
-          out-chan (chan 1)]
-      (process-message start-state fix out-chan)
-      (is (= fix-msg (<!! out-chan)))
-      ))
-  (testing "one message, short buffer"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip)
-          out-chan (chan 1)
-          arr1 (util/byte-array-head (.array fix) 10)]
-      (is (= parse-var-header (:parse-fn (process-message start-state
-                                                          arr1
-                                                          out-chan))))
-      ))
-  (testing "one message, split buffer"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip)
-          out-chan (chan 1)
-          arr1 (util/byte-array-head (.array fix) 10)
-          arr2 (util/byte-array-rest (.array fix) 10)
-          state (process-message start-state arr1 out-chan)]
-      (is (= parse-fixed-header (:parse-fn (process-message state
-                                                            arr2
-                                                            out-chan))))
-      (is (= fix-msg (<!! out-chan)))
-      ))
-  (testing "two messages, one buffer"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer (* 2 fix-buflen)) :no-flip)
-          out-chan (chan 2)]
-      (fill-buffer-with-testdata fix :flip)
-      (is (= parse-fixed-header (:parse-fn (process-message start-state
-                                                            (.array fix)
-                                                            out-chan))))
-      (is (= fix-msg (<!! out-chan)))
-      (is (= fix-msg (<!! out-chan)))
-      ))
-  (testing "one message with some rest"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer (+ fix-buflen 2)) :no-flip)
-          out-chan (chan 1)]
-      (bb/put-byte fix (byte \M))
-      (bb/put-byte fix (byte \X))
-      (.flip fix)
-      (is (= "MX" (String. ^bytes (:rest-arr (process-message start-state
-                                                              (.array fix)
-                                                              out-chan)))))
-      (is (= fix-msg (<!! out-chan)))
-      ))
-  )
-
-(defn split-buffer-test
-  [pos]
-  (testing (str "at pos " pos)
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer 28) :no-flip)
-          arr1 (util/byte-array-head (.array fix) pos)
-          arr2 (util/byte-array-rest (.array fix) pos)
-          out-chan (chan 1)
-          in-chan (chan 2)]
-      (>!! in-chan arr1)
-      (>!! in-chan arr2)
-      (bytes->Messages in-chan out-chan)
-      out-chan)
-    )
-  )
-
-(deftest test-message-receiver
-  (testing "receive one message, one buffer"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer 28) :no-flip)
-          in-chan (chan 1)
-          out-chan (chan 1)]
-      (is (= out-chan (bytes->Messages in-chan out-chan)))
-      (>!! in-chan (.array fix))
-      (is (= fix-msg (<!! out-chan)))
-      ))
-  (testing "one message, split in two parts"
-    (testing "at section boundary"
-      (is (= fix-msg (<!! (split-buffer-test 10)))))
-    (testing "in fixed header"
-      (is (= fix-msg (<!! (split-buffer-test 5)))))
-    (testing "in var header"
-      (is (= fix-msg (<!! (split-buffer-test 14)))))
-    (testing "in uuid"
-      (is (= fix-msg (<!! (split-buffer-test 19)))))
-    (testing "in payload"
-      (is (= fix-msg (<!! (split-buffer-test 24)))))
-    )
-  (testing "two messages, one buffer"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer (* 2 fix-buflen)) false)
-          in-chan (chan 2)
-          out-chan (chan 2)]
-      (fill-buffer-with-testdata fix :no-flip)
-      (bytes->Messages in-chan out-chan)
-      (>!! in-chan (.array fix))
-      (is (= fix-msg (<!! out-chan)))
-      (is (= fix-msg (<!! out-chan)))
-      )
-    )
-  (testing "two messages, two buffers"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip)
-          in-chan (chan 2)
-          out-chan (chan 2)]
-      (bytes->Messages in-chan out-chan)
-      (>!! in-chan (.array fix))
-      (>!! in-chan (.array fix))
-      (is (= fix-msg (<!! out-chan)))
-      (is (= fix-msg (<!! out-chan)))
-      )
-    )
-  (testing "close channel"
-    (let [fix (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip)
-          in-chan (chan 2)
-          out-chan (chan 2)]
-      (bytes->Messages in-chan out-chan)
-      (>!! in-chan (.array fix))
-      (close! in-chan)
-      (is (= fix-msg (<!! out-chan)))
-      (is (nil? (<!! out-chan)))
-      )
-    )
+(deftest test-align-buffer
+  (testing "One array - one message"
+    (let [fix (.array (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) true))]
+      (is (util/byte-array-equal (first (into [] (align-byte-arrays) [fix])) fix))))
+  (testing "one array - two messages"
+    (let [fix (byte-array (* 2 fix-buflen))
+          one-fix (byte-array fix-buflen)
+          buf (ByteBuffer/wrap fix)]
+      (fill-buffer-with-testdata buf :no-flip)
+      (fill-buffer-with-testdata buf)
+      (fill-buffer-with-testdata (ByteBuffer/wrap one-fix))
+      (is (= 2 (count (into [] (align-byte-arrays) [fix]))))
+      (is (= fix-buflen (count (first (into [] (align-byte-arrays) [fix])))))
+      (is (= fix-buflen (count (second (into [] (align-byte-arrays) [fix])))))
+      (is (util/byte-array-equal (first (into [] (align-byte-arrays) [fix])) one-fix))
+      (is (util/byte-array-equal (second (into [] (align-byte-arrays) [fix])) one-fix))))
+  (testing "two arrays with each one message"
+    (let [f1 (byte-array fix-buflen)
+          f2 (byte-array fix-buflen)]
+      (fill-buffer-with-testdata (ByteBuffer/wrap f1))
+      (fill-buffer-with-testdata (ByteBuffer/wrap f2))
+      (is (= 2 (count (into [] (align-byte-arrays) [f1 f2]))))
+      (is (= fix-buflen (count (first (into [] (align-byte-arrays) [f1 f2])))))
+      (is (= fix-buflen (count (second (into [] (align-byte-arrays) [f1 f2])))))
+      (is (util/byte-array-equal (first (into [] (align-byte-arrays) [f1 f2])) f1))
+      (is (util/byte-array-equal (second (into [] (align-byte-arrays) [f1 f2])) f2))))
+  (testing "two arrays message split directly behind header"
+    (let [fix (byte-array (* 2 fix-buflen))
+          one-fix (byte-array fix-buflen)
+          buf (ByteBuffer/wrap fix)]
+      (fill-buffer-with-testdata buf :no-flip)
+      (fill-buffer-with-testdata buf)
+      (fill-buffer-with-testdata (ByteBuffer/wrap one-fix))
+      (let [f1 (util/byte-array-head fix 10)
+            f2 (util/byte-array-rest fix 10)]
+        (is (= 2 (count (into [] (align-byte-arrays) [f1 f2]))))
+        (is (= fix-buflen (count (first (into [] (align-byte-arrays) [f1 f2])))))
+        (is (= fix-buflen (count (second (into [] (align-byte-arrays) [f1 f2])))))
+        (is (util/byte-array-equal (first (into [] (align-byte-arrays) [f1 f2])) one-fix))
+        (is (util/byte-array-equal (second (into [] (align-byte-arrays) [f1 f2])) one-fix)))))
+  (testing "two arrays message split inside header"
+    (let [fix (byte-array (* 2 fix-buflen))
+          one-fix (byte-array fix-buflen)
+          buf (ByteBuffer/wrap fix)]
+      (fill-buffer-with-testdata buf :no-flip)
+      (fill-buffer-with-testdata buf)
+      (fill-buffer-with-testdata (ByteBuffer/wrap one-fix))
+      (let [f1 (util/byte-array-head fix 5)
+            f2 (util/byte-array-rest fix 5)]
+        (is (= 2 (count (into [] (align-byte-arrays) [f1 f2]))))
+        (is (= fix-buflen (count (first (into [] (align-byte-arrays) [f1 f2])))))
+        (is (= fix-buflen (count (second (into [] (align-byte-arrays) [f1 f2])))))
+        (is (util/byte-array-equal (first (into [] (align-byte-arrays) [f1 f2])) one-fix))
+        (is (util/byte-array-equal (second (into [] (align-byte-arrays) [f1 f2])) one-fix)))))
+  (testing "two arrays message split inside payload"
+    (let [fix (byte-array (* 2 fix-buflen))
+          one-fix (byte-array fix-buflen)
+          buf (ByteBuffer/wrap fix)]
+      (fill-buffer-with-testdata buf :no-flip)
+      (fill-buffer-with-testdata buf)
+      (fill-buffer-with-testdata (ByteBuffer/wrap one-fix))
+      (let [f1 (util/byte-array-head fix 20)
+            f2 (util/byte-array-rest fix 20)]
+        (is (= 2 (count (into [] (align-byte-arrays) [f1 f2]))))
+        (is (= fix-buflen (count (first (into [] (align-byte-arrays) [f1 f2])))))
+        (is (= fix-buflen (count (second (into [] (align-byte-arrays) [f1 f2])))))
+        (is (util/byte-array-equal (first (into [] (align-byte-arrays) [f1 f2])) one-fix))
+        (is (util/byte-array-equal (second (into [] (align-byte-arrays) [f1 f2])) one-fix)))))
+  (testing "three arrays message split inside payload"
+    (let [fix (byte-array (* 2 fix-buflen))
+          one-fix (byte-array fix-buflen)
+          buf (ByteBuffer/wrap fix)]
+      (fill-buffer-with-testdata buf :no-flip)
+      (fill-buffer-with-testdata buf)
+      (fill-buffer-with-testdata (ByteBuffer/wrap one-fix))
+      (let [f1 (util/byte-array-head fix 15)
+            f2 (util/byte-array-head (util/byte-array-rest fix 15) 25)
+            f3 (util/byte-array-rest fix 40)]
+        (is (= 2 (count (into [] (align-byte-arrays) [f1 f2 f3]))))
+        (is (= fix-buflen (count (first (into [] (align-byte-arrays) [f1 f2 f3])))))
+        (is (= fix-buflen (count (second (into [] (align-byte-arrays) [f1 f2 f3])))))
+        (is (util/byte-array-equal (first (into [] (align-byte-arrays) [f1 f2 f3])) one-fix))
+        (is (util/byte-array-equal (second (into [] (align-byte-arrays) [f1 f2 f3])) one-fix)))))
   )
 
 (deftest test-label-match
@@ -325,11 +290,8 @@
           out-chan (chan 4)]
       (.put fix (util/byte-array-head (.array trunc) 10))
       (fill-buffer-with-testdata fix)
-      (bytes->Messages in-chan out-chan)
-      (>!! in-chan (.array fix))
-      (close! in-chan)
-      (is (= fix-msg (<!! out-chan)))
-      (is (nil? (<!! out-chan)))
+      (is (= fix-msg (first (into [] (align-byte-arrays) [(.array fix)]))))
+      (is (= 1 (count (into [] (align-byte-arrays) [(.array fix)]))))
       ))
   (testing "Msg - Trunk Msg - Msg - Msg"
     (let [bb (bb/byte-buffer (* fix-buflen 20))
@@ -341,30 +303,7 @@
                       (bb/put-byte (byte \a)))
       (fill-buffer-with-testdata fix :no-flip)
       (fill-buffer-with-testdata fix)
-      (bytes->Messages in-chan out-chan)
-      (>!! in-chan (.array fix))
-      (close! in-chan)
-      (is (= fix-msg (<!! out-chan)))
-      (is (= fix-msg (<!! out-chan)))
-      (is (nil? (<!! out-chan)))
-      ))
-  (testing "2 buffers - msg trunk msg msg"
-    (let [fix1 (fill-buffer-with-testdata (bb/byte-buffer (* fix-buflen 3)) :no-flip)
-          fix2 (fill-buffer-with-testdata (bb/byte-buffer (* fix-buflen 3)) :no-flip)
-          in-chan (chan 2)
-          out-chan (chan 2)]
-      (bytes->Messages in-chan out-chan)
-      (bb/with-buffer fix1
-                      (bb/put-byte (byte \a))
-                      (bb/put-byte (byte \a)))
-      (>!! in-chan (.array fix1))
-      (fill-buffer-with-testdata fix2)
-      (>!! in-chan (.array fix2))
-      (close! in-chan)
-      (is (= fix-msg (<!! out-chan)))
-      (is (= fix-msg (<!! out-chan)))
-      (is (= fix-msg (<!! out-chan)))
-      (is (nil? (<!! out-chan)))
+      (is (= 2 (count (into [] (align-byte-arrays) [(.array fix)]))))
       ))
     )
 

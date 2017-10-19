@@ -150,3 +150,21 @@
       (bb/take-byte buf)
       (is (= "" (take-string buf))))))
 
+(deftest test-byte-array-equal
+  (testing "equal"
+    (is (byte-array-equal (.getBytes "hallo") (.getBytes "hallo")))
+    (is (byte-array-equal (.getBytes "h") (.getBytes "h")))
+    (is (byte-array-equal (.getBytes "hällöchen") (.getBytes "hällöchen")))
+    (is (byte-array-equal nil nil))
+    (is (byte-array-equal (.getBytes "") (.getBytes "")))
+    )
+  (testing "not equal"
+    (is (not (byte-array-equal (.getBytes "hallo") (.getBytes "hallö"))))
+    (is (not (byte-array-equal (.getBytes "hi") (.getBytes "ho"))))
+    (is (not (byte-array-equal (.getBytes "") (.getBytes "hallo"))))
+    (is (not (byte-array-equal (.getBytes "hallo") (.getBytes ""))))
+    (is (not (byte-array-equal (.getBytes "hallo") nil)))
+    (is (not (byte-array-equal nil (.getBytes "hallo"))))
+    (is (not (byte-array-equal (.getBytes "hallo") (.getBytes "hall"))))
+    (is (not (byte-array-equal (.getBytes "") nil)))
+    ))
