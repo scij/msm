@@ -3,7 +3,7 @@
             [com.senacor.msm.core.control :as c]
             [com.senacor.msm.core.monitor :as mon]
             [com.senacor.msm.core.util :as util]
-            [clojure.core.async :refer [>!! >! <! tap untap go-loop chan close!]]
+            [clojure.core.async :refer [>!! >! <! tap admix unmix mix untap go go-loop chan close!]]
             [clojure.tools.logging :as log])
   (:import (java.nio ByteBuffer)
            (mil.navy.nrl.norm.enums NormSyncPolicy)))
@@ -46,28 +46,34 @@
   (close! out-chan))
 
 (defn stream-handler
-  "Handles receiving from a particular stream."
-  ; todo This will send byte arrays from different streams to the same chan
-  ; solution could be to turn bytes->message into a transducer
-  ; and pass the transducer down which would maintain decoupling
-  ; of layers
-  [session stream event-chan out-chan]
+  "Handles receiving from a particular stream. It scans the event chan
+  for rx-object-updated events carrying the correct session and stream id,
+  reads byte arrays and sends them to stream-chan
+  session NORM session
+  stream NORM stream being handled
+  event-chan NORM events
+  out-mix is the chan where all stream channels are mixed.
+  stream-chan the stream output channel."
+  [session stream event-chan out-mix stream-chan]
+  (log/debug "Enter stream handler" session stream)
   (norm/seek-message-start stream)
-  (let [ec-tap (chan 5)]
+  (let [ec-tap (chan 5 (filter #(and (= session (:session %))
+                                     (= stream (:object %)))))]
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
+      (log/trace "next event" (norm/event->str event-chan))
       (if event
-        (if (and (= session (:session event))
-                 (= stream (:object event)))
-          (case (:event-type event-chan)
-            :rx-object-updated
-            (do
-              (receive-data session stream out-chan)
-              (recur (<! ec-tap)))
-            (:rx-object-completed :rx-object-aborted)
-            (log/info "Stream closed" (norm/event->str event))
-            ;default
+        (case (:event-type event)
+          :rx-object-updated
+          (do
+            (log/trace "Stream new data:" (norm/event->str event))
+            (receive-data session stream stream-chan)
             (recur (<! ec-tap)))
+          (:rx-object-completed :rx-object-aborted)
+          (do
+            (log/info "Stream closed:" (norm/event->str event))
+            (unmix out-mix stream-chan))
+          ;default
           (recur (<! ec-tap)))
         (untap event-chan ec-tap)))))
 
@@ -79,9 +85,12 @@
   event-chan is the control loop event channel.
   out-chan is the channel where received data will be written. The channel
     will contain byte arrays. Due to datagram length restrictions a block sent
-    my be received in multiple blocks."
-  [session event-chan out-chan]
-  (let [ec-tap (chan 5)]
+    my be received in multiple blocks.
+  message-builder is a transducer that builds messages from a sequence of
+    byte arrays."
+  [session event-chan out-chan message-builder]
+  (let [ec-tap (chan 5)
+        out-mix (mix out-chan)]
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
       (if event
@@ -100,13 +109,12 @@
               (log/info "Remote sender inactive" (norm/event->str event))
               (recur (<! ec-tap)))
             :rx-object-new
-            (do
-              (log/info "New stream opened:" (norm/event->str event))
-              (stream-handler session (:object event) event-chan out-chan)
-              ;; Maybe we should start a new go-loop to handle :rx-object-updated for
-              ;; one particular stream.
+            (let [stream-chan (chan 5 message-builder)]
+              (admix out-mix stream-chan)
+              (log/info "Stream opened:" (norm/event->str event))
+              (stream-handler session (:object event) event-chan out-mix stream-chan)
               (recur (<! ec-tap)))
-            :event-invalid ;; happens when the instance is unexpectedly shut down
+            :event-invalid                                ;; happens when the instance is unexpectedly shut down
             (close! out-chan)
             ;; default
             (recur (<! ec-tap)))
@@ -114,7 +122,7 @@
         (do
           (log/trace "Exit receiver event loop")
           (untap event-chan ec-tap)))))
-    session)
+  session)
 
 (defn create-receiver
   "Creates a receiver participant in a NORM communication. Returns
@@ -126,8 +134,9 @@
   out-chan is the channel where the receiver posts the received
     messages. The channel contains byte arrays which may be broken
     at datagram boundaries and do not necessarily match the blocks
-    sent"
-  [session event-chan out-chan
+    sent
+  message-builder is a transducer that combines byte-arrays to messages."
+  [session event-chan out-chan message-builder
    & {:keys [cache-limit socket-buffer silent]}]
   (when cache-limit
     (norm/set-rx-cache-limit session cache-limit))
@@ -137,5 +146,5 @@
     (norm/set-silent-receiver session true silent))
   (norm/start-receiver session (* 10 buf-size))
   (norm/set-default-sync-policy session :stream)
-  (receiver-handler session event-chan out-chan)
+  (receiver-handler session event-chan out-chan message-builder)
   (partial close-receiver session out-chan))

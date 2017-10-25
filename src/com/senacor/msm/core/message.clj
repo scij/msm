@@ -206,3 +206,7 @@
         [label corr-id] (parse-var-header buf)
         payload (parse-payload payload-len buf)]
   (create-message label corr-id payload)))
+
+(def message-rebuilder
+  (comp (align-byte-arrays)
+        (map parse-message)))

@@ -1,9 +1,10 @@
 (ns com.senacor.msm.core.receiver-test
   (:require [clojure.test :refer :all]
-            [clojure.core.async :refer [chan close! mult poll! timeout <!! >!!]]
+            [clojure.core.async :refer [chan close! mult poll! mix admix timeout <!! >!!]]
             [com.senacor.msm.core.receiver :refer :all]
             [com.senacor.msm.core.norm-api :as norm]
-            [com.senacor.msm.core.monitor :as monitor]))
+            [com.senacor.msm.core.monitor :as monitor]
+            [com.senacor.msm.core.monitor :as mon]))
 
 (deftest test-receive-data
   (testing "one single message"
@@ -13,7 +14,7 @@
                                             5)
                        #'monitor/record-bytes-received (fn [_ _])}
         #(do
-           (receive-data out-chan {:object 1})
+           (receive-data 1 1 out-chan)
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
            )))
     )
@@ -33,7 +34,7 @@
                                                   :else 0))
                        #'monitor/record-bytes-received (fn [_ _])}
         #(do
-           (receive-data out-chan {:object 1})
+           (receive-data 1 1 out-chan)
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
@@ -43,6 +44,64 @@
         )))
   )
 
+(deftest test-stream-handler
+  (testing "one message one matching event"
+    (let [session 1
+          stream :stream
+          event-chan (chan 2)
+          out-chan (chan 2)
+          out-mix (mix out-chan)
+          stream-chan (chan 2)]
+      (with-redefs-fn {#'receive-data (fn [_ _ c] (>!! c "hallo")),
+                       #'norm/seek-message-start (fn [_] true)}
+        #(do
+           (admix out-mix stream-chan)
+           (stream-handler session stream (mult event-chan) out-mix stream-chan)
+           (>!! event-chan {:session session :object stream :event-type :rx-object-updated})
+           (>!! event-chan {:session session :object stream :event-type :rx-object-completed})
+           (close! event-chan)
+           (is (= "hallo" (<!! out-chan)))
+           (is (nil? (poll! out-chan)))))))
+  (testing "one message, event session not matching"
+    (let [session 1
+          stream :stream
+          event-chan (chan 2)
+          out-chan (chan 2)
+          out-mix (mix out-chan)
+          stream-chan (chan 2)]
+      (with-redefs-fn {#'receive-data (fn [_ _ c] (>!! c "hallo")),
+                       #'norm/seek-message-start (fn [_] true)}
+        #(do
+            (admix out-mix stream-chan)
+            (stream-handler session stream (mult event-chan) out-mix stream-chan)
+            (>!! event-chan {:session 0, :object stream, :event-type :rx-object-updated})
+            (is (nil? (poll! out-chan)))
+            (>!! event-chan {:session session, :object stream, :event-type :rx-object-completed})
+            (close! event-chan)))))
+  (testing "one message, event stream not matching"
+    (let [session 1
+          stream :stream
+          event-chan (chan 2)
+          out-chan (chan 2)
+          out-mix (mix out-chan)
+          stream-chan (chan 2)]
+      (with-redefs-fn {#'receive-data (fn [_ _ c] (>!! c "hallo")),
+                       #'norm/seek-message-start (fn [_] true)}
+        #(do
+            (admix out-mix stream-chan)
+            (stream-handler session stream (mult event-chan) out-mix stream-chan)
+            (>!! event-chan {:session session, :object 0, :event-type :rx-object-updated})
+            (is (nil? (poll! out-chan)))
+            (>!! event-chan {:session session, :object stream, :event-type :rx-object-completed})
+            (close! event-chan)))))
+  )
+
+(def bytearray-fx
+  (map (fn [^bytes b] (String. b))))
+
+(def nil-fx
+  (map (fn [x] x)))
+
 (deftest test-receiver-handler
   (testing "handle immediate close without an event"
     (let [session 1
@@ -50,9 +109,9 @@
           out-chan (chan)]
       (with-redefs-fn {#'close-receiver (fn [session out-chan]
                                         (>!! out-chan :stopped))
-                       #'receive-data   (fn [_ _])}
+                       #'receive-data   (fn [_ _ _])}
         #(do
-           (receiver-handler session (mult event-chan) out-chan)
+           (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (close! event-chan)
            (is (nil? (poll! out-chan)))
            ))))
@@ -62,9 +121,9 @@
           out-chan (chan)]
       (with-redefs-fn {#'close-receiver (fn [session out-chan]
                                         (>!! out-chan :stopped))
-                       #'receive-data   (fn [_ _])}
+                       #'receive-data   (fn [_ _ _])}
         #(do
-           (receiver-handler session (mult event-chan) out-chan)
+           (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (>!! event-chan {:session session :event-type :event-invalid})
            (is (nil? (<!! out-chan)))
            ))))
@@ -72,9 +131,9 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'receive-data   (fn [_ _])}
+      (with-redefs-fn {#'receive-data   (fn [_ _ _])}
         #(do
-           (receiver-handler session (mult event-chan) out-chan)
+           (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (>!! event-chan {:session session :event-type :rx-object-aborted})
            (is (nil? (poll! out-chan)))
            ))))
@@ -82,9 +141,9 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'receive-data   (fn [_ _])}
+      (with-redefs-fn {#'receive-data   (fn [_ _ _])}
         #(do
-           (receiver-handler session (mult event-chan) out-chan)
+           (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (>!! event-chan {:session session :event-type :rx-object-completed})
            (is (nil? (poll! out-chan)))
            ))))
@@ -93,10 +152,10 @@
           event-chan (chan 1)
           out-chan (timeout 100)]
       (with-redefs-fn {#'close-receiver (fn [_ _])
-                       #'receive-data   (fn [_ _]
+                       #'receive-data   (fn [_ _ _]
                                         (>!! out-chan :received))}
         #(do
-           (receiver-handler session (mult event-chan) out-chan)
+           (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (>!! event-chan {:session session :event-type :unknown})
            (is (= nil (poll! out-chan)))
            (>!! event-chan {:session session :event-type :rx-object-completed})
@@ -105,24 +164,39 @@
   (testing "handle different session for close"
     (let [session 1
           event-chan (chan 1)
-          out-chan (timeout 100)]
+          out-chan (timeout 100)
+          ctl-chan (chan 1)]
       (with-redefs-fn {#'receive-data   (fn [_ _])}
         #(do
-           (receiver-handler session (mult event-chan) out-chan)
+           (receiver-handler session (mult event-chan) out-chan nil-fx)
            (>!! event-chan {:session (inc session) :event-type :rx-object-completed})
            (is (nil? (poll! out-chan)))
            ))))
   (testing "receive some data"
-    (let [session 1
-          event-chan (chan 1)
-          out-chan (chan 1)]
-      (with-redefs-fn {#'close-receiver (fn [_ _])
-                       #'receive-data   (fn [_ _]
-                                        (>!! out-chan :data))}
+    (let [session "sess"
+          stream :stream
+          event-chan (chan 5)
+          out-chan (chan 5)
+          ctl-chan (timeout 1000)]
+      (with-redefs-fn {#'close-receiver (fn [_ _]),
+                       #'receive-data   (fn [_ _ c]
+                                          (>!! c :data)),
+                       #'norm/seek-message-start (fn [_]
+                                                   (>!! ctl-chan :ready)
+                                                   true)}
         #(do
-           (receiver-handler session (mult event-chan) out-chan)
-           (>!! event-chan {:session session :event-type :rx-object-updated})
-           (is (= :data (<!! out-chan)))
+           (receiver-handler session (mult event-chan) out-chan nil-fx)
+           (>!! event-chan {:session session,
+                            :object stream,
+                            :event-type :rx-object-new})
+           (is (not (nil? (<!! ctl-chan)))) ; block until stream-handler is started
+           (>!! event-chan {:session session,
+                            :object stream,
+                            :event-type :rx-object-updated})
+           (>!! event-chan {:session session,
+                            :object stream,
+                            :event-type :rx-object-completed})
            (close! event-chan)
+           (is (= :data (<!! out-chan)))
            ))))
   )

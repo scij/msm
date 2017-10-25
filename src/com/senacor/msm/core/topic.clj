@@ -1,5 +1,5 @@
 (ns com.senacor.msm.core.topic
-  (:require [clojure.core.async :refer [chan]]
+  (:require [clojure.core.async :refer [chan pipeline]]
             [com.senacor.msm.core.message :as message]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.receiver :as receiver]
@@ -15,10 +15,7 @@
   event-chan is a mult channel with events from the instance control receiver.
   msg-chan is the channel where the accepted messages will be sent."
   [session subscription event-chan msg-chan]
-  (let [bytes-chan (chan 5)]
-    (receiver/create-receiver session event-chan bytes-chan)
-    (message/bytes->Messages bytes-chan msg-chan)
-    ))
+  (receiver/create-receiver session event-chan msg-chan message/message-rebuilder))
 
 
 (defn create-session
