@@ -4,7 +4,8 @@
             [com.senacor.msm.core.receiver :refer :all]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.monitor :as monitor]
-            [com.senacor.msm.core.monitor :as mon]))
+            [com.senacor.msm.core.monitor :as mon]
+            [clojure.tools.logging :as log]))
 
 (deftest test-receive-data
   (testing "one single message"
@@ -46,6 +47,7 @@
 
 (deftest test-stream-handler
   (testing "one message one matching event"
+    (println "At" *testing-contexts*)
     (let [session 1
           stream :stream
           event-chan (chan 2)
@@ -63,6 +65,7 @@
            (is (= "hallo" (<!! out-chan)))
            (is (nil? (poll! out-chan)))))))
   (testing "one message, event session not matching"
+    (println "At" *testing-contexts*)
     (let [session 1
           stream :stream
           event-chan (chan 2)
@@ -79,6 +82,7 @@
             (>!! event-chan {:session session, :object stream, :event-type :rx-object-completed})
             (close! event-chan)))))
   (testing "one message, event stream not matching"
+    (println "At" *testing-contexts*)
     (let [session 1
           stream :stream
           event-chan (chan 2)
@@ -104,6 +108,7 @@
 
 (deftest test-receiver-handler
   (testing "handle immediate close without an event"
+    (println "At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (chan)]
@@ -116,6 +121,7 @@
            (is (nil? (poll! out-chan)))
            ))))
   (testing "handle closing instance"
+    (println "At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (chan)]
@@ -128,6 +134,7 @@
            (is (nil? (<!! out-chan)))
            ))))
   (testing "handle closing stream (aborted)"
+    (println "At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
@@ -138,6 +145,7 @@
            (is (nil? (poll! out-chan)))
            ))))
   (testing "handle closing stream (complete)"
+    (println "At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
@@ -148,6 +156,7 @@
            (is (nil? (poll! out-chan)))
            ))))
   (testing "handle unknown event type"
+    (println "At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
@@ -162,6 +171,7 @@
            (<!! out-chan)
            ))))
   (testing "handle different session for close"
+    (println "At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)
@@ -173,6 +183,7 @@
            (is (nil? (poll! out-chan)))
            ))))
   (testing "receive some data"
+    (println "At" *testing-contexts*)
     (let [session "sess"
           stream :stream
           event-chan (chan 5)
@@ -189,6 +200,7 @@
            (>!! event-chan {:session session,
                             :object stream,
                             :event-type :rx-object-new})
+           ; todo race condition here
            (is (not (nil? (<!! ctl-chan)))) ; block until stream-handler is started
            (>!! event-chan {:session session,
                             :object stream,

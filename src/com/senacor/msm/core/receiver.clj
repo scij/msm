@@ -56,10 +56,10 @@
   stream-chan the stream output channel."
   [session stream event-chan out-mix stream-chan]
   (log/debug "Enter stream handler" session stream)
-  (norm/seek-message-start stream)
   (let [ec-tap (chan 5 (filter #(and (= session (:session %))
                                      (= stream (:object %)))))]
     (tap event-chan ec-tap)
+    (norm/seek-message-start stream)
     (go-loop [event (<! ec-tap)]
       (log/trace "next event" (norm/event->str event-chan))
       (if event

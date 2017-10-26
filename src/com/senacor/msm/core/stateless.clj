@@ -115,7 +115,6 @@
                             (partial receiver-status-housekeeping session session-receivers receiver-count my-session-index))
     (command/command-receiver session event-chan cmd-chan-in)
     (receiver/create-receiver session event-chan msg-chan message/message-rebuilder)
-    ; todo which variant is more efficient?
     ; todo message-rebuilder und filter composen
     ;(pipeline 1 msg-chan (filter (partial is-my-messages subscription my-session-index receiver-count)) raw-msg-chan)
     (go-loop [msg (<! raw-msg-chan)]

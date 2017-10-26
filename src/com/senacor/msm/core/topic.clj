@@ -17,7 +17,6 @@
   [session subscription event-chan msg-chan]
   (receiver/create-receiver session event-chan msg-chan message/message-rebuilder))
 
-
 (defn create-session
   "Create a topic session consuming matching messages in specified session
   instance is the NORM instance handle
