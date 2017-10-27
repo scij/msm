@@ -1,6 +1,6 @@
 (ns com.senacor.msm.core.receiver-test
   (:require [clojure.test :refer :all]
-            [clojure.core.async :refer [chan close! mult poll! mix admix timeout <!! >!!]]
+            [clojure.core.async :refer [chan close! mult poll! mix admix tap timeout <!! >!!]]
             [com.senacor.msm.core.receiver :refer :all]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.monitor :as monitor]
@@ -53,8 +53,13 @@
           event-chan (chan 2)
           out-chan (chan 2)
           out-mix (mix out-chan)
-          stream-chan (chan 2)]
-      (with-redefs-fn {#'receive-data (fn [_ _ c] (>!! c "hallo")),
+          stream-chan (chan 2)
+          count (atom 0)]
+      (with-redefs-fn {#'receive-data (fn [_ _ c]
+                                        (swap! count inc)
+                                        (if (= 1 @count)
+                                          (>!! c "hallo")
+                                          (>!! c ""))),
                        #'norm/seek-message-start (fn [_] true)}
         #(do
            (admix out-mix stream-chan)
@@ -63,7 +68,7 @@
            (>!! event-chan {:session session :object stream :event-type :rx-object-completed})
            (close! event-chan)
            (is (= "hallo" (<!! out-chan)))
-           (is (nil? (poll! out-chan)))))))
+           (is (= "" (<!! out-chan)))))))
   (testing "one message, event session not matching"
     (println "At" *testing-contexts*)
     (let [session 1
@@ -78,23 +83,6 @@
             (admix out-mix stream-chan)
             (stream-handler session stream (mult event-chan) out-mix stream-chan)
             (>!! event-chan {:session 0, :object stream, :event-type :rx-object-updated})
-            (is (nil? (poll! out-chan)))
-            (>!! event-chan {:session session, :object stream, :event-type :rx-object-completed})
-            (close! event-chan)))))
-  (testing "one message, event stream not matching"
-    (println "At" *testing-contexts*)
-    (let [session 1
-          stream :stream
-          event-chan (chan 2)
-          out-chan (chan 2)
-          out-mix (mix out-chan)
-          stream-chan (chan 2)]
-      (with-redefs-fn {#'receive-data (fn [_ _ c] (>!! c "hallo")),
-                       #'norm/seek-message-start (fn [_] true)}
-        #(do
-            (admix out-mix stream-chan)
-            (stream-handler session stream (mult event-chan) out-mix stream-chan)
-            (>!! event-chan {:session session, :object 0, :event-type :rx-object-updated})
             (is (nil? (poll! out-chan)))
             (>!! event-chan {:session session, :object stream, :event-type :rx-object-completed})
             (close! event-chan)))))

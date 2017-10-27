@@ -12,7 +12,7 @@
 ;; Receive messages across a norm stream
 ;;
 
-(def ^:const buf-size 1024)
+(def ^:const buf-size (* 1024 1024))
 
 (defn receive-data
   "Receives as much data as there is available in the NORM network buffers.
@@ -56,11 +56,15 @@
   stream-chan the stream output channel."
   [session stream event-chan out-mix stream-chan]
   (log/debug "Enter stream handler" session stream)
-  (let [ec-tap (chan 5 (filter #(and (= session (:session %))
-                                     (= stream (:object %)))))]
-    (tap event-chan ec-tap)
-    (norm/seek-message-start stream)
-    (go-loop [event (<! ec-tap)]
+  (norm/seek-message-start stream)
+  (let [stream-events (chan 5 (filter #(and (= session (:session %))
+                                            (= stream (:object %)))))]
+    (tap event-chan stream-events)
+    ; fake one event because we may have missed the first one already
+    (>!! stream-events {:event-type :rx-object-updated,
+                        :session session,
+                        :object stream})
+    (go-loop [event (<! stream-events)]
       (log/trace "next event" (norm/event->str event-chan))
       (if event
         (case (:event-type event)
@@ -68,14 +72,14 @@
           (do
             (log/trace "Stream new data:" (norm/event->str event))
             (receive-data session stream stream-chan)
-            (recur (<! ec-tap)))
+            (recur (<! stream-events)))
           (:rx-object-completed :rx-object-aborted)
           (do
             (log/info "Stream closed:" (norm/event->str event))
             (unmix out-mix stream-chan))
           ;default
-          (recur (<! ec-tap)))
-        (untap event-chan ec-tap)))))
+          (recur (<! stream-events)))
+        (untap event-chan stream-events)))))
 
 (defn receiver-handler
   "Handles NORM-Events that relate to received messages. Hook this
@@ -109,7 +113,8 @@
               (log/info "Remote sender inactive" (norm/event->str event))
               (recur (<! ec-tap)))
             :rx-object-new
-            (let [stream-chan (chan 5 message-builder)]
+            (let [stream-chan (chan 5 message-builder)
+                  ]
               (admix out-mix stream-chan)
               (log/info "Stream opened:" (norm/event->str event))
               (stream-handler session (:object event) event-chan out-mix stream-chan)
