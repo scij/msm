@@ -22,6 +22,7 @@
    ["-r" "--repeat COUNT" "Repeat message COUNT times"
     :default 1
     :parse-fn #(Integer/parseInt %)]
+   ["-a" "--autonumber" "Generate automatically numbered messages. Combine with repeat"]
    ["-s" "--tos TOS" "Type of service"
     :parse-fn #(Integer/parseInt %)]
    ["-t" "--ttl HOPS" "Number of hops"
@@ -40,10 +41,13 @@
   (System/exit 1))
 
 (defn start-message-source
-  [label message count out-chan]
+  [label message count autonumber out-chan]
   (log/tracef "Repeat send %s %d times" message count)
   (doseq [i (range count)]
-    (>!! out-chan (message/create-message label message)))
+    (>!! out-chan (message/create-message label
+                                          (if autonumber
+                                            (str message " " i)
+                                            message))))
   (close! out-chan)
   )
 
@@ -70,7 +74,7 @@
                           (:size options))
     (if (:file options)
       (start-file-message-source label (:file options) msg-chan)
-      (start-message-source label message (:repeat options) msg-chan))
+      (start-message-source label message (:repeat options) (:autonumber options) msg-chan))
     ; todo finit-norm darf erst aufgerufen werden, wenn die session geschlossen ist
     ;(control/finit-norm instance)
     ))
