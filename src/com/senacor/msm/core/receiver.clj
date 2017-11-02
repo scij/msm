@@ -113,8 +113,7 @@
               (log/info "Remote sender inactive" (norm/event->str event))
               (recur (<! ec-tap)))
             :rx-object-new
-            (let [stream-chan (chan 5 message-builder)
-                  ]
+            (let [stream-chan (chan 5 message-builder)]
               (admix out-mix stream-chan)
               (log/info "Stream opened:" (norm/event->str event))
               (stream-handler session (:object event) event-chan out-mix stream-chan)

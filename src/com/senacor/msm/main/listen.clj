@@ -9,6 +9,7 @@
             [com.senacor.msm.core.stateless :as stateless]
             [com.senacor.msm.core.topic :as topic]
             [clojure.core.async :refer [chan go-loop mult <! >!]]
+            [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
             [clojure.string :as str])
@@ -43,11 +44,22 @@
   (println summary)
   (System/exit 1))
 
-(defn- wrt
-  [writer line]
-  (when writer
-    (binding [*out* writer]
-      (println line))))
+(defn- print-to-file
+  [file-name msg-chan]
+  (let [writer (io/writer file-name)]
+      (go-loop [msg (<! msg-chan)]
+        (if msg
+          (do
+            (.write writer (prn-str msg))
+            (recur (<! msg-chan)))
+          (.close writer)))))
+
+(defn- print-to-stdout
+  [msg-chan]
+  (go-loop [msg (<! msg-chan)]
+    (when msg
+      (println msg)
+      (recur (<! msg-chan)))))
 
 (defn start-listening
   [net-spec label options]
@@ -60,14 +72,11 @@
       :stateless (stateless/create-session instance net-spec label event-chan-m msg-chan options)
       :stateful  (log/error "Stateful sessions not yet implemented")
       (topic/create-session instance net-spec label event-chan-m msg-chan options))
-    (go-loop [msg (<! msg-chan)]
-      (if msg
-        (do
-          ; todo write to file - (:output options)
-          (println msg)
-          (recur (<! msg-chan)))
-        (control/finit-norm instance)
-        ))))
+    (if (:output options)
+      (print-to-file (:output options) msg-chan)
+      (print-to-stdout msg-chan))
+    ;(control/finit-norm instance)
+    ))
 
 (defn -main
   [& args]
