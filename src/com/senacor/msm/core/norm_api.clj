@@ -713,6 +713,10 @@
 ;; NORM Nodes
 ;;
 
+(def ^:const NORM_NODE_NONE
+  "Wildcard used when ACKing is enforced. Should have been a constant in NormNode just like NORM_NODE_ANY."
+  0)
+
 (defn ^Long get-node-id
   "Return the node id of a given node."
   [^NormNode handle]

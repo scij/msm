@@ -8,12 +8,14 @@
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.stateless :as stateless]
             [com.senacor.msm.core.topic :as topic]
-            [clojure.core.async :refer [chan go-loop mult <! >!]]
+            [clojure.core.async :refer [chan go-loop mult tap untap <! >!]]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
             [clojure.string :as str])
-  (:import (org.apache.logging.log4j ThreadContext)))
+  (:import (org.apache.logging.log4j ThreadContext)
+           (mil.navy.nrl.norm NormEvent)
+           (mil.navy.nrl.norm.enums NormEventType)))
 
 (def cli-options
   [["-h" "--help"]
@@ -68,15 +70,21 @@
         msg-chan (chan 5)
         instance (control/init-norm event-chan)]
     (monitor/mon-event-loop event-chan-m)
-    (case (:receive options)
-      :stateless (stateless/create-session instance net-spec label event-chan-m msg-chan options)
-      :stateful  (log/error "Stateful sessions not yet implemented")
-      (topic/create-session instance net-spec label event-chan-m msg-chan options))
-    (if (:output options)
-      (print-to-file (:output options) msg-chan)
-      (print-to-stdout msg-chan))
-    ;(control/finit-norm instance)
-    ))
+    (let [session (case (:receive options)
+                    :stateless (stateless/create-session instance net-spec label event-chan-m msg-chan options)
+                    :stateful  (log/error "Stateful sessions not yet implemented")
+                    (topic/create-session instance net-spec label event-chan-m msg-chan options))]
+      (if (:output options)
+        (print-to-file (:output options) msg-chan)
+        (print-to-stdout msg-chan))
+      ; TODO this will never happen. No idea how to exit the listener
+      (let [ec-tap (chan 5)]
+        (tap event-chan-m ec-tap)
+        (util/wait-for-events ec-tap session #{NormEventType/NORM_EVENT_INVALID})
+        (untap event-chan-m ec-tap))
+      (control/stop-session session)
+      (control/finit-norm instance)
+      )))
 
 (defn -main
   [& args]

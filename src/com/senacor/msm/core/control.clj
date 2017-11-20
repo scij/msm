@@ -73,3 +73,10 @@
       (norm/set-rx-port-reuse session true))
     (mon/register session address port (:node-id options))
     session))
+
+(defn stop-session
+  "Stops and unregisters the session."
+  [session]
+  (norm/destroy-session session)
+  (mon/unregister session)
+  (log/trace "session closed" session))

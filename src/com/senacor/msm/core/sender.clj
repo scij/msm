@@ -16,17 +16,14 @@
 (defn stop-sender
   [session stream event-chan]
   (let [ec-tap (tap event-chan (chan 5))]
-    (log/trace "closing session")
-    (norm/add-acking-node session 0)
+    (log/trace "closing sender")
+    (norm/add-acking-node session norm/NORM_NODE_NONE)
     (norm/set-watermark session stream true)
     (util/wait-for-events ec-tap session #{:tx-watermark-completed})
     (norm/flush-stream stream true :passive)
     (norm/close-stream stream true)
     (norm/stop-sender session)
-    ; todo vielleicht brauchen wir die session noch?
-    (norm/destroy-session session)
-    (mon/unregister session)
-    (log/trace "session and stream closed")
+    (log/trace "stream closed" stream)
     (untap event-chan ec-tap)))
 
 (defn create-sender
