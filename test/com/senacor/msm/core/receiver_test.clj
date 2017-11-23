@@ -7,6 +7,12 @@
             [com.senacor.msm.core.monitor :as mon]
             [clojure.tools.logging :as log]))
 
+(def bytearray-fx
+  (map (fn [^bytes b] (String. b))))
+
+(def fx-x
+  (map (fn [x] x)))
+
 (deftest test-receive-data
   (testing "one single message"
     (let [out-chan (timeout 100)]
@@ -47,13 +53,12 @@
 
 (deftest test-stream-handler
   (testing "one message one matching event"
-    (println "At" *testing-contexts*)
+    (println "*** At" *testing-contexts*)
     (let [session 1
           stream :stream
           event-chan (chan 2)
           out-chan (chan 2)
           out-mix (mix out-chan)
-          stream-chan (chan 2)
           count (atom 0)]
       (with-redefs-fn {#'receive-data (fn [_ _ c]
                                         (swap! count inc)
@@ -62,41 +67,34 @@
                                           (>!! c ""))),
                        #'norm/seek-message-start (fn [_] true)}
         #(do
-           (admix out-mix stream-chan)
-           (stream-handler session stream (mult event-chan) out-mix stream-chan)
+           (stream-handler session stream (mult event-chan) out-mix fx-x)
            (>!! event-chan {:session session :object stream :event-type :rx-object-updated})
            (>!! event-chan {:session session :object stream :event-type :rx-object-completed})
            (close! event-chan)
            (is (= "hallo" (<!! out-chan)))
            (is (= "" (<!! out-chan)))))))
-  (testing "one message, event session not matching"
-    (println "At" *testing-contexts*)
+  (testing "one message, event session NOT matching"
+    (println "*** At" *testing-contexts*)
     (let [session 1
           stream :stream
           event-chan (chan 2)
           out-chan (chan 2)
-          out-mix (mix out-chan)
-          stream-chan (chan 2)]
+          out-mix (mix out-chan)]
       (with-redefs-fn {#'receive-data (fn [_ _ c] (>!! c "hallo")),
                        #'norm/seek-message-start (fn [_] true)}
         #(do
-            (admix out-mix stream-chan)
-            (stream-handler session stream (mult event-chan) out-mix stream-chan)
+            (stream-handler session stream (mult event-chan) out-mix fx-x)
             (>!! event-chan {:session 0, :object stream, :event-type :rx-object-updated})
+            ; stream-handler fügt vorne ein event ein, weil wir vielleicht schon eins verpasst haben.
+            (is (= "hallo" (<!! out-chan)))
             (is (nil? (poll! out-chan)))
             (>!! event-chan {:session session, :object stream, :event-type :rx-object-completed})
             (close! event-chan)))))
   )
 
-(def bytearray-fx
-  (map (fn [^bytes b] (String. b))))
-
-(def nil-fx
-  (map (fn [x] x)))
-
 (deftest test-receiver-handler
   (testing "handle immediate close without an event"
-    (println "At" *testing-contexts*)
+    (println "*** At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (chan)]
@@ -109,7 +107,7 @@
            (is (nil? (poll! out-chan)))
            ))))
   (testing "handle closing instance"
-    (println "At" *testing-contexts*)
+    (println "*** At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (chan)]
@@ -122,7 +120,7 @@
            (is (nil? (<!! out-chan)))
            ))))
   (testing "handle closing stream (aborted)"
-    (println "At" *testing-contexts*)
+    (println "*** At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
@@ -133,7 +131,7 @@
            (is (nil? (poll! out-chan)))
            ))))
   (testing "handle closing stream (complete)"
-    (println "At" *testing-contexts*)
+    (println "*** At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
@@ -144,7 +142,7 @@
            (is (nil? (poll! out-chan)))
            ))))
   (testing "handle unknown event type"
-    (println "At" *testing-contexts*)
+    (println "*** At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
@@ -159,19 +157,19 @@
            (<!! out-chan)
            ))))
   (testing "handle different session for close"
-    (println "At" *testing-contexts*)
+    (println "*** At" *testing-contexts*)
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)
           ctl-chan (chan 1)]
       (with-redefs-fn {#'receive-data   (fn [_ _])}
         #(do
-           (receiver-handler session (mult event-chan) out-chan nil-fx)
+           (receiver-handler session (mult event-chan) out-chan fx-x)
            (>!! event-chan {:session (inc session) :event-type :rx-object-completed})
            (is (nil? (poll! out-chan)))
            ))))
   (testing "receive some data"
-    (println "At" *testing-contexts*)
+    (println "*** At" *testing-contexts*)
     (let [session "sess"
           stream :stream
           event-chan (chan 5)
@@ -184,7 +182,7 @@
                                                    (>!! ctl-chan :ready)
                                                    true)}
         #(do
-           (receiver-handler session (mult event-chan) out-chan nil-fx)
+           (receiver-handler session (mult event-chan) out-chan fx-x)
            (>!! event-chan {:session session,
                             :object stream,
                             :event-type :rx-object-new})

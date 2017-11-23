@@ -53,13 +53,15 @@
   stream NORM stream being handled
   event-chan NORM events
   out-mix is the chan where all stream channels are mixed.
-  stream-chan the stream output channel."
-  [session stream event-chan out-mix stream-chan]
+  message-builder a transducer to recombine messages from fragments."
+  [session stream event-chan out-mix message-builder]
   (log/debug "Enter stream handler" session stream)
   (norm/seek-message-start stream)
   (let [stream-events (chan 5 (filter #(and (= session (:session %))
-                                            (= stream (:object %)))))]
+                                            (= stream (:object %)))))
+        stream-chan (chan 5 message-builder)]
     (tap event-chan stream-events)
+    (admix out-mix stream-chan)
     ; fake one event because we may have missed the first one already
     (>!! stream-events {:event-type :rx-object-updated,
                         :session session,
@@ -113,12 +115,11 @@
               (log/info "Remote sender inactive" (norm/event->str event))
               (recur (<! ec-tap)))
             :rx-object-new
-            (let [stream-chan (chan 5 message-builder)]
-              (admix out-mix stream-chan)
+            (do
               (log/info "Stream opened:" (norm/event->str event))
-              (stream-handler session (:object event) event-chan out-mix stream-chan)
+              (stream-handler session (:object event) event-chan out-mix message-builder)
               (recur (<! ec-tap)))
-            :event-invalid                                ;; happens when the instance is unexpectedly shut down
+            :event-invalid ;; happens when the instance is unexpectedly shut down
             (close! out-chan)
             ;; default
             (recur (<! ec-tap)))
