@@ -133,7 +133,7 @@
       (do
         (log/errorf "Invalid magic msg prefix: %d %d" magic1 magic2)
         -1)
-      (if (or (not= version-major major-v) (< minor-v version-minor))
+      (if (or (not= version-major major-v) (> minor-v version-minor))
         (do
           (log/errorf "Invalid msg version: %d %d" major-v minor-v)
           -1)
@@ -142,7 +142,9 @@
             (log/errorf "Invalid var header length %d" hdr-var-length)
             -1)
           (if (neg? payload-length)
-            (log/errorf "Payload length must be >= 0: %d" payload-length)
+            (do
+              (log/errorf "Payload length must be >= 0: %d" payload-length)
+              -1)
             [hdr-var-length payload-length]
             ))))))
 

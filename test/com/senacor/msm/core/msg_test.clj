@@ -253,7 +253,127 @@
   (testing "well formed message"
     (let [bb (bb/byte-buffer fix-buflen)
           fix (fill-buffer-with-testdata bb)]
-      (is (= fix-msg (parse-message (.array bb)))))))
+      (is (= fix-msg (parse-message (.array bb))))))
+  (testing "message with bad magic number first char"
+    (let [bb (bb/byte-buffer fix-buflen)]
+      (doto bb
+        (bb/put-byte 76)
+        (bb/put-byte 88)
+        (bb/put-byte 1)
+        (bb/put-byte 0)
+        (bb/put-short 4)
+        (bb/put-int 1)
+        (bb/put-byte 1)
+        (bb/put-byte (byte \l))
+        (bb/put-byte 1)
+        (bb/put-byte (byte \i))
+        (bb/put-byte (byte \p))
+        (bb/put-byte (byte \d)))
+      (.flip bb)
+      (is (= -1 (parse-fixed-header (.array bb))))))
+  (testing "message with bad magic number second char"
+    (let [bb (bb/byte-buffer fix-buflen)]
+      (doto bb
+        (bb/put-byte 77)
+        (bb/put-byte 87)
+        (bb/put-byte 1)
+        (bb/put-byte 0)
+        (bb/put-short 4)
+        (bb/put-int 1)
+        (bb/put-byte 1)
+        (bb/put-byte (byte \l))
+        (bb/put-byte 1)
+        (bb/put-byte (byte \i))
+        (bb/put-byte (byte \p))
+        (bb/put-byte (byte \d)))
+      (.flip bb)
+      (is (= -1 (parse-fixed-header (.array bb))))))
+  (testing "message with bad version number (major)"
+    (let [bb (bb/byte-buffer fix-buflen)]
+      (doto bb
+        (bb/put-byte 77)
+        (bb/put-byte 88)
+        (bb/put-byte 2)
+        (bb/put-byte 0)
+        (bb/put-short 4)
+        (bb/put-int 1)
+        (bb/put-byte 1)
+        (bb/put-byte (byte \l))
+        (bb/put-byte 1)
+        (bb/put-byte (byte \i))
+        (bb/put-byte (byte \p))
+        (bb/put-byte (byte \d)))
+      (.flip bb)
+      (is (= -1 (parse-fixed-header (.array bb))))))
+  (testing "message with bad version number (minor)"
+    (let [bb (bb/byte-buffer fix-buflen)]
+      (doto bb
+        (bb/put-byte 77)
+        (bb/put-byte 88)
+        (bb/put-byte 1)
+        (bb/put-byte 1)
+        (bb/put-short 4)
+        (bb/put-int 1)
+        (bb/put-byte 1)
+        (bb/put-byte (byte \l))
+        (bb/put-byte 1)
+        (bb/put-byte (byte \i))
+        (bb/put-byte (byte \p))
+        (bb/put-byte (byte \d)))
+      (.flip bb)
+      (is (= -1 (parse-fixed-header (.array bb))))))
+  (testing "message with bad version number (minor)"
+    (let [bb (bb/byte-buffer fix-buflen)]
+      (doto bb
+        (bb/put-byte 77)
+        (bb/put-byte 88)
+        (bb/put-byte 1)
+        (bb/put-byte 0)
+        (bb/put-short 1)
+        (bb/put-int 1)
+        (bb/put-byte 1)
+        (bb/put-byte (byte \l))
+        (bb/put-byte 1)
+        (bb/put-byte (byte \i))
+        (bb/put-byte (byte \p))
+        (bb/put-byte (byte \d)))
+      (.flip bb)
+      (is (= -1 (parse-fixed-header (.array bb))))))
+  (testing "message with bad var header length"
+    (let [bb (bb/byte-buffer fix-buflen)]
+      (doto bb
+        (bb/put-byte 77)
+        (bb/put-byte 88)
+        (bb/put-byte 1)
+        (bb/put-byte 0)
+        (bb/put-short 3) ; here
+        (bb/put-int 1)
+        (bb/put-byte 1)
+        (bb/put-byte (byte \l))
+        (bb/put-byte 1)
+        (bb/put-byte (byte \i))
+        (bb/put-byte (byte \p))
+        (bb/put-byte (byte \d)))
+      (.flip bb)
+      (is (= -1 (parse-fixed-header (.array bb))))))
+  (testing "message with bad var header length"
+    (let [bb (bb/byte-buffer fix-buflen)]
+      (doto bb
+        (bb/put-byte 77)
+        (bb/put-byte 88)
+        (bb/put-byte 1)
+        (bb/put-byte 0)
+        (bb/put-short 4)
+        (bb/put-int -1) ; here
+        (bb/put-byte 1)
+        (bb/put-byte (byte \l))
+        (bb/put-byte 1)
+        (bb/put-byte (byte \i))
+        (bb/put-byte (byte \p))
+        (bb/put-byte (byte \d)))
+      (.flip bb)
+      (is (= -1 (parse-fixed-header (.array bb))))))
+  )
 
 (deftest test-rebuild-message
   (testing "one message"

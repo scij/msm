@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [com.senacor.msm.core.command :refer :all]
             [bytebuffer.buff :as bb]
-            [clojure.core.async :refer [chan timeout mult >!! <!! poll!]]
+            [clojure.core.async :refer [chan timeout mult >!! <!! poll! close!]]
             [com.senacor.msm.core.norm-api :as norm])
   (:import (java.nio Buffer ByteBuffer)))
 
@@ -93,7 +93,7 @@
 
 
 (deftest test-command-sender
-  (let [sent-msg-chan (timeout 10)]
+  (let [sent-msg-chan (timeout 100)]
     (with-redefs-fn {#'norm/send-command (fn [_ buf len _]
                                            (>!! sent-msg-chan [buf len]))}
       #(let [session 1
@@ -106,6 +106,8 @@
          (let [result (<!! sent-msg-chan)]
            (is (not (nil? result)))
            (is (= 11 (second result))))
+         (close! event-chan)
+         (close! cmd-chan)
          ))))
 
 (deftest test-parse-fixed-header
