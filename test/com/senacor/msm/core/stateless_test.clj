@@ -122,6 +122,26 @@
       (is (is-my-message "abc" zero one fix)))
     ))
 
+(deftest test-message-rebuild-and-filter
+  (testing "passende message"
+    (let [one (atom 1)
+          four (atom 4)
+          msg1 (message/create-message "abc" "def" "payload")
+          c (chan 1 (comp message/message-rebuilder
+                          (filter (partial is-my-message "abc" one four))))]
+      (>!! c (message/Message->bytes msg1))
+      (is (= msg1 (<!! c)))))
+  (testing "passiert den Filter nicht"
+    (let [two (atom 2)
+          four (atom 2)
+          msg1 (message/create-message "abc" "def" "payload")
+          c (chan 1 (comp message/message-rebuilder
+                          (filter (partial is-my-message "abc" two four))))]
+      (>!! c (message/Message->bytes msg1))
+      (close! c)
+      (is (nil? (<!! c)))))
+  )
+
 (deftest test-msg-filter-pipeline
   (testing "simple pipeline"
     (let [c-in (chan 10)

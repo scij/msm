@@ -100,7 +100,7 @@
          (>!! event-chan {:session 1, :event-type :cc-active})
          (>!! event-chan {:session 1, :event-type :grtt-updated})
          (close! event-chan)
-         (Thread/sleep 100)
+         (Thread/sleep 100) ; todo waiting is bad
          (is (= 4711 (jmx/read (get @session-names 1) :tx-rate)))
          (is (= 4712 (jmx/read (get @session-names 1) :grtt)))
          (is (jmx/read (get @session-names 1) :cc-active))

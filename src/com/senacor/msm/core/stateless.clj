@@ -100,7 +100,6 @@
   [session subscription event-chan msg-chan]
   (let [cmd-chan-out (chan 2)
         cmd-chan-in  (chan 5)
-        raw-msg-chan (chan 5)
         session-receivers (atom (sorted-map my-session {:expires Long/MAX_VALUE,
                                                         :subscription subscription}))
         my-session-index (atom 0)
@@ -114,14 +113,10 @@
     (moments/schedule-every sl-exec alive-interval
                             (partial receiver-status-housekeeping session session-receivers receiver-count my-session-index))
     (command/command-receiver session event-chan cmd-chan-in)
-    (receiver/create-receiver session event-chan msg-chan message/message-rebuilder)
-    ; todo message-rebuilder und filter composen
-    ;(pipeline 1 msg-chan (filter (partial is-my-messages subscription my-session-index receiver-count)) raw-msg-chan)
-    (go-loop [msg (<! raw-msg-chan)]
-      (when (and msg (is-my-message subscription my-session-index receiver-count msg))
-        (>! msg-chan msg)
-        (recur (<! raw-msg-chan))))
-  ))
+    (receiver/create-receiver session event-chan msg-chan
+                              (comp message/message-rebuilder
+                                    (filter (partial is-my-message subscription my-session-index receiver-count)))
+  )))
 
 (defn create-session
   "Create a stateless session consuming matching messages in specified session
