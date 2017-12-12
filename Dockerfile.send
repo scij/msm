@@ -1,0 +1,6 @@
+FROM scij/jre-norm
+
+COPY target/com.senacor.msm-0.1.0-SNAPSHOT-standalone.jar .
+ENTRYPOINT ["java", "-cp", "com.senacor.msm-0.1.0-SNAPSHOT-standalone.jar", "clojure.main", \
+            "--main", "com.senacor.msm.main.send", \
+            "--autonumber", "--repeat", "1000", "eth0;239.192.0.1:7100", "/com/senacor/msm", "MSG "]

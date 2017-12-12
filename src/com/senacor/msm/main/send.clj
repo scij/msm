@@ -76,8 +76,9 @@
       (start-file-message-source label (:file options) msg-chan)
       (start-message-source label message (:repeat options) (:autonumber options) msg-chan))
     ; todo finit-norm darf erst aufgerufen werden, wenn die session geschlossen ist
-    ; todo wait-for-events auf ACK-Completed
-    ;(control/finit-norm instance)
+    ; todo wait-for-events muss getestet werden
+    (util/wait-for-events event-chan session #{:tx-watermark-completed})
+    (control/finit-norm instance)
     ))
 
 (defn -main

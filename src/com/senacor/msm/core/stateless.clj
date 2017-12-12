@@ -97,6 +97,7 @@
   subscription is a String or a Regex filtering the message label.
   event-chan is a mult channel with events from the instance control receiver.
   msg-chan is the channel where the accepted messages will be sent."
+  ; todo buffer messages in case we need to reprocess them after another consumer failed
   [session subscription event-chan msg-chan]
   (let [cmd-chan-out (chan 2)
         cmd-chan-in  (chan 5)

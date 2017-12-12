@@ -48,6 +48,7 @@
 
 (defn- print-to-file
   [file-name msg-chan]
+  ; todo funktioniert noch nicht. Ist immer leer.
   (let [writer (io/writer file-name)]
       (go-loop [msg (<! msg-chan)]
         (if msg
@@ -77,7 +78,7 @@
       (if (:output options)
         (print-to-file (:output options) msg-chan)
         (print-to-stdout msg-chan))
-      ; TODO this will never happen. No idea how to exit the listener
+      ; TODO this will never happen. JMX Beans with actions would be a solution
       (let [ec-tap (chan 5)]
         (tap event-chan-m ec-tap)
         (util/wait-for-events ec-tap session #{NormEventType/NORM_EVENT_INVALID})
