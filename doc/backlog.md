@@ -35,6 +35,12 @@ Ich möchte den Traffic überwachen können.
 * Prozesse zur Verarbeitung (zum Beispiel Anreicherung um Geodaten)
 * Client zur Visualisierung
 
+### Mazewar
+* MP-Shooter mit einem vorgegebenen Labyrinth.
+* Jeder Spieler postet seine Position und den letzten Schritt.
+* Geschosse posten ebenfalls Position und letzten Schritt.
+* Jeder Client prüft, ob der Move gültig war, um Cheats zu verhindern
+
 ## Benchmark
 
 Vergleich JMS (verschiedene Implementierungen und Konfigurationen) mit MSM.

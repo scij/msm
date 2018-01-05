@@ -4,7 +4,8 @@
             [com.senacor.msm.core.monitor :as mon]
             [com.senacor.msm.core.util :as util]
             [clojure.core.async :refer [>!! >! <! tap admix unmix mix untap go go-loop chan close!]]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [com.senacor.msm.core.sender :as sender])
   (:import (java.nio ByteBuffer)
            (mil.navy.nrl.norm.enums NormSyncPolicy)))
 
@@ -12,7 +13,11 @@
 ;; Receive messages across a norm stream
 ;;
 
-(def ^:const buf-size (* 1024 1024))
+(def ^:const receiver-buffer-size
+  "Receiver buffer size should be bigger than the sender buffer to
+  make sure the receiver can handle any message bursts on the sender side"
+  ; todo This dependency is somewhat weird. Buffer size should be somewhere else.
+  (* 2 sender/buffer-size))
 
 (defn receive-data
   "Receives as much data as there is available in the NORM network buffers.
@@ -23,14 +28,14 @@
   out-chan is a channel where the buffer is sent
   event is the NORM event containing the input stream handle."
   [session stream out-chan]
-  (go-loop [buffer (byte-array buf-size)
-            bytes-read (norm/read-stream stream buffer buf-size)]
+  (go-loop [buffer (byte-array receiver-buffer-size)
+            bytes-read (norm/read-stream stream buffer receiver-buffer-size)]
     (mon/record-bytes-received session bytes-read)
     (log/tracef "message received, len=%d" bytes-read)
     (when (pos? bytes-read)
       (>! out-chan (util/byte-array-head buffer bytes-read))
-      (let [nbuf (byte-array buf-size)]
-        (recur nbuf (norm/read-stream stream nbuf buf-size))))))
+      (let [nbuf (byte-array receiver-buffer-size)]
+        (recur nbuf (norm/read-stream stream nbuf receiver-buffer-size))))))
 
 (defn close-receiver
   "Closes and gracefully stops the session. Releases all NORM resources and closes the
@@ -149,7 +154,7 @@
     (norm/set-rx-socket-buffer session socket-buffer))
   (when silent
     (norm/set-silent-receiver session true silent))
-  (norm/start-receiver session (* 10 buf-size))
+  (norm/start-receiver session (* 10 receiver-buffer-size))
   (norm/set-default-sync-policy session :stream)
   (receiver-handler session event-chan out-chan message-builder)
   (partial close-receiver session out-chan))

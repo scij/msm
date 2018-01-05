@@ -36,6 +36,7 @@
   in-chan An inbound channel with byte-arrays of messages to be sent.
   max-msg-size in bytes, used to appropriately size the NORM buffers."
   [session instance-id event-chan in-chan max-msg-size]
+  (norm/set-congestion-control session true true)
   (norm/start-sender session instance-id buffer-size max-msg-size 64 16)
   (let [stream (norm/open-stream session buffer-size)
         ec-tap (chan (sliding-buffer 5) (filter #(contains? #{:tx-queue-vacancy :tx-queue-empty} (:event-type %))))]

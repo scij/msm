@@ -16,6 +16,7 @@
         (with-redefs-fn {#'norm/write-stream (fn [stream b-arr b-offs b-len] (>!! test-chan b-arr) b-len),
                          #'norm/start-sender (fn [_ _ _ _ _ _]),
                          #'norm/open-stream  (fn [_ _] 99),
+                         #'norm/set-congestion-control (fn [_ _ _])
                          #'norm/mark-eom     (fn [_])
                          #'mon/record-bytes-sent (fn [_ _])
                          #'stop-sender (fn [_ _ _] (>!! test-chan true))}
@@ -39,6 +40,7 @@
                                                b-len)
                          #'norm/start-sender (fn [_ _ _ _ _ _])
                          #'norm/open-stream  (fn [_ _] 99)
+                         #'norm/set-congestion-control (fn [_ _ _])
                          #'norm/mark-eom     (fn [_])
                          #'mon/record-bytes-sent (fn [_ _])
                          #'stop-sender       (fn [_ _ _] (>!! test-chan true))}
@@ -62,6 +64,7 @@
                                                (swap! send-count inc)
                                                8),
                          #'norm/start-sender (fn [_ _ _ _ _ _]),
+                         #'norm/set-congestion-control (fn [_ _ _])
                          #'norm/open-stream  (fn [_ _] 99),
                          #'norm/mark-eom     (fn [_]),
                          #'mon/record-bytes-sent (fn [_ _])

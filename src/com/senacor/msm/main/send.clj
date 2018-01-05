@@ -79,6 +79,7 @@
     ; todo wait-for-events muss getestet werden
     (util/wait-for-events event-chan session #{:tx-watermark-completed})
     (control/finit-norm instance)
+    (close! event-chan)
     ))
 
 (defn -main

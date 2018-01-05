@@ -48,7 +48,7 @@
 
 (defn- print-to-file
   [file-name msg-chan]
-  ; todo funktioniert noch nicht. Ist immer leer.
+  ; todo  Ist immer leer. Was daran iegt, dass go-loop terminiert und dann geht der writer aus dem scope
   (let [writer (io/writer file-name)]
       (go-loop [msg (<! msg-chan)]
         (if msg
