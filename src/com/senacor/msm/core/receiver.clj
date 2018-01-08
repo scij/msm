@@ -1,23 +1,15 @@
 (ns com.senacor.msm.core.receiver
   (:require [com.senacor.msm.core.norm-api :as norm]
-            [com.senacor.msm.core.control :as c]
             [com.senacor.msm.core.monitor :as mon]
             [com.senacor.msm.core.util :as util]
             [clojure.core.async :refer [>!! >! <! tap admix unmix mix untap go go-loop chan close!]]
-            [clojure.tools.logging :as log]
-            [com.senacor.msm.core.sender :as sender])
-  (:import (java.nio ByteBuffer)
-           (mil.navy.nrl.norm.enums NormSyncPolicy)))
+            [clojure.tools.logging :as log])
+  )
 
 ;;
 ;; Receive messages across a norm stream
 ;;
 
-(def ^:const receiver-buffer-size
-  "Receiver buffer size should be bigger than the sender buffer to
-  make sure the receiver can handle any message bursts on the sender side"
-  ; todo This dependency is somewhat weird. Buffer size should be somewhere else.
-  (* 2 sender/buffer-size))
 
 (defn receive-data
   "Receives as much data as there is available in the NORM network buffers.
@@ -26,8 +18,9 @@
   buffers we repeatedly read blocks until NORM indicates that all bytes have
   been read.
   out-chan is a channel where the buffer is sent
-  event is the NORM event containing the input stream handle."
-  [session stream out-chan]
+  event is the NORM event containing the input stream handle.
+  receive-buffer-size is the number of bytes to reserve for incoming data"
+  [session stream out-chan receiver-buffer-size]
   (go-loop [buffer (byte-array receiver-buffer-size)
             bytes-read (norm/read-stream stream buffer receiver-buffer-size)]
     (mon/record-bytes-received session bytes-read)
@@ -64,7 +57,8 @@
   (norm/seek-message-start stream)
   (let [stream-events (chan 5 (filter #(and (= session (:session %))
                                             (= stream (:object %)))))
-        stream-chan (chan 5 message-builder)]
+        stream-chan (chan 5 message-builder)
+        receive-buffer-size (* 2 (norm/get-size stream))]
     (tap event-chan stream-events)
     (admix out-mix stream-chan)
     ; fake one event because we may have missed the first one already
@@ -78,7 +72,7 @@
           :rx-object-updated
           (do
             (log/trace "Stream new data:" (norm/event->str event))
-            (receive-data session stream stream-chan)
+            (receive-data session stream stream-chan receive-buffer-size)
             (recur (<! stream-events)))
           (:rx-object-completed :rx-object-aborted)
           (do
@@ -154,7 +148,7 @@
     (norm/set-rx-socket-buffer session socket-buffer))
   (when silent
     (norm/set-silent-receiver session true silent))
-  (norm/start-receiver session (* 10 receiver-buffer-size))
+  (norm/start-receiver session (* 1024 1024)) ; same as NormApp
   (norm/set-default-sync-policy session :stream)
   (receiver-handler session event-chan out-chan message-builder)
   (partial close-receiver session out-chan))

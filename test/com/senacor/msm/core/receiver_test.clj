@@ -21,7 +21,7 @@
                                             5)
                        #'monitor/record-bytes-received (fn [_ _])}
         #(do
-           (receive-data 1 1 out-chan)
+           (receive-data 1 1 out-chan 1024)
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
            )))
     )
@@ -41,7 +41,7 @@
                                                   :else 0))
                        #'monitor/record-bytes-received (fn [_ _])}
         #(do
-           (receive-data 1 1 out-chan)
+           (receive-data 1 1 out-chan 1024)
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
@@ -60,12 +60,13 @@
           out-chan (chan 2)
           out-mix (mix out-chan)
           count (atom 0)]
-      (with-redefs-fn {#'receive-data (fn [_ _ c]
+      (with-redefs-fn {#'receive-data (fn [_ _ c _]
                                         (swap! count inc)
                                         (if (= 1 @count)
                                           (>!! c "hallo")
                                           (>!! c ""))),
-                       #'norm/seek-message-start (fn [_] true)}
+                       #'norm/seek-message-start (fn [_] true),
+                       #'norm/get-size (fn [_] 1024)}
         #(do
            (stream-handler session stream (mult event-chan) out-mix fx-x)
            (>!! event-chan {:session session :object stream :event-type :rx-object-updated})
@@ -80,8 +81,9 @@
           event-chan (chan 2)
           out-chan (chan 2)
           out-mix (mix out-chan)]
-      (with-redefs-fn {#'receive-data (fn [_ _ c] (>!! c "hallo")),
-                       #'norm/seek-message-start (fn [_] true)}
+      (with-redefs-fn {#'receive-data (fn [_ _ c _] (>!! c "hallo")),
+                       #'norm/seek-message-start (fn [_] true)
+                       #'norm/get-size (fn [_] 1024)}
         #(do
             (stream-handler session stream (mult event-chan) out-mix fx-x)
             (>!! event-chan {:session 0, :object stream, :event-type :rx-object-updated})
@@ -100,7 +102,8 @@
           out-chan (chan)]
       (with-redefs-fn {#'close-receiver (fn [session out-chan]
                                         (>!! out-chan :stopped))
-                       #'receive-data   (fn [_ _ _])}
+                       #'receive-data   (fn [_ _ _ _]),
+                       #'norm/get-size  (fn [_] 1024)}
         #(do
            (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (close! event-chan)
@@ -113,7 +116,7 @@
           out-chan (chan)]
       (with-redefs-fn {#'close-receiver (fn [session out-chan]
                                         (>!! out-chan :stopped))
-                       #'receive-data   (fn [_ _ _])}
+                       #'receive-data   (fn [_ _ _ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (>!! event-chan {:session session :event-type :event-invalid})
@@ -124,7 +127,7 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'receive-data   (fn [_ _ _])}
+      (with-redefs-fn {#'receive-data   (fn [_ _ _ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (>!! event-chan {:session session :event-type :rx-object-aborted})
@@ -135,7 +138,7 @@
     (let [session 1
           event-chan (chan 1)
           out-chan (timeout 100)]
-      (with-redefs-fn {#'receive-data   (fn [_ _ _])}
+      (with-redefs-fn {#'receive-data   (fn [_ _ _ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan bytearray-fx)
            (>!! event-chan {:session session :event-type :rx-object-completed})
@@ -147,7 +150,7 @@
           event-chan (chan 1)
           out-chan (timeout 100)]
       (with-redefs-fn {#'close-receiver (fn [_ _])
-                       #'receive-data   (fn [_ _ _]
+                       #'receive-data   (fn [_ _ _ _]
                                         (>!! out-chan :received))}
         #(do
            (receiver-handler session (mult event-chan) out-chan bytearray-fx)
@@ -162,7 +165,7 @@
           event-chan (chan 1)
           out-chan (timeout 100)
           ctl-chan (chan 1)]
-      (with-redefs-fn {#'receive-data   (fn [_ _])}
+      (with-redefs-fn {#'receive-data   (fn [_ _ _ _])}
         #(do
            (receiver-handler session (mult event-chan) out-chan fx-x)
            (>!! event-chan {:session (inc session) :event-type :rx-object-completed})
@@ -176,11 +179,12 @@
           out-chan (chan 5)
           ctl-chan (timeout 1000)]
       (with-redefs-fn {#'close-receiver (fn [_ _]),
-                       #'receive-data   (fn [_ _ c]
+                       #'receive-data   (fn [_ _ c _]
                                           (>!! c :data)),
                        #'norm/seek-message-start (fn [_]
                                                    (>!! ctl-chan :ready)
-                                                   true)}
+                                                   true)
+                       #'norm/get-size (fn [_] 1024)}
         #(do
            (receiver-handler session (mult event-chan) out-chan fx-x)
            (>!! event-chan {:session session,
