@@ -1,19 +1,25 @@
 (ns com.senacor.msm.core.sender
   (:require [com.senacor.msm.core.norm-api :as norm]
-            [com.senacor.msm.core.control :as c]
             [com.senacor.msm.core.monitor :as mon]
             [com.senacor.msm.core.util :as util]
             [clojure.core.async :refer [chan close! go-loop sliding-buffer tap untap <! <!! >!! >! poll!]]
             [clojure.tools.logging :as log])
-  (:import (mil.navy.nrl.norm NormNode)))
+  )
 
-(def ^:const buffer-size (* 1024 1024))
+(def ^:const buffer-size
+  "Transmission buffer for the sender. Size is the same as in NormApp."
+  (* 1024 1024))
 
 ;;
 ;; Send messages across a norm stream
 ;;
 
 (defn stop-sender
+  "Notify all receivers that this sender closes down. The sender will wait for
+  confirmation by all receivers.
+  session the NORM session that is closing down
+  stream the NORM stream that is being closed
+  event-chan delivers NORM notifications about the progress of the session shutdown"
   [session stream event-chan]
   (let [ec-tap (tap event-chan (chan 5))]
     (log/trace "closing sender")

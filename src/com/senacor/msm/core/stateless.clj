@@ -73,7 +73,7 @@
   (log/trace "After alive-sessions" @session-receivers)
   (swap! receiver-count number-of-sessions-alive @session-receivers)
   (log/tracef "After count sessions %d" @receiver-count)
-  ; todo (monitor/record-number-of-sl-receivers session @receiver-count)
+  (monitor/record-number-of-sl-receivers session @receiver-count)
   (swap! my-session-index find-my-index @session-receivers)
   (log/tracef "After my-index %d" @my-session-index)
   (log/trace "Exit housekeeping"))

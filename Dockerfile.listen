@@ -1,4 +1,4 @@
-FROM scij/jre-norm
+FROM scij/deb-norm
 
 COPY target/com.senacor.msm-0.1.0-SNAPSHOT-standalone.jar .
 EXPOSE 7100/udp

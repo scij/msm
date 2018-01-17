@@ -5,7 +5,7 @@
             [clojure.tools.logging :as log]
             [com.senacor.msm.core.util :as util])
   (:import (java.nio Buffer ByteBuffer)
-           (java.util UUID)
+           (java.util UUID Date)
            (clojure.lang PersistentQueue)
            (java.util.regex Pattern)))
 
@@ -17,15 +17,21 @@
 (defrecord Message
   [^String label
    ^String correlation-id
-   ^String payload])
+   ^String payload
+   ^Date   receive-ts])
 
 (defn create-message
   ([^String label ^String corr-id ^String payload]
    (assert label "Label must not be nil")
    (assert (not (str/blank? label)) "Label must not be empty")
-   (->Message label corr-id payload))
+   (->Message label corr-id payload (Date.)))
   ([^String label ^String payload]
-   (->Message label (str (UUID/randomUUID)) payload)))
+   (->Message label (str (UUID/randomUUID)) payload (Date.))))
+
+(defn msg= [a b]
+  (and (= (:label a) (:label b))
+       (= (:correlation-id a) (:correlation-id b))
+       (= (:payload a) (:payload b))))
 
 (defmulti label-match
           "checks if the msg's label matches the value given by match"

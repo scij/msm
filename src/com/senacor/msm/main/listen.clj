@@ -8,7 +8,7 @@
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.stateless :as stateless]
             [com.senacor.msm.core.topic :as topic]
-            [clojure.core.async :refer [chan go-loop mult tap untap <! >!]]
+            [clojure.core.async :refer [chan go go-loop mult tap untap <! >!]]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
@@ -46,16 +46,15 @@
   (println summary)
   (System/exit 1))
 
-(defn- print-to-file
+(defn print-to-file
   [file-name msg-chan]
-  ; todo  Ist immer leer. Was daran iegt, dass go-loop terminiert und dann geht der writer aus dem scope
-  (let [writer (io/writer file-name)]
-      (go-loop [msg (<! msg-chan)]
-        (if msg
-          (do
-            (.write writer (prn-str msg))
-            (recur (<! msg-chan)))
-          (.close writer)))))
+  (go-loop [writer (io/writer file-name)
+            msg (<! msg-chan)]
+    (if msg
+      (do
+        (.write writer (prn-str msg))
+        (recur writer (<! msg-chan)))
+      (.close writer))))
 
 (defn- print-to-stdout
   [msg-chan]

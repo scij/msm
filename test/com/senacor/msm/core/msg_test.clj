@@ -253,7 +253,7 @@
   (testing "well formed message"
     (let [bb (bb/byte-buffer fix-buflen)
           fix (fill-buffer-with-testdata bb)]
-      (is (= fix-msg (parse-message (.array bb))))))
+      (is (msg= fix-msg (parse-message (.array bb))))))
   (testing "message with bad magic number first char"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -378,7 +378,7 @@
 (deftest test-rebuild-message
   (testing "one message"
     (let [fix (.array (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) true))]
-      (is (= fix-msg (first (into [] message-rebuilder [fix]))))))
+      (is (msg= fix-msg (first (into [] message-rebuilder [fix]))))))
   (testing "one array - two messages"
     (let [fix (byte-array (* 2 fix-buflen))
           one-fix (byte-array fix-buflen)
@@ -387,16 +387,16 @@
       (fill-buffer-with-testdata buf)
       (fill-buffer-with-testdata (ByteBuffer/wrap one-fix))
       (is (= 2 (count (into [] message-rebuilder [fix]))))
-      (is (= fix-msg (first (into [] message-rebuilder [fix]))))
-      (is (= fix-msg (second (into [] message-rebuilder [fix]))))))
+      (is (msg= fix-msg (first (into [] message-rebuilder [fix]))))
+      (is (msg= fix-msg (second (into [] message-rebuilder [fix]))))))
   (testing "two arrays with each one message"
     (let [f1 (byte-array fix-buflen)
           f2 (byte-array fix-buflen)]
       (fill-buffer-with-testdata (ByteBuffer/wrap f1))
       (fill-buffer-with-testdata (ByteBuffer/wrap f2))
       (is (= 2 (count (into [] message-rebuilder [f1 f2]))))
-      (is (= fix-msg (first (into [] message-rebuilder [f1 f2]))))
-      (is (= fix-msg (second (into [] message-rebuilder [f1 f2]))))))
+      (is (msg= fix-msg (first (into [] message-rebuilder [f1 f2]))))
+      (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2]))))))
   (testing "two arrays message split directly behind header"
     (let [fix (byte-array (* 2 fix-buflen))
           one-fix (byte-array fix-buflen)
@@ -407,8 +407,8 @@
       (let [f1 (util/byte-array-head fix 10)
             f2 (util/byte-array-rest fix 10)]
         (is (= 2 (count (into [] message-rebuilder [f1 f2]))))
-        (is (= fix-msg (first (into [] message-rebuilder [f1 f2]))))
-        (is (= fix-msg (second (into [] message-rebuilder [f1 f2])))))))
+        (is (msg= fix-msg (first (into [] message-rebuilder [f1 f2]))))
+        (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2])))))))
   (testing "two arrays message split inside header"
     (let [fix (byte-array (* 2 fix-buflen))
           one-fix (byte-array fix-buflen)
@@ -419,8 +419,8 @@
       (let [f1 (util/byte-array-head fix 5)
             f2 (util/byte-array-rest fix 5)]
         (is (= 2 (count (into [] message-rebuilder [f1 f2]))))
-        (is (= fix-msg (first (into [] message-rebuilder [f1 f2]))))
-        (is (= fix-msg (second (into [] message-rebuilder [f1 f2])))))))
+        (is (msg= fix-msg (first (into [] message-rebuilder [f1 f2]))))
+        (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2])))))))
   (testing "two arrays message split inside payload"
     (let [fix (byte-array (* 2 fix-buflen))
           one-fix (byte-array fix-buflen)
@@ -431,8 +431,8 @@
       (let [f1 (util/byte-array-head fix 20)
             f2 (util/byte-array-rest fix 20)]
         (is (= 2 (count (into [] message-rebuilder [f1 f2]))))
-        (is (= fix-msg (first (into [] message-rebuilder [f1 f2]))))
-        (is (= fix-msg (second (into [] message-rebuilder [f1 f2])))))))
+        (is (msg= fix-msg (first (into [] message-rebuilder [f1 f2]))))
+        (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2])))))))
   (testing "three arrays message split inside payload"
     (let [fix (byte-array (* 2 fix-buflen))
           one-fix (byte-array fix-buflen)
@@ -444,6 +444,6 @@
             f2 (util/byte-array-head (util/byte-array-rest fix 15) 25)
             f3 (util/byte-array-rest fix 40)]
         (is (= 2 (count (into [] message-rebuilder [f1 f2 f3]))))
-        (is (= fix-msg (first (into [] message-rebuilder [f1 f2 f3]))))
-        (is (= fix-msg (second (into [] message-rebuilder [f1 f2 f3])))))))
+        (is (msg= fix-msg (first (into [] message-rebuilder [f1 f2 f3]))))
+        (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2 f3])))))))
   )

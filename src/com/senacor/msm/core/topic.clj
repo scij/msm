@@ -15,8 +15,9 @@
   event-chan is a mult channel with events from the instance control receiver.
   msg-chan is the channel where the accepted messages will be sent."
   [session subscription event-chan msg-chan]
-  ; todo label filter needs to be added
-  (receiver/create-receiver session event-chan msg-chan message/message-rebuilder))
+  (receiver/create-receiver session event-chan msg-chan
+                            (comp message/message-rebuilder
+                                  (filter (partial message/label-match subscription)))))
 
 (defn create-session
   "Create a topic session consuming matching messages in specified session
