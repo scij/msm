@@ -4,9 +4,8 @@
             [clojure.core.async :refer [<! >! <!! >!! go-loop chan close!]]
             [clojure.tools.logging :as log]
             [com.senacor.msm.core.util :as util])
-  (:import (java.nio Buffer ByteBuffer)
+  (:import (java.nio ByteBuffer)
            (java.util UUID Date)
-           (clojure.lang PersistentQueue)
            (java.util.regex Pattern)))
 
 ;;
@@ -87,7 +86,8 @@
   [corr-id error-msg]
   (->Message "/sys/fault"
              (or corr-id "")
-             error-msg))
+             error-msg
+             (Date.)))
 
 (defn ^"[B" Message->bytes
   "Takes a message and returns a byte array with it's binary
@@ -121,11 +121,10 @@
 (declare start-state)
 
 (defn parse-fixed-header
-  "Parse the fixed part of the header from buf and return an
-  updated state map"
-  [b-arr]
-  (let [buf (ByteBuffer/wrap b-arr)
-        magic1 (bb/take-byte buf)
+  "Parse the fixed part of the header from buf and returns the variable
+  header length and the payload length (as an array)"
+  [buf]
+  (let [magic1 (bb/take-byte buf)
         magic2 (bb/take-byte buf)
         major-v (bb/take-byte buf)
         minor-v (bb/take-byte buf)
@@ -153,6 +152,11 @@
               -1)
             [hdr-var-length payload-length]
             ))))))
+
+(defn parse-fixed-header-array
+  "Same as parse-fixed-header but with a byte array argument"
+  [b-arr]
+  (parse-fixed-header (ByteBuffer/wrap b-arr)))
 
 (defn parse-var-header
   "Parse the var length metadata from the message header."
@@ -190,7 +194,7 @@
               (loop [n-arr arr
                      bytes-avail (count n-arr)] ; as much bytes as we need.
                 (when (>= bytes-avail hdr-len)
-                  (vreset! state {:bytes-required (reduce + hdr-len (parse-fixed-header n-arr)),
+                  (vreset! state {:bytes-required (reduce + hdr-len (parse-fixed-header-array n-arr)),
                                   :b-arr          n-arr}))
                 (if (>= bytes-avail (:bytes-required @state))
                   (let [msg (util/byte-array-head n-arr (:bytes-required @state))
@@ -209,8 +213,7 @@
   "takes a byte array and returns a Message object"
   [b-arr]
   (let [buf (ByteBuffer/wrap b-arr)
-        hdr-buf (bb/slice-off buf hdr-len)
-        [var-hdr-len payload-len] (parse-fixed-header b-arr)
+        [var-hdr-len payload-len] (parse-fixed-header buf)
         [label corr-id] (parse-var-header buf)
         payload (parse-payload payload-len buf)]
   (create-message label corr-id payload)))

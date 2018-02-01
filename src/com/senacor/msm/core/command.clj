@@ -9,7 +9,7 @@
 
 
 (def ^:const CMD_ALIVE
-  "A stateful or stateless process sends this command to inform it's peers
+  "A stateless or stateful process sends this command to inform it's peers
   that it is still alive and processing" 1)
 
 (defn command-sender
@@ -33,13 +33,12 @@
   are notified.
   cmd-chan is a channel of byte array to which the events are published."
   [session event-chan cmd-chan]
-  (let [ec-tap (chan 20)]
+  (let [ec-tap (chan 20 (filter #(and (= :rx-object-cmd-new (:event-type %))
+                                      (= session (:session %)))))]
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
-      (when (and (= :rx-object-cmd-new (:event-type event))
-                 (= session (:session event)))
-        (>! cmd-chan {:cmd (norm/get-command (:node event)),
-                      :node-id (:node event)}))
+      (>! cmd-chan {:cmd (norm/get-command (:node event)),
+                    :node-id (:node event)})
       (recur (<! ec-tap)))))
 
 
@@ -73,7 +72,7 @@
   buf)
 
 (defn alive
-  "Creates an ALIVE command message informing all participating SF processes that the
+  "Creates an ALIVE command message informing all participating SL or SF processes that the
   current node is alive and kicking. The command is returned as a byte array.
   session-id is the current session.
   subscription is the message label the consumer is listening to. It is either a String

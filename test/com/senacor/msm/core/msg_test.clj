@@ -5,7 +5,8 @@
             [bytebuffer.buff :as bb]
             [clojure.core.async :refer [<!! >!! <! >! chan to-chan timeout close!]]
             [clojure.tools.logging :as log])
-  (:import (java.nio ByteBuffer)))
+  (:import (java.nio ByteBuffer)
+           (java.util UUID)))
 
 (def fix-msg (create-message "label" "uuid" "payload"))
 
@@ -52,6 +53,12 @@
       (is (= (byte \a) (bb/take-byte fxb)))
       (is (= (byte \d) (bb/take-byte fxb)))
       (is (= 0 (.remaining fxb)))
+      ))
+  (testing "encode and parse"
+    (let [cid (str (UUID/randomUUID))
+          msg (create-message "/com/senacor/msm" cid "MSG 123")
+          fxb (ByteBuffer/wrap (Message->bytes msg))]
+      (is (msg= msg (parse-message (.array fxb))))
       ))
   )
 
@@ -270,7 +277,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header (.array bb))))))
+      (is (= -1 (parse-fixed-header bb)))))
   (testing "message with bad magic number second char"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -287,7 +294,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header (.array bb))))))
+      (is (= -1 (parse-fixed-header bb)))))
   (testing "message with bad version number (major)"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -304,7 +311,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header (.array bb))))))
+      (is (= -1 (parse-fixed-header bb)))))
   (testing "message with bad version number (minor)"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -321,7 +328,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header (.array bb))))))
+      (is (= -1 (parse-fixed-header bb)))))
   (testing "message with bad version number (minor)"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -338,7 +345,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header (.array bb))))))
+      (is (= -1 (parse-fixed-header bb)))))
   (testing "message with bad var header length"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -355,7 +362,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header (.array bb))))))
+      (is (= -1 (parse-fixed-header bb)))))
   (testing "message with bad var header length"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -372,7 +379,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header (.array bb))))))
+      (is (= -1 (parse-fixed-header bb)))))
   )
 
 (deftest test-rebuild-message

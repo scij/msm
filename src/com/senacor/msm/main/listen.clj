@@ -1,21 +1,17 @@
 (ns com.senacor.msm.main.listen
   (:gen-class)
   (:require [com.senacor.msm.core.control :as control]
-            [com.senacor.msm.core.receiver :as receiver]
             [com.senacor.msm.core.util :as util]
-            [com.senacor.msm.core.message :as message]
             [com.senacor.msm.core.monitor :as monitor]
-            [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.stateless :as stateless]
+            [com.senacor.msm.core.stateful :as stateful]
             [com.senacor.msm.core.topic :as topic]
             [clojure.core.async :refer [chan go go-loop mult tap untap <! >!]]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
             [clojure.string :as str])
-  (:import (org.apache.logging.log4j ThreadContext)
-           (mil.navy.nrl.norm NormEvent)
-           (mil.navy.nrl.norm.enums NormEventType)))
+  (:import (mil.navy.nrl.norm.enums NormEventType)))
 
 (def cli-options
   [["-h" "--help"]
@@ -72,7 +68,7 @@
     (monitor/mon-event-loop event-chan-m)
     (let [session (case (:receive options)
                     :stateless (stateless/create-session instance net-spec label event-chan-m msg-chan options)
-                    :stateful  (log/error "Stateful sessions not yet implemented")
+                    :stateful  (stateful/create-session instance net-spec label event-chan-m msg-chan options)
                     (topic/create-session instance net-spec label event-chan-m msg-chan options))]
       (if (:output options)
         (print-to-file (:output options) msg-chan)

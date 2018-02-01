@@ -1,6 +1,9 @@
+# run with docker run -p 239.192.0.1:7100:7100/udp test/msm-send
+
 FROM scij/deb-norm:latest
 
 COPY target/com.senacor.msm-0.1.0-SNAPSHOT-standalone.jar .
 ENTRYPOINT ["java", "-cp", "com.senacor.msm-0.1.0-SNAPSHOT-standalone.jar", "clojure.main", \
             "--main", "com.senacor.msm.main.send", \
+	    "--loopback", \
             "--autonumber", "--repeat", "1000", "eth0;239.192.0.1:7100", "/com/senacor/msm", "MSG "]

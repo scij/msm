@@ -10,10 +10,6 @@
             [clojure.tools.logging :as log]
             [com.senacor.msm.core.monitor :as monitor]))
 
-(def sl-exec
-  ;Scheduled executor to run keep alive and house keeping
-  (moments/executor 2))
-
 (def ^:const alive-interval
   "Interval in ms to report that a receiver is alive"
   100)
@@ -105,15 +101,18 @@
                                                         :subscription subscription}))
         my-session-index (atom 0)
         receiver-count (atom 1)]
+    ; send out status messages
     (norm/start-sender session (norm/get-local-node-id session) 2048 256 64 16)
     (command/command-sender session event-chan cmd-chan-out)
-    (moments/schedule-every sl-exec alive-interval 10
+    (moments/schedule-every util/sl-exec alive-interval 10
                             (fn []
                               (>!! cmd-chan-out (command/alive session subscription true))))
+    ; process status messages from other receivers
     (handle-receiver-status session subscription cmd-chan-in session-receivers my-session-index receiver-count)
-    (moments/schedule-every sl-exec alive-interval
+    (moments/schedule-every util/sl-exec alive-interval
                             (partial receiver-status-housekeeping session session-receivers receiver-count my-session-index))
     (command/command-receiver session event-chan cmd-chan-in)
+    ; process incoming traffic
     (receiver/create-receiver session event-chan msg-chan
                               (comp message/message-rebuilder
                                     (filter (partial is-my-message subscription my-session-index receiver-count)))

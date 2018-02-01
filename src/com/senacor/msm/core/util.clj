@@ -3,7 +3,8 @@
             [clojure.java.jmx :as jmx]
             [clojure.core.async :refer [<!! >!!]]
             [clojure.tools.logging :as log]
-            [bytebuffer.buff :as bb])
+            [bytebuffer.buff :as bb]
+            [me.raynes.moments :as moments])
   (:import (java.nio Buffer ByteBuffer)
            (org.apache.logging.log4j ThreadContext)))
 
@@ -165,3 +166,8 @@ byte.  Works for chars as well."
 (defn init-logging
   [app-name]
   (ThreadContext/put "app" app-name))
+
+(def sl-exec
+  ;Scheduled executor to run keep alive and house keeping
+  (moments/executor 2))
+

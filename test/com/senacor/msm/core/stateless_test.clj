@@ -130,7 +130,7 @@
           c (chan 1 (comp message/message-rebuilder
                           (filter (partial is-my-message "abc" one four))))]
       (>!! c (message/Message->bytes msg1))
-      (is (= msg1 (<!! c)))))
+      (is (message/msg= msg1 (<!! c)))))
   (testing "passiert den Filter nicht"
     (let [two (atom 2)
           four (atom 2)
