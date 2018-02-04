@@ -58,9 +58,9 @@
   [session stream event-chan out-mix message-builder]
   (log/debug "Enter stream handler" session stream)
   (norm/seek-message-start stream)
-  (let [stream-events (chan 5 (filter #(and (= session (:session %))
+  (let [stream-events (chan 64 (filter #(and (= session (:session %))
                                             (= stream (:object %)))))
-        stream-chan (chan 5 message-builder)
+        stream-chan (chan 128 message-builder)
         receive-buffer-size (* 2 (norm/get-size stream))]
     (tap event-chan stream-events)
     (admix out-mix stream-chan)
@@ -82,7 +82,9 @@
             (unmix out-mix stream-chan))
           ;default
           (recur (<! stream-events)))
-        (untap event-chan stream-events)))))
+        (do
+          (log/trace "Stream received nil")
+          (untap event-chan stream-events))))))
 
 (defn receiver-handler
   "Handles NORM-Events that relate to received messages. Hook this
@@ -96,7 +98,7 @@
   message-builder is a transducer that builds messages from a sequence of
     byte arrays."
   [session event-chan out-chan message-builder]
-  (let [ec-tap (chan 5)
+  (let [ec-tap (chan 128)
         out-mix (mix out-chan)]
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]

@@ -5,13 +5,22 @@
         <Console name="STDOUT" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%15.15t] %-5p %16.16c %x - %m%n"/>
         </Console>
-        <File name="File" fileName="target/logs/${ctx:app}.log" append="false">
+        <File name="File" fileName="target/logs/${sys:app}.log" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%15.15t] %-5p %16.16c %x - %m%n"/>
         </File>
     </Appenders>
     <Loggers>
         <Root level="trace">
             <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="File"/>
         </Root>
+        <Logger name="com.senacor.msm.core.message"
+                level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+        <Logger name="com.senacor.msm.core.command"
+                level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
     </Loggers>
 </Configuration>

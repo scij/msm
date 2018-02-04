@@ -21,7 +21,7 @@
   stream the NORM stream that is being closed
   event-chan delivers NORM notifications about the progress of the session shutdown"
   [session stream event-chan]
-  (let [ec-tap (tap event-chan (chan 5))]
+  (let [ec-tap (tap event-chan (chan 128))]
     (log/trace "closing sender")
     (norm/add-acking-node session norm/NORM_NODE_NONE)
     (norm/set-watermark session stream true)

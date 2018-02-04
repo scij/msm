@@ -95,8 +95,8 @@
   msg-chan is the channel where the accepted messages will be sent."
   ; todo buffer messages in case we need to reprocess them after another consumer failed
   [session subscription event-chan msg-chan]
-  (let [cmd-chan-out (chan 2)
-        cmd-chan-in  (chan 5)
+  (let [cmd-chan-out (chan 16)
+        cmd-chan-in  (chan 64)
         session-receivers (atom (sorted-map my-session {:expires Long/MAX_VALUE,
                                                         :subscription subscription}))
         my-session-index (atom 0)

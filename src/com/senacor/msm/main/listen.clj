@@ -61,9 +61,9 @@
 
 (defn start-listening
   [net-spec label options]
-  (let [event-chan (chan 5)
+  (let [event-chan (chan 512)
         event-chan-m (mult event-chan)
-        msg-chan (chan 5)
+        msg-chan (chan 128)
         instance (control/init-norm event-chan)]
     (monitor/mon-event-loop event-chan-m)
     (let [session (case (:receive options)

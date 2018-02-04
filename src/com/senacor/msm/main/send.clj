@@ -63,9 +63,9 @@
 
 (defn start-sending
   [net-spec label message options]
-  (let [event-chan (chan 5)
+  (let [event-chan (chan 512)
         event-chan-m (mult event-chan)
-        msg-chan (chan 50 (map message/Message->bytes))
+        msg-chan (chan 128 (map message/Message->bytes))
         [if-name network port] (util/parse-network-spec net-spec)
         instance (control/init-norm event-chan)
         session (control/start-session instance if-name network port options)]

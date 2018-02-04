@@ -4,7 +4,7 @@
             [clojure.tools.logging :as log]
             [clojure.java.jmx :as jmx]
             [clojure.string :as str]
-            [clojure.core.async :refer [chan tap untap go-loop >! <! >!! close!]]))
+            [clojure.core.async :refer [chan tap untap go-loop thread >! <! >!! close!]]))
 
 
 ;;
@@ -37,7 +37,7 @@
   exactly onece before any subsequent interaction is possible."
   [event-chan]
   (let [instance (norm/create-instance)
-        event-loop-f (future (event-loop instance event-chan))]
+        event-loop-result-chan (thread (event-loop instance event-chan))]
     (norm/set-debug-level instance 2)
     instance))
 

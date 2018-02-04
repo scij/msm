@@ -15,7 +15,11 @@
         </Root>
         <Logger name="com.senacor.msm.core.command"
                 level="INFO">
-            <AppenderRef ref=""/>
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+        <Logger name="com.senacor.msm.core.message"
+                level="INFO">
+            <AppenderRef ref="STDOUT"/>
         </Logger>
     </Loggers>
 </Configuration>
