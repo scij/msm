@@ -21,12 +21,15 @@
   event is the NORM event containing the input stream handle.
   receive-buffer-size is the number of bytes to reserve for incoming data"
   [session stream out-chan receiver-buffer-size]
-  (go-loop [buffer (byte-array receiver-buffer-size)
+  ; Should not be a go-loop as this may change the order
+  ; in which inbound messages are being processed.
+  (loop [buffer (byte-array receiver-buffer-size)
             bytes-read (norm/read-stream stream buffer receiver-buffer-size)]
     (mon/record-bytes-received session bytes-read)
-    (log/tracef "message received, len=%d" bytes-read)
+    (log/tracef "message received, buf-size=%d len=%d" receiver-buffer-size bytes-read)
+    ;(util/dump-bytes-to-file bytes-read buffer)
     (when (pos? bytes-read)
-      (>! out-chan (util/byte-array-head buffer bytes-read))
+      (>!! out-chan (util/byte-array-head buffer bytes-read))
       (let [nbuf (byte-array receiver-buffer-size)]
         (recur nbuf (norm/read-stream stream nbuf receiver-buffer-size))))))
 
@@ -66,7 +69,6 @@
                         :session session,
                         :object stream})
     (go-loop [event (<! stream-events)]
-      (log/trace "next event" (norm/event->str event-chan))
       (if event
         (case (:event-type event)
           :rx-object-updated

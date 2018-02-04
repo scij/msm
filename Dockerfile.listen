@@ -6,5 +6,5 @@ COPY target/com.senacor.msm-0.1.0-SNAPSHOT-standalone.jar .
 EXPOSE 7100/udp
 ENTRYPOINT ["java", "-cp", "com.senacor.msm-0.1.0-SNAPSHOT-standalone.jar", "clojure.main", \
             "--main", "com.senacor.msm.main.listen", \
-	    "--loopback", \
+	        "--loopback", \
             "--receive", "topic", "eth0;239.192.0.1:7100", "/com/senacor/msm"]

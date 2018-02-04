@@ -1,0 +1,35 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="com.senacor.msm:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/com_senacor_msm_jar</output-path>
+    <root id="archive" name="com.senacor.msm.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/resources/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="com.senacor.msm" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/tools.macro/0.1.1/tools.macro-0.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/mil/navy/nrl/norm/1.5.6/norm-1.5.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/logging/log4j/log4j-core/2.8.2/log4j-core-2.8.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/tools.analyzer/0.6.9/tools.analyzer-0.6.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/tools.cli/0.3.5/tools.cli-0.3.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/java.jmx/0.3.4/java.jmx-0.3.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/clojure-complete/clojure-complete/0.2.4/clojure-complete-0.2.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/core.async/0.3.442/core.async-0.3.442.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/joda-time/joda-time/2.2/joda-time-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/core.memoize/0.5.9/core.memoize-0.5.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/me/raynes/moments/0.1.1/moments-0.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/tools.analyzer.jvm/0.7.0/tools.analyzer.jvm-0.7.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/clojure/1.8.0/clojure-1.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/bytebuffer/bytebuffer/0.2.0/bytebuffer-0.2.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/data.priority-map/0.0.7/data.priority-map-0.0.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/logging/log4j/log4j-api/2.8.2/log4j-api-2.8.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/core.cache/0.6.5/core.cache-0.6.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/tools.reader/1.0.0-beta4/tools.reader-1.0.0-beta4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/flatland/useful/0.10.0/useful-0.10.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/tools.nrepl/0.2.12/tools.nrepl-0.2.12.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/clojure/tools.logging/0.4.0/tools.logging-0.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/ow2/asm/asm-all/4.2/asm-all-4.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/clj-time/clj-time/0.6.0/clj-time-0.6.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/flatland/chronicle/0.2.1/chronicle-0.2.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

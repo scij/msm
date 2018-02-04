@@ -44,6 +44,7 @@
   [label message count autonumber out-chan]
   (log/tracef "Repeat send %s %d times" message count)
   (doseq [i (range count)]
+    (log/tracef "Sending msg %d" i)
     (>!! out-chan (message/create-message label
                                           (if autonumber
                                             (str message " " i)

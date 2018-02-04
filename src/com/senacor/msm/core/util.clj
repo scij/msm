@@ -4,8 +4,10 @@
             [clojure.core.async :refer [<!! >!!]]
             [clojure.tools.logging :as log]
             [bytebuffer.buff :as bb]
-            [me.raynes.moments :as moments])
+            [me.raynes.moments :as moments]
+            [clojure.java.io :as io])
   (:import (java.nio Buffer ByteBuffer)
+           (java.io OutputStream)
            (org.apache.logging.log4j ThreadContext)))
 
 ;; Based on m0smith's code at https://gist.github.com/m0smith/1684476#file-hexlify-clj
@@ -59,6 +61,15 @@ byte.  Works for chars as well."
             (println (partition-all 4 hexc)
                      (partition-all 4 (str/join charc))))
          (hexlify b-arr))))
+
+(def dump-file (io/output-stream (io/file "target/dump.out")))
+
+(defn dump-bytes-to-file
+  [len b-arr]
+  (.write dump-file (.getBytes "################################"))
+  (.write dump-file b-arr 0 len)
+  )
+
 
 (defn cat-byte-array
   "Returns a new byte array containing the data from b1 and be

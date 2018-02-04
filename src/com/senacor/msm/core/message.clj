@@ -137,19 +137,19 @@
     (if (or (not= magic1 msg-prefix-m) (not= magic2 msg-prefix-x))
       (do
         (log/errorf "Invalid magic msg prefix: %d %d" magic1 magic2)
-        -1)
+        [0 0])
       (if (or (not= version-major major-v) (> minor-v version-minor))
         (do
           (log/errorf "Invalid msg version: %d %d" major-v minor-v)
-          -1)
+          [0 0])
         (if (< hdr-var-length 4)
           (do
             (log/errorf "Invalid var header length %d" hdr-var-length)
-            -1)
+            [0 0])
           (if (neg? payload-length)
             (do
               (log/errorf "Payload length must be >= 0: %d" payload-length)
-              -1)
+              [0 0])
             [hdr-var-length payload-length]
             ))))))
 
