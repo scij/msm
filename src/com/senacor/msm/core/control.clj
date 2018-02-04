@@ -61,7 +61,7 @@
   one session per process."
   [instance if-name address port options]
   (let [session (norm/create-session instance address port (:node-id options))]
-    (log/tracef "session created %s %d %d" address port (:node-id options))
+    (log/infof "session created %s %d %d" address port (:node-id options))
     (when-not (str/blank? if-name)
       (norm/set-multicast-interface session if-name))
     (when (:ttl options)
@@ -80,4 +80,4 @@
   [session]
   (norm/destroy-session session)
   (mon/unregister session)
-  (log/trace "session closed" session))
+  (log/info "session closed" session))

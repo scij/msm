@@ -49,6 +49,7 @@
     (if msg
       (do
         (.write writer (prn-str msg))
+        (.flush writer)
         (recur writer (<! msg-chan)))
       (.close writer))))
 

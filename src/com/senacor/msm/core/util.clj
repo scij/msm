@@ -176,7 +176,8 @@ byte.  Works for chars as well."
 
 (defn init-logging
   [app-name]
-  (System/setProperty "app" app-name))
+  (System/setProperty "app" app-name)
+  (log/infof "App startup %s" app-name))
 
 (def sl-exec
   ;Scheduled executor to run keep alive and house keeping

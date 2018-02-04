@@ -22,14 +22,14 @@
   event-chan delivers NORM notifications about the progress of the session shutdown"
   [session stream event-chan]
   (let [ec-tap (tap event-chan (chan 128))]
-    (log/trace "closing sender")
+    (log/trace "closing stream and sender")
     (norm/add-acking-node session norm/NORM_NODE_NONE)
     (norm/set-watermark session stream true)
     (util/wait-for-events ec-tap session #{:tx-watermark-completed})
     (norm/flush-stream stream true :passive)
     (norm/close-stream stream true)
     (norm/stop-sender session)
-    (log/trace "stream closed" stream)
+    (log/info "stream and sender closed" session stream)
     (untap event-chan ec-tap)))
 
 (defn create-sender
@@ -47,7 +47,7 @@
   (let [stream (norm/open-stream session buffer-size)
         ec-tap (chan (sliding-buffer 5) (filter #(contains? #{:tx-queue-vacancy :tx-queue-empty} (:event-type %))))]
     (tap event-chan ec-tap)
-    (log/trace "Sender registered, starting loop")
+    (log/info "Sender registered, starting loop" session stream)
     (go-loop [b-arr (<! in-chan)
               b-len (count b-arr)
               b-offs 0]
