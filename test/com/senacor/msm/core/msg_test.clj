@@ -277,7 +277,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header bb)))))
+      (is (= [0 0] (parse-fixed-header bb)))))
   (testing "message with bad magic number second char"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -294,7 +294,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header bb)))))
+      (is (= [0 0] (parse-fixed-header bb)))))
   (testing "message with bad version number (major)"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -311,7 +311,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header bb)))))
+      (is (= [0 0] (parse-fixed-header bb)))))
   (testing "message with bad version number (minor)"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -328,7 +328,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header bb)))))
+      (is (= [0 0] (parse-fixed-header bb)))))
   (testing "message with bad version number (minor)"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -345,7 +345,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header bb)))))
+      (is (= [0 0] (parse-fixed-header bb)))))
   (testing "message with bad var header length"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -362,7 +362,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header bb)))))
+      (is (= [0 0] (parse-fixed-header bb)))))
   (testing "message with bad var header length"
     (let [bb (bb/byte-buffer fix-buflen)]
       (doto bb
@@ -379,7 +379,7 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= -1 (parse-fixed-header bb)))))
+      (is (= [0 0] (parse-fixed-header bb)))))
   )
 
 (deftest test-rebuild-message

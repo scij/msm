@@ -12,8 +12,9 @@
     (testing "eine kurze Message"
       (let [event-chan (chan 1)
             in-chan (chan 1)
+            sync-chan (chan 1)
             test-chan (timeout 1000)]
-        (with-redefs-fn {#'norm/write-stream (fn [stream b-arr b-offs b-len] (>!! test-chan b-arr) b-len),
+        (with-redefs-fn {#'norm/write-stream (fn [_ b-arr b-offs b-len] (>!! test-chan b-arr) b-len),
                          #'norm/start-sender (fn [_ _ _ _ _ _]),
                          #'norm/open-stream  (fn [_ _] 99),
                          #'norm/set-congestion-control (fn [_ _ _])
@@ -21,7 +22,7 @@
                          #'mon/record-bytes-sent (fn [_ _])
                          #'stop-sender (fn [_ _ _] (>!! test-chan true))}
           #(do
-             (create-sender session instance-id (mult event-chan) in-chan 128)
+             (create-sender session instance-id (mult event-chan) in-chan sync-chan 128)
              (>!! in-chan (.getBytes "hallo"))
              (is (= "hallo" (String. ^bytes (<!! test-chan))))
              (close! in-chan)
@@ -31,9 +32,10 @@
     (testing "viele kurze Messages"
       (let [event-chan (chan 1)
             in-chan (chan 10)
+            sync-chan (chan 1)
             test-chan (timeout 1000)
             send-count (atom 0)]
-        (with-redefs-fn {#'norm/write-stream (fn [_ b-arr b-offs b-len]
+        (with-redefs-fn {#'norm/write-stream (fn [_ _ b-offs b-len]
                                                (is (= b-len 8))
                                                (is (= b-offs 0))
                                                (swap! send-count inc)
@@ -45,7 +47,7 @@
                          #'mon/record-bytes-sent (fn [_ _])
                          #'stop-sender       (fn [_ _ _] (>!! test-chan true))}
           #(do
-             (create-sender session instance-id (mult event-chan) in-chan 128)
+             (create-sender session instance-id (mult event-chan) in-chan sync-chan 128)
              (doseq [i (range 20)]
                (>!! in-chan (.getBytes "12345678")))
              (close! in-chan)
@@ -57,8 +59,9 @@
       (let [send-count (atom 0)
             event-chan (chan 1)
             in-chan (chan 1)
+            sync-chan (chan 1)
             test-chan (timeout 1000)]
-        (with-redefs-fn {#'norm/write-stream (fn [stream b-arr b-offs b-len]
+        (with-redefs-fn {#'norm/write-stream (fn [_ _ b-offs b-len]
                                                (log/tracef "write-stream %d %d" b-offs b-len)
                                                (>!! event-chan {:session 1, :event-type :tx-queue-vacancy})
                                                (swap! send-count inc)
@@ -70,7 +73,7 @@
                          #'mon/record-bytes-sent (fn [_ _])
                          #'stop-sender       (fn [_ _ _] (>!! test-chan true))}
           #(do
-             (create-sender session instance-id (mult event-chan) in-chan 128)
+             (create-sender session instance-id (mult event-chan) in-chan sync-chan 128)
              (>!! in-chan (.getBytes (apply str (repeat 20 "abcdefg "))))
              (close! in-chan)
              (close! event-chan)

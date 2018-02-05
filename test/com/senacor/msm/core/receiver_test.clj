@@ -15,10 +15,14 @@
 
 (deftest test-receive-data
   (testing "one single message"
-    (let [out-chan (timeout 100)]
+    (println "*** At" *testing-contexts*)
+    (let [out-chan (chan 3)
+          msgs (atom ["hallo" ""])]
       (with-redefs-fn {#'norm/read-stream (fn [stream buffer size]
-                                            (System/arraycopy (.getBytes "hallo") 0 buffer 0 5)
-                                            5)
+                                            (let [this-msg (first @msgs)]
+                                              (swap! msgs rest)
+                                              (System/arraycopy (.getBytes this-msg) 0 buffer 0 (count this-msg))
+                                              (count this-msg)))
                        #'monitor/record-bytes-received (fn [_ _])}
         #(do
            (receive-data 1 1 out-chan 1024)
@@ -26,27 +30,21 @@
            )))
     )
   (testing "available data is bigger than buffer size"
-    (let [out-chan (timeout 100)
-          num-msgs (atom 4)]
+    (println "*** At" *testing-contexts*)
+    (let [out-chan (chan 3)
+          msgs (atom ["hallo" "hallo" "end bag" ""])]
       (with-redefs-fn {#'norm/read-stream (fn [stream buffer size]
-                                            (swap! num-msgs dec)
-                                            (cond (pos? @num-msgs)
-                                                  (do
-                                                    (System/arraycopy (.getBytes "hallo") 0 buffer 0 5)
-                                                    5)
-                                                  (zero? @num-msgs)
-                                                  (do
-                                                    (System/arraycopy (.getBytes "end bag") 0 buffer 0 7)
-                                                    7)
-                                                  :else 0))
+                                            (let [this-msg (first @msgs)]
+                                              (swap! msgs rest)
+                                              (System/arraycopy (.getBytes this-msg) 0 buffer 0 (count this-msg))
+                                              (count this-msg)))
                        #'monitor/record-bytes-received (fn [_ _])}
         #(do
            (receive-data 1 1 out-chan 1024)
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
            (is (= "hallo" (String. ^bytes (<!! out-chan))))
-           (is (= "hallo" (String. ^bytes (<!! out-chan))))
            (is (= "end bag" (String. ^bytes (<!! out-chan))))
-           (is (nil? (<!! out-chan)))
+           (is (nil? (poll! out-chan)))
            )
         )))
   )
@@ -195,10 +193,10 @@
            (>!! event-chan {:session session,
                             :object stream,
                             :event-type :rx-object-updated})
+           (is (= :data (<!! out-chan)))
            (>!! event-chan {:session session,
                             :object stream,
                             :event-type :rx-object-completed})
            (close! event-chan)
-           (is (= :data (<!! out-chan)))
            ))))
   )
