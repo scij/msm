@@ -5,7 +5,7 @@
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.sender :as sender]
             [com.senacor.msm.core.util :as util]
-            [clojure.core.async :refer [chan go-loop mult sliding-buffer >! <! >!! close!]]
+            [clojure.core.async :refer [chan go-loop mult sliding-buffer >!! <!! close!]]
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
             [clojure.string :as str]
@@ -66,19 +66,19 @@
   (let [event-chan (chan 512)
         event-chan-m (mult event-chan)
         msg-chan (chan 128 (map message/Message->bytes))
+        sync-chan (chan)
         [if-name network port] (util/parse-network-spec net-spec)
         instance (control/init-norm event-chan)
         session (control/start-session instance if-name network port options)]
     (monitor/mon-event-loop event-chan-m)
     (sender/create-sender session (:node-id options)
-                          event-chan-m msg-chan
+                          event-chan-m msg-chan sync-chan
                           (:size options))
     (if (:file options)
       (start-file-message-source label (:file options) msg-chan)
       (start-message-source label message (:repeat options) (:autonumber options) msg-chan))
-    ; todo finit-norm darf erst aufgerufen werden, wenn die session geschlossen ist
-    ; todo wait-for-events muss getestet werden
-    (util/wait-for-events event-chan session #{:tx-watermark-completed})
+    (<!! sync-chan)
+    (log/trace "Shutdown")
     (control/finit-norm instance)
     (close! event-chan)
     ))

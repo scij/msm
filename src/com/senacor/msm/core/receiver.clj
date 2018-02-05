@@ -98,34 +98,32 @@
   message-builder is a transducer that builds messages from a sequence of
     byte arrays."
   [session event-chan out-chan message-builder]
-  (let [ec-tap (chan 128)
+  (let [ec-tap (chan 128 (filter #(= session (:session %))))
         out-mix (mix out-chan)]
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
       (if event
-        (if (= session (:session event))
-          (case (:event-type event)
-            :remote-sender-new
-            (do
-              (log/info "New sender:" (norm/event->str event))
-              (recur (<! ec-tap)))
-            :remote-sender-active
-            (do
-              (log/info "Remote sender active" (norm/event->str event))
-              (recur (<! ec-tap)))
-            :remote-sender-inactive
-            (do
-              (log/info "Remote sender inactive" (norm/event->str event))
-              (recur (<! ec-tap)))
-            :rx-object-new
-            (do
-              (log/info "Stream opened:" (norm/event->str event))
-              (stream-handler session (:object event) event-chan out-mix message-builder)
-              (recur (<! ec-tap)))
-            :event-invalid ;; happens when the instance is unexpectedly shut down
-            (close! out-chan)
-            ;; default
+        (case (:event-type event)
+          :remote-sender-new
+          (do
+            (log/info "New sender:" (norm/event->str event))
             (recur (<! ec-tap)))
+          :remote-sender-active
+          (do
+            (log/info "Remote sender active" (norm/event->str event))
+            (recur (<! ec-tap)))
+          :remote-sender-inactive
+          (do
+            (log/info "Remote sender inactive" (norm/event->str event))
+            (recur (<! ec-tap)))
+          :rx-object-new
+          (do
+            (log/info "Stream opened:" (norm/event->str event))
+            (stream-handler session (:object event) event-chan out-mix message-builder)
+            (recur (<! ec-tap)))
+          :event-invalid ;; happens when the instance is unexpectedly shut down
+          (close! out-chan)
+          ;; default
           (recur (<! ec-tap)))
         (do
           (log/trace "Exit receiver event loop")
