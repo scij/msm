@@ -22,7 +22,7 @@ The monitor namespace creates and updates JMX mbeans for status reporting on dat
 
 At the top there are three modes of transport:
 
-1. **Topic** refers to the JMS concept of a Topic. A message is sent by one or more producer and
+1. **Topic** refers to the JMS concept of a Topic. A message is sent by one or more producers and
 it is delivered to all consumers that have subscribed to this particular message label.
 2. **Stateful** is more Queue-like. A message is sent by one or more message producers and received
 by exactly one active consumer. In case this consumer fails processing is taken over by one of

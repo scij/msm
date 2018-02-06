@@ -2,15 +2,13 @@
   (:require [com.senacor.msm.core.control :as control]
             [com.senacor.msm.core.message :as message]
             [com.senacor.msm.core.monitor :as monitor]
-            [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.sender :as sender]
             [com.senacor.msm.core.util :as util]
             [clojure.core.async :refer [chan go-loop mult sliding-buffer >!! <!! close!]]
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
             [clojure.string :as str]
-            [clojure.java.io :as io])
-  (:import (org.apache.logging.log4j ThreadContext)))
+            [clojure.java.io :as io]))
 
 (def cli-options
   [["-f" "--file FILE" "Read messages from file"]

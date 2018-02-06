@@ -44,11 +44,12 @@ Details can be found at [The clojure.core.async github page](https://github.com/
 
     (let [event-chan-out (chan 5)
           event-chan-in (mult event-chan-out)
+          sync-chan (chan)
           instance (ctl/init-norm event-chan-out)]
       (let [session (ctl/start-norm-session instance "239.192.0.1" 7100 1 :loopback true)]
         (mon/mon-event-loop event-chan-in)
         (let [out-chan (chan)
-              sndr (snd/create-sender session 0 event-chan out-chan 128)]
+              sndr (snd/create-sender session 0 event-chan out-chan sync-chan 128)]
           (>!! out-chan (msg/Message->bytes (msg/create-message "DEMO.COUNT" "Message")))
           (close! out-chan))))
         
