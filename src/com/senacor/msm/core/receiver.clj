@@ -10,6 +10,14 @@
 ;; Receive messages across a norm stream
 ;;
 
+(defn synch-message
+  "Seek to start of next message"
+  [stream]
+  (log/trace "Seek to message start" stream)
+  (loop [synched (norm/seek-message-start stream)]
+    (when (not synched)
+      (log/trace "Seek to message start" stream)
+      (recur (norm/seek-message-start stream)))))
 
 (defn receive-data
   "Receives as much data as there is available in the NORM network buffers.
@@ -57,7 +65,7 @@
   message-builder a transducer to recombine messages from fragments."
   [session stream event-chan out-mix message-builder]
   (log/debug "Enter stream handler" session stream)
-  (norm/seek-message-start stream)
+  (synch-message stream)
   (let [stream-events (chan 64 (filter #(and (= session (:session %))
                                             (= stream (:object %)))))
         stream-chan (chan 128 message-builder)

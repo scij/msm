@@ -78,6 +78,6 @@
 (defn stop-session
   "Stops and unregisters the session."
   [session]
+  (log/info "stopping session" session)
   (norm/destroy-session session)
-  (mon/unregister session)
-  (log/info "session closed" session))
+  (mon/unregister session))
