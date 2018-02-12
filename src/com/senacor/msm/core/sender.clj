@@ -22,17 +22,9 @@
   event-chan delivers NORM notifications about the progress of the session shutdown"
   [session stream event-chan]
   (let [ec-tap (tap event-chan (chan 128))]
-    (log/trace "closing stream and sender")
-    (norm/add-acking-node session norm/NORM_NODE_NONE)
-    (norm/set-watermark session stream true)
-    (util/wait-for-events ec-tap session #{:tx-watermark-completed})
-    (log/trace "Flushing stream")
-    (norm/flush-stream stream true :passive)
-    (util/wait-for-events ec-tap session #{:tx-queue-empty})
     (log/trace "Closing stream")
     (norm/close-stream stream true)
-    ; make sure that the close command has been transmitted
-    (Thread/sleep 500)
+    (util/wait-for-events ec-tap session #{:tx-flush-completed})
     (log/trace "Stopping sender")
     (norm/stop-sender session)
     (log/info "stream and sender closed" session stream)
