@@ -7,12 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2728eb43-e098-452b-b478-f18e8b8e4c1c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/doc/LICENSE.TXT" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change beforePath="$PROJECT_DIR$/doc/intro.md" afterPath="$PROJECT_DIR$/doc/intro.md" />
-      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/util.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/util.clj" />
-      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" afterPath="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,8 +36,8 @@
       <file leaf-file-name="sender.clj" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-149">
-              <caret line="34" column="4" lean-forward="false" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="4" />
+            <state relative-caret-position="525">
+              <caret line="35" column="3" lean-forward="false" selection-start-line="35" selection-start-column="3" selection-end-line="35" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -644,13 +640,6 @@
       <option name="presentableId" value="Default" />
       <updated>1488727036841</updated>
     </task>
-    <task id="LOCAL-00010" summary="Namespaces sprechender benannt.&#10;Namespacehierarchie besser organisiert.&#10;Demo ist kein Testprogramm mehr sondern liegt in einem eigenen Namespace&#10;des Sourcecodes.&#10;JMX-Beans werden de-registriert, wenn die Session endet.">
-      <created>1502038638193</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1502038638193</updated>
-    </task>
     <task id="LOCAL-00011" summary="Handle missing send count and use default 10 msgs">
       <created>1502084848485</created>
       <option name="number" value="00011" />
@@ -987,7 +976,14 @@
       <option name="project" value="LOCAL" />
       <updated>1517824500990</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="Cleaned up imports and unused stuff.">
+      <created>1517930986695</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1517930986696</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -1049,7 +1045,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
-    <MESSAGE value="Temp fix - replace pipeline with go-loop to filter messages in stateless session&#10;Corrected norm jar version number." />
     <MESSAGE value="TODO removed - added unit tests for pipeline." />
     <MESSAGE value="Small housekeeping session&#10;Documentation extended - new architecture picture added&#10;kibit issues solved" />
     <MESSAGE value="Refactored init-logging to util" />
@@ -1074,7 +1069,8 @@
     <MESSAGE value="Optimized logging" />
     <MESSAGE value="Sender shutdown works.&#10;Exit of sender loop is now synchronised with the caller and&#10;closing stream and session gets through to the receiver.&#10;Once I get rid of this stupid sleep(500) I will be really&#10;happy with this code." />
     <MESSAGE value="Tests are now working" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tests are now working" />
+    <MESSAGE value="Cleaned up imports and unused stuff." />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up imports and unused stuff." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1240,6 +1236,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="572">
           <caret line="82" column="38" lean-forward="false" selection-start-line="82" selection-start-column="38" selection-end-line="82" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1254,6 +1251,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
           <caret line="135" column="4" lean-forward="false" selection-start-line="135" selection-start-column="4" selection-end-line="135" selection-end-column="4" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1310,6 +1308,7 @@
         <state split_layout="FIRST">
           <first_editor relative-caret-position="192">
             <caret line="30" column="82" lean-forward="false" selection-start-line="30" selection-start-column="82" selection-end-line="30" selection-end-column="82" />
+            <folding />
           </first_editor>
           <second_editor />
         </state>
@@ -1374,8 +1373,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-149">
-          <caret line="34" column="4" lean-forward="false" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="4" />
+        <state relative-caret-position="525">
+          <caret line="35" column="3" lean-forward="false" selection-start-line="35" selection-start-column="3" selection-end-line="35" selection-end-column="3" />
           <folding />
         </state>
       </provider>
