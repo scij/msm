@@ -3,8 +3,8 @@
             [com.senacor.msm.core.monitor :as mon]
             [com.senacor.msm.core.util :as util]
             [clojure.core.async :refer [chan close! go-loop sliding-buffer tap untap <! <!! >!! >! poll!]]
-            [clojure.tools.logging :as log])
-  )
+            [clojure.tools.logging :as log]))
+
 
 (def ^:const buffer-size
   "Transmission buffer for the sender. Size is the same as in NormApp."
@@ -65,11 +65,11 @@
                 (log/tracef "wait free out buffer space, remaining=%d" (- b-len bytes-sent))
                 (util/wait-for-events ec-tap session #{:tx-queue-empty :tx-queue-vacancy})
                 (log/trace "buffer space available")
-                (recur b-arr (- b-len bytes-sent) (+ b-offs bytes-sent)))))
-          )
+                (recur b-arr (- b-len bytes-sent) (+ b-offs bytes-sent))))))
+
         (do
           (untap event-chan ec-tap)
           (stop-sender session stream event-chan)
           (log/trace "Exit sender loop")
-          (>!! sync-chan "Done"))
-        ))))
+          (>!! sync-chan "Done"))))))
+

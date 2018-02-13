@@ -27,8 +27,8 @@
       :cc-inactive (jmx-write mbean :cc-active false)
       :grtt-updated (jmx-write mbean :grtt (norm/get-grtt-estimate session))
       ;; default
-      nil
-      )))
+      nil)))
+
 
 (defn record-bytes-sent
   "Record the number of bytes sent by this session"

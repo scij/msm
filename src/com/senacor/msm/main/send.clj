@@ -27,8 +27,8 @@
     :parse-fn #(Integer/parseInt %)]
    ["-z" "--size MSG-SIZE" "Message buffer size"
     :default 1024
-    :parse-fn #(Integer/parseInt %)]
-   ])
+    :parse-fn #(Integer/parseInt %)]])
+
 
 (defn usage
   [errors summary]
@@ -47,17 +47,17 @@
                                           (if autonumber
                                             (str message " " i)
                                             message))))
-  (close! out-chan)
-  )
+  (close! out-chan))
+
 
 (defn start-file-message-source
   [label file out-chan]
   (with-open [r (io/reader file)]
     (doseq [line (line-seq r)]
-      (>!! out-chan (message/create-message label line)))
-    )
-  (close! out-chan)
-  )
+      (>!! out-chan (message/create-message label line))))
+
+  (close! out-chan))
+
 
 (defn start-sending
   [net-spec label message options]
@@ -78,8 +78,8 @@
     (<!! sync-chan)
     (log/trace "Shutdown")
     (control/finit-norm instance)
-    (close! event-chan)
-    ))
+    (close! event-chan)))
+
 
 (defn -main
   [& args]
@@ -103,5 +103,4 @@
     (when (nil? net-spec)
       (usage ["Network spec is missing"]
              (:summary opt-arg)))
-    (start-sending net-spec label message (:options opt-arg))
-    ))
+    (start-sending net-spec label message (:options opt-arg))))

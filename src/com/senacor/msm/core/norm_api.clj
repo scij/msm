@@ -1,7 +1,6 @@
 (ns com.senacor.msm.core.norm-api
-  (:require [clojure.tools.logging :as log]
-            [clojure.string :as str])
-  (:import (mil.navy.nrl.norm NormInstance NormSession NormEvent NormData NormObject NormNode NormStream)
+  (:require [clojure.string :as str])
+  (:import (mil.navy.nrl.norm NormInstance NormSession NormData NormObject NormNode NormStream)
            (java.nio ByteBuffer)
            (mil.navy.nrl.norm.enums NormEventType NormProbingMode NormAckingStatus NormSyncPolicy NormNackingMode NormRepairBoundary NormObjectType NormFlushMode)
            (java.net InetSocketAddress)))
@@ -75,8 +74,8 @@
                               NormEventType/NORM_RX_OBJECT_ABORTED      :rx-object-aborted,
                               NormEventType/NORM_RX_CMD_NEW             :rx-object-cmd-new,
                               NormEventType/NORM_GRTT_UPDATED           :grtt-updated,
-                              NormEventType/NORM_EVENT_INVALID          :event-invalid
-                              })
+                              NormEventType/NORM_EVENT_INVALID          :event-invalid})
+
 
 (defn next-event
   "Returns the next event. This is a blocking call which will not return
@@ -137,12 +136,12 @@
 
 (defn ^NormSession set-rx-port-reuse
   "Controls port reuse of the session's receive socket"
-  ([^NormSession handle ^Boolean reuse]
-   (.setRxPortReuse handle reuse)
-    handle)
-  ([^NormSession handle ^Boolean reuse ^String rx-bind-address ^String sender-address ^Integer sender-port]
-   (.setRxPortReuse handle reuse rx-bind-address sender-address sender-port)
-    handle))
+  ([^NormSession session ^Boolean reuse]
+   (.setRxPortReuse session reuse)
+   session)
+  ([^NormSession session ^Boolean reuse ^String rx-bind-address ^String sender-address ^Integer sender-port]
+   (.setRxPortReuse session reuse rx-bind-address sender-address sender-port)
+    session))
 
 (defn ^NormSession set-multicast-interface
   "Binds this session to the specified network interface.
@@ -260,8 +259,8 @@
     handle)
   ([^NormSession handle ^Boolean enable]
    (.setCongestionControl handle enable true)
-    handle)
-  )
+    handle))
+
 
 (defn ^Boolean set-tx-rate-bounds
   "Sets the lower and upper bound for transmission rates. The NORM
@@ -324,8 +323,8 @@
                                 :active NormProbingMode/NORM_PROBE_ACTIVE
                                 :passive NormProbingMode/NORM_PROBE_PASSIVE
                                 :none NormProbingMode/NORM_PROBE_NONE))
-  handle
-  )
+  handle)
+
 
 (defn ^NormSession set-grtt-probing-interval
   "Sets the interval in which the sender sends probing messages to all receivers.
@@ -364,8 +363,8 @@
     ^bytes info ^Integer info-offset ^Integer info-length]
    (.dataEnqueue handle (ByteBuffer/wrap data offset length) 0 length info info-offset info-length))
   ([^NormSession handle ^String str]
-   (.dataEnqueue handle (ByteBuffer/wrap (.getBytes str) 0 (count str)) 0 (count str)))
-  )
+   (.dataEnqueue handle (ByteBuffer/wrap (.getBytes str) 0 (count str)) 0 (count str))))
+
 
 (defn ^Boolean requeue-object
   "Re-queues the specified object for retransmission. A return value of true
@@ -592,7 +591,7 @@
           (fn [target _] (class target)))
 
 (defmethod set-nacking-mode NormNode
-  [NormNode handle nacking-mode]
+  [^NormNode handle nacking-mode]
   (.setNackingMode handle (key->nacking-mode nacking-mode)))
 
 (defmethod set-nacking-mode NormObject
@@ -701,7 +700,7 @@
 
 (defn ^NormNode get-sender
   "Returns the identity of the sender node of the object."
-  [NormObject handle]
+  [^NormObject handle]
   (.getSender handle))
 
 (defn ^bytes get-data

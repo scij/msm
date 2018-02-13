@@ -8,7 +8,6 @@
             [com.senacor.msm.core.topic :as topic]
             [clojure.core.async :refer [chan go go-loop mult tap untap <! >!]]
             [clojure.java.io :as io]
-            [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
             [clojure.string :as str])
   (:import (mil.navy.nrl.norm.enums NormEventType)))
@@ -27,7 +26,7 @@
                  "topic" :topic
                  nil)
     :validate [#(contains? #{:stateful :stateless :topic} %)
-               "Mode must be \"stateful\", \"stateless\" or \"topic\"" ]
+               "Mode must be \"stateful\", \"stateless\" or \"topic\""]
     :default "topic"]
    ["-s" "--tos TOS" "Type of service"
     :parse-fn #(Integer/parseInt %)]
@@ -80,8 +79,8 @@
         (util/wait-for-events ec-tap session #{NormEventType/NORM_EVENT_INVALID})
         (untap event-chan-m ec-tap))
       (control/stop-session session)
-      (control/finit-norm instance)
-      )))
+      (control/finit-norm instance))))
+
 
 (defn -main
   [& args]
@@ -100,5 +99,5 @@
     (when (nil? net-spec)
       (usage ["Network spec is missing"]
              (:summary opt-arg)))
-    (start-listening net-spec label (:options opt-arg))
-    ))
+    (start-listening net-spec label (:options opt-arg))))
+

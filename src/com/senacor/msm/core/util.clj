@@ -4,7 +4,8 @@
             [clojure.core.async :refer [<!! >!!]]
             [clojure.tools.logging :as log]
             [bytebuffer.buff :as bb]
-            [me.raynes.moments :as moments]))
+            [me.raynes.moments :as moments])
+  (:import (java.nio ByteBuffer)))
 
 ;; Based on m0smith's code at https://gist.github.com/m0smith/1684476#file-hexlify-clj
 (defprotocol Hexl
@@ -14,7 +15,7 @@
 (extend-type Number
   Hexl
   (hexl-hex [i]
-    (let [rtnval (Integer/toHexString (if (neg? i) (+ 256 i) i)) ]
+    (let [rtnval (Integer/toHexString (if (neg? i) (+ 256 i) i))]
       (if (< (count rtnval) 2) (str "0" rtnval) rtnval)))
   (hexl-char [b]
     (let [v (if (neg? b) (+ 256 b) b)
@@ -112,7 +113,7 @@ byte.  Works for chars as well."
   a one byte length field from the buffer, the second takes
   an additional length argument and reads as many bytes from
   the buffer as specified in length."
-  ([buf]
+  ([^ByteBuffer buf]
    (if (pos? (.remaining buf))
      (let [net-len (min (bb/take-byte buf) (.remaining buf))
            b (byte-array net-len)]
@@ -136,8 +137,8 @@ byte.  Works for chars as well."
   (let [[interface mc-addr port] (str/split network-spec #"[;:]")]
     [interface
      mc-addr
-     (Integer/parseInt port)
-     ]))
+     (Integer/parseInt port)]))
+
 
 (defn default-node-id
   "Returns the process id as a default value for the node id."

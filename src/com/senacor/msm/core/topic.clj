@@ -1,7 +1,6 @@
 (ns com.senacor.msm.core.topic
   (:require [clojure.core.async :refer [chan pipeline]]
             [com.senacor.msm.core.message :as message]
-            [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.receiver :as receiver]
             [com.senacor.msm.core.util :as util]
             [com.senacor.msm.core.control :as control]
@@ -31,5 +30,5 @@
   (let [[if-name network port] (util/parse-network-spec netspec)
         session (control/start-session instance if-name network port options)]
     (log/infof "Create topic session on interface %s, address %s, port %d" if-name network port)
-    (topic-session-handler session subscription event-chan msg-chan)
-    ))
+    (topic-session-handler session subscription event-chan msg-chan)))
+

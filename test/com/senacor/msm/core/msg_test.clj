@@ -3,8 +3,7 @@
             [com.senacor.msm.core.util :as util]
             [clojure.test :refer :all]
             [bytebuffer.buff :as bb]
-            [clojure.core.async :refer [<!! >!! <! >! chan to-chan timeout close!]]
-            [clojure.tools.logging :as log])
+            [clojure.core.async :refer [<!! >!! <! >! chan to-chan timeout close!]])
   (:import (java.nio ByteBuffer)
            (java.util UUID)))
 
@@ -16,15 +15,15 @@
   [^bytes b1 ^bytes b2]
    (if (= (count b1) (count b2))
      (every? identity (map = b1 b2))
-     false)
-  )
+     false))
+
 
 (deftest test-encode
   (testing "just encode"
     (let [fxb ^bytes (Message->bytes fix-msg)]
       (is fxb)
-      (is (= fix-buflen (count fxb)))
-      ))
+      (is (= fix-buflen (count fxb)))))
+
   (testing "encode and inspect"
     (let [fxb (ByteBuffer/wrap (Message->bytes fix-msg))]
       (is (= fix-buflen (.remaining fxb)))
@@ -52,15 +51,15 @@
       (is (= (byte \o) (bb/take-byte fxb)))
       (is (= (byte \a) (bb/take-byte fxb)))
       (is (= (byte \d) (bb/take-byte fxb)))
-      (is (= 0 (.remaining fxb)))
-      ))
+      (is (= 0 (.remaining fxb)))))
+
   (testing "encode and parse"
     (let [cid (str (UUID/randomUUID))
           msg (create-message "/com/senacor/msm" cid "MSG 123")
           fxb (ByteBuffer/wrap (Message->bytes msg))]
-      (is (msg= msg (parse-message (.array fxb))))
-      ))
-  )
+      (is (msg= msg (parse-message (.array fxb)))))))
+
+
 
 (defn fill-buffer-with-testdata
   "Fill buf with predefined test data and flip the buffer.
@@ -100,8 +99,8 @@
   (testing "Puffer vergleichen"
     (let [buf (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip)]
       (is (= (String. ^"[B" (.array buf))
-             (String. (Message->bytes fix-msg)))))
-    )
+             (String. (Message->bytes fix-msg))))))
+
   (testing "buffer io mit mark und reset"
     (let [buf (bb/byte-buffer 20)]
       (.mark buf)
@@ -123,16 +122,16 @@
       (.compact buf)
       (.flip buf)
       (is (= 0 (.position buf)))
-      (is (= 18 (.remaining buf)))
-      ))
+      (is (= 18 (.remaining buf)))))
+
   (testing "buffer io with flip"
     (let [buf (bb/byte-buffer 20)]
       (is (= 20 (.remaining buf)))
       (bb/put-byte buf 1)
       (bb/put-byte buf 2)
       (.flip buf)
-      (is (= 2 (.remaining buf)))
-      ))
+      (is (= 2 (.remaining buf)))))
+
   (testing "buffer out with flip"
     (let [buf (bb/byte-buffer 20)]
       (is (= 20 (.remaining buf)))
@@ -142,9 +141,9 @@
       (bb/put-byte buf (byte \c))
       (bb/put-byte buf (byte \d))
       (is (= 0 (.remaining buf))) ;; flip has set the limit to 2
-      (is (= "cd" (String. (.array buf) 0 2)))
-      ))
-  )
+      (is (= "cd" (String. (.array buf) 0 2))))))
+
+
 
 (deftest test-async-io
   (testing "send and close"
@@ -236,8 +235,8 @@
         (is (= fix-buflen (count (first (into [] (align-byte-arrays) [f1 f2 f3])))))
         (is (= fix-buflen (count (second (into [] (align-byte-arrays) [f1 f2 f3])))))
         (is (util/byte-array-equal (first (into [] (align-byte-arrays) [f1 f2 f3])) one-fix))
-        (is (util/byte-array-equal (second (into [] (align-byte-arrays) [f1 f2 f3])) one-fix)))))
-  )
+        (is (util/byte-array-equal (second (into [] (align-byte-arrays) [f1 f2 f3])) one-fix))))))
+
 
 (deftest test-label-match
   (testing "nil match"
@@ -253,13 +252,12 @@
   (testing "regex match"
     (let [fix (create-message "com.senacor.msm.label.1" "foo.bar")]
       (is (label-match #"com.+" fix))
-      (is (label-match #"com.senacor.*" fix))))
-  )
+      (is (label-match #"com.senacor.*" fix)))))
+
 
 (deftest test-parse-message
   (testing "well formed message"
-    (let [bb (bb/byte-buffer fix-buflen)
-          fix (fill-buffer-with-testdata bb)]
+    (let [bb (bb/byte-buffer fix-buflen)]
       (is (msg= fix-msg (parse-message (.array bb))))))
   (testing "message with bad magic number first char"
     (let [bb (bb/byte-buffer fix-buflen)]
@@ -379,8 +377,8 @@
         (bb/put-byte (byte \p))
         (bb/put-byte (byte \d)))
       (.flip bb)
-      (is (= [0 0] (parse-fixed-header bb)))))
-  )
+      (is (= [0 0] (parse-fixed-header bb))))))
+
 
 (deftest test-rebuild-message
   (testing "one message"
@@ -452,5 +450,5 @@
             f3 (util/byte-array-rest fix 40)]
         (is (= 2 (count (into [] message-rebuilder [f1 f2 f3]))))
         (is (msg= fix-msg (first (into [] message-rebuilder [f1 f2 f3]))))
-        (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2 f3])))))))
-  )
+        (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2 f3]))))))))
+

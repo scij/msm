@@ -3,8 +3,8 @@
             [com.senacor.msm.core.monitor :as mon]
             [com.senacor.msm.core.util :as util]
             [clojure.core.async :refer [>!! >! <! tap admix unmix mix untap go go-loop chan close!]]
-            [clojure.tools.logging :as log])
-  )
+            [clojure.tools.logging :as log]))
+
 
 ;;
 ;; Receive messages across a norm stream
@@ -15,7 +15,7 @@
   [stream]
   (log/trace "Seek to message start" stream)
   (loop [synched (norm/seek-message-start stream)]
-    (when (not synched)
+    (when-not synched
       (log/trace "Seek to message start" stream)
       (recur (norm/seek-message-start stream)))))
 
