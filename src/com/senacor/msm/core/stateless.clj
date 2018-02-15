@@ -63,6 +63,8 @@
       (recur (<! cmd-chan-in)))))
 
 (defn receiver-status-housekeeping
+  "Handle number of consumers and changes to it."
+  ;; todo neu hinzukommende Consumer müssen synchronisiert in die Verteilung aufgenommen werden.
   [session session-receivers receiver-count my-session-index]
   (log/trace "Enter housekeeping")
   (swap! session-receivers alive-sessions (System/currentTimeMillis))

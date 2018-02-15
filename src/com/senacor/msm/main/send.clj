@@ -55,7 +55,6 @@
   (with-open [r (io/reader file)]
     (doseq [line (line-seq r)]
       (>!! out-chan (message/create-message label line))))
-
   (close! out-chan))
 
 
