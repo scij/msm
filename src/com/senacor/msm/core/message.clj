@@ -25,8 +25,10 @@
    (assert label "Label must not be nil")
    (assert (not (str/blank? label)) "Label must not be empty")
    (->Message label corr-id seq-nbr payload (Date.)))
+  ([^String label ^String corr-id ^String payload]
+   (create-message label corr-id 0 payload))
   ([^String label ^String payload]
-   (->Message label (str (UUID/randomUUID)) 0 payload (Date.))))
+   (create-message label (str (UUID/randomUUID)) 0 payload)))
 
 (defn set-seq-nbr
   [message seq-nbr]
