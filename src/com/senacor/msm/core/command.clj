@@ -12,6 +12,10 @@
   "A stateless or stateful process sends this command to inform it's peers
   that it is still alive and processing" 1)
 
+(def ^:const CMD_JOIN
+  "A stateless process sends this command to inform it's peers that
+  it intends to join processing" 2)
+
 (defn command-sender
   "Receive commands as byte array messages from cmd-chan and send them
   to all NORM receivers of this session. Use event-chan to receive
@@ -77,11 +81,24 @@
   session-id is the current session.
   subscription is the message label the consumer is listening to. It is either a String
   or the String representing the regex.
-  active is true when this consumer assumes to be the active instance and false otherwise"
-  [session-id subscription active]
+  active is true when this consumer assumes to be the active instance and false otherwise
+  msg-seq-nbr is the last message sequence number this client has processed"
+  [session-id subscription active msg-seq-nbr]
   (let [result (bb/byte-buffer 256)]
     (put-fixed-header result CMD_ALIVE)
     (bb/put-byte result (if active 1 0))
+    (bb/put-long result msg-seq-nbr)
+    (put-string result (str subscription))
+    (util/byte-array-head (.array result) (.position result))))
+
+(defn join
+  "Creates a JOIN command message informing all participating SL processes that the
+  current node intends to join processing, starting with a given message sequence
+  number. The message is returned as a byte array."
+  [session-id subscription msg-seq-nbr]
+  (let [result (bb/byte-buffer 256)]
+    (put-fixed-header result CMD_JOIN)
+    (bb/put-long result msg-seq-nbr)
     (put-string result (str subscription))
     (util/byte-array-head (.array result) (.position result))))
 
@@ -109,7 +126,13 @@
 (defn parse-alive-var-part
   [buf]
   {:active (= 1 (bb/take-byte buf))
+   :msg-seq-nbr (bb/take-long buf)
    :subscription (util/take-string buf)})
+
+(defn parse-join-var-part
+  [buf]
+  {:msg-seq-nbr (bb/take-long buf),
+  :subscription (util/take-string buf)})
 
 (defn parse-command
   [b-arr]
@@ -118,6 +141,8 @@
     (merge {:cmd cmd}
            (cond
              (= cmd CMD_ALIVE) (parse-alive-var-part buf)
-             :else (do
-                     (log/errorf "Unknown command type %d" cmd)
-                     nil)))))
+             (= cmd CMD_JOIN) (parse-join-var-part buf)
+             :else
+             (do
+               (log/errorf "Unknown command type %d" cmd)
+               nil)))))

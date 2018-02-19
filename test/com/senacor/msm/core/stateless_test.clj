@@ -64,7 +64,7 @@
                task (handle-receiver-status 1 "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (Thread/sleep 10)
            (is (= 1 @receiver-count))
-           (>!! cmd-chan-in {:cmd (command/alive 2 "label" true) :node-id "remote:3456"})
+           (>!! cmd-chan-in {:cmd (command/alive 2 "label" true 199) :node-id "remote:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
            (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 0 @my-session-index))
@@ -79,7 +79,7 @@
                task (handle-receiver-status 2 "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (Thread/sleep 10)
            (is (= 1 @receiver-count))
-           (>!! cmd-chan-in {:cmd (command/alive 1 "label" true) :node-id "aaa:3456"})
+           (>!! cmd-chan-in {:cmd (command/alive 1 "label" true 200) :node-id "aaa:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
            (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 1 @my-session-index))
@@ -92,7 +92,7 @@
                session-receivers (atom {my-session {:expires Long/MAX_VALUE}})
                cmd-chan-in (chan 1)
                task (handle-receiver-status 2  "label" cmd-chan-in session-receivers my-session-index receiver-count)]
-           (>!! cmd-chan-in {:cmd (command/alive 1 "label" true) :node-id "remote:3456"})
+           (>!! cmd-chan-in {:cmd (command/alive 1 "label" true 200) :node-id "remote:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
            (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 2 @receiver-count))
