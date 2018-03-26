@@ -1,5 +1,5 @@
 (ns com.senacor.msm.core.stateless
-  (:require [clojure.core.async :refer [go-loop chan pipeline <! >! >!!]]
+  (:require [clojure.core.async :refer [go-loop close! poll! chan pipeline <! >! <!! >!! timeout]]
             [me.raynes.moments :as moments]
             [com.senacor.msm.core.util :as util]
             [com.senacor.msm.core.control :as control]
@@ -50,41 +50,71 @@
   (.indexOf (keys sessions) my-session))
 
 (defn handle-receiver-status
-  [session label cmd-chan-in session-receivers my-session-index receiver-count]
+  [session label cmd-chan-in a-session-receivers a-my-session-index a-receiver-count]
   (go-loop [cmd (<! cmd-chan-in)]
     (when cmd
       (log/trace "Command received" cmd)
-      (let [remote-label (:subscription (command/parse-command (:cmd cmd)))
+      (let [remote-label (:subscription cmd)
             remote-node-id (norm/get-node-name (:node-id cmd))
             now (System/currentTimeMillis)]
         (when (= remote-label label)
-          (swap! session-receivers session-is-alive remote-node-id remote-label now))
+          (swap! a-session-receivers session-is-alive remote-node-id remote-label now))
         )
       (recur (<! cmd-chan-in)))))
 
 (defn receiver-status-housekeeping
-  [session session-receivers receiver-count my-session-index]
+  "Expire sessions that have not reported in with an alive message for twice
+  the alive time interval.
+  session the current NORM session.
+  a-session-receivers the atom holding the active session map.
+  a-receiver-count an atom holding the number of active receivers (including self).
+  a-my-session-index an atom holding the index of the current session in session-receivers."
+  [session a-session-receivers a-receiver-count a-my-session-index]
   (log/trace "Enter housekeeping")
-  (swap! session-receivers alive-sessions (System/currentTimeMillis))
-  (log/trace "After alive-sessions" @session-receivers)
-  (swap! receiver-count number-of-sessions-alive @session-receivers)
-  (log/tracef "After count sessions %d" @receiver-count)
-  (monitor/record-number-of-sl-receivers session @receiver-count)
-  (swap! my-session-index find-my-index @session-receivers)
-  (log/tracef "After my-index %d" @my-session-index)
+  (swap! a-session-receivers alive-sessions (System/currentTimeMillis))
+  (log/trace "After alive-sessions" @a-session-receivers)
+  (swap! a-receiver-count number-of-sessions-alive @a-session-receivers)
+  (log/tracef "After count sessions %d" @a-receiver-count)
+  (monitor/record-number-of-sl-receivers session @a-receiver-count)
+  (swap! a-my-session-index find-my-index @a-session-receivers)
+  (log/tracef "After my-index %d" @a-my-session-index)
   (log/trace "Exit housekeeping"))
 
 (defn is-my-message
-  "Returns true if the message label matches the
-  subscription and if the message correlation id matches the shard key
-  and false otherwise.
-  message is a msm message record
+  "Returns true if the message sequence number matches the shard key
+  and false otherwise. When the subscription has not been established yet
+  false is returned and the sequence number is sent to the seq-no-chan.
   subscription is a regex
-  my-index and receiver-count are the ingredients to compute the sharding key."
-  [subscription my-index receiver-count message]
-  (and
-    (message/label-match subscription message)
-    (= @my-index (mod (.hashCode (:correlation-id message)) @receiver-count))))
+  seq-no-chan is an outbound channel where the message seq-nos are written
+   as long as no subscription has been established.
+  a-my-index and a-receiver-count are the ingredients to compute the sharding key.
+  message is a msm message record\n"
+  [seq-no-chan a-my-index a-receiver-count message]
+  (log/tracef "is my message: my index %d receiver count %d seq-no %d"
+              @a-my-index @a-receiver-count (:msg-seq-nbr message))
+  (or
+    (and (nil? @a-my-index)
+         (>!! seq-no-chan (:msg-seq-nbr message))
+         false)
+    (and (some? @a-my-index)
+         (= @a-my-index (mod (:msg-seq-nbr message) @a-receiver-count)))))
+
+(defn prepare-to-join
+  "Collects the message sequence numbers on seq-no-chan until it closes (by timeout),
+  computes an estimate for the sequence number this session should join."
+  [seq-no-chan a-join-seq-no]
+  (log/info "Preparing to join - collecting data")
+  (go-loop [initial-seq-no (<! seq-no-chan)
+            prev-seq-no initial-seq-no
+            seq-no (<! seq-no-chan)]
+    (if seq-no
+      (recur initial-seq-no seq-no (<! seq-no-chan))
+      (do
+        (assert (some? initial-seq-no) "Premature timeout on seq-no-chan")
+        (let [join-seq-no (+ (* 2 (- prev-seq-no initial-seq-no)) initial-seq-no)]
+          (reset! a-join-seq-no join-seq-no)
+          (log/infof "Prepare to join complete. Join with %d" join-seq-no)))))
+  a-join-seq-no)
 
 (defn stateless-session-handler
   "Starts sending out the alive-status messages and at the same time
@@ -97,25 +127,35 @@
   [session subscription event-chan msg-chan]
   (let [cmd-chan-out (chan 16)
         cmd-chan-in  (chan 64)
-        session-receivers (atom (sorted-map my-session {:expires Long/MAX_VALUE,
-                                                        :subscription subscription}))
-        my-session-index (atom 0)
-        receiver-count (atom 1)]
+        a-session-receivers (atom (sorted-map my-session {:expires Long/MAX_VALUE,
+                                                          :subscription subscription}))
+        a-my-session-index (atom nil)
+        a-my-session-last-msg (atom 0)
+        a-receiver-count (atom 1)]
     ; send out status messages
     (norm/start-sender session (norm/get-local-node-id session) 2048 256 64 16)
     (command/command-sender session event-chan cmd-chan-out)
-    (moments/schedule-every util/sl-exec alive-interval 10
-                            (fn []
-                              (>!! cmd-chan-out (command/alive session subscription true))))
-    ; process status messages from other receivers
-    (handle-receiver-status session subscription cmd-chan-in session-receivers my-session-index receiver-count)
     (moments/schedule-every util/sl-exec alive-interval
-                            (partial receiver-status-housekeeping session session-receivers receiver-count my-session-index))
+                            (fn []
+                              (log/trace "sending alive command msg")
+                              (>!! cmd-chan-out (command/alive session subscription true @a-my-session-index @a-my-session-last-msg))))
+    ; process status messages from other receivers
+    (handle-receiver-status session subscription cmd-chan-in a-session-receivers a-my-session-index a-receiver-count)
+    (moments/schedule-every util/sl-exec alive-interval
+                            #(receiver-status-housekeeping session a-session-receivers a-receiver-count a-my-session-index))
     (command/command-receiver session event-chan cmd-chan-in)
-    ; process incoming traffic
-    (receiver/create-receiver session event-chan msg-chan
-                              (comp message/message-rebuilder
-                                    (filter (partial is-my-message subscription my-session-index receiver-count)))
+    ; start receiving data. First in passive mode and once successfully joined actively
+    (let [seq-no-chan  (timeout (* 2 alive-interval))
+          a-join-seq-no (atom Long/MAX_VALUE)]
+      ; start watching incoming messages and choose the sequence number to join at
+      (prepare-to-join seq-no-chan a-join-seq-no)
+      ; start processing incoming messages
+      (receiver/create-receiver session event-chan msg-chan
+                                (comp message/message-rebuilder
+                                      (filter #(message/label-match subscription %))
+                                      (filter #(> (:msg-seq-nbr %) @a-join-seq-no))
+                                      (filter (partial is-my-message seq-no-chan
+                                                       a-my-session-index a-receiver-count))))
   )))
 
 (defn create-session

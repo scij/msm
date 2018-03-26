@@ -1,12 +1,14 @@
 (ns com.senacor.msm.core.stateless-test
   (:require [clojure.test :refer :all]
             [com.senacor.msm.core.stateless :refer :all]
-            [clojure.core.async :refer [onto-chan close! chan timeout pipeline poll! <!! >!!]]
+            [clojure.core.async :refer [go-loop onto-chan close! chan onto-chan timeout pipeline poll! <! >! <!! >!!]]
             [com.senacor.msm.core.command :as command]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.message :as message]
-            [com.senacor.msm.core.monitor :as monitor])
-  (:import (java.util.concurrent Future)))
+            [com.senacor.msm.core.monitor :as monitor]
+            [com.senacor.msm.core.receiver :as receiver]
+            [clojure.tools.logging :as log]
+            [me.raynes.moments :as moments]))
 
 (deftest test-alive-sessions
   (let [fix {1 {:expires 100, :subscription "100"},
@@ -64,7 +66,12 @@
                task (handle-receiver-status 1 "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (Thread/sleep 10)
            (is (= 1 @receiver-count))
-           (>!! cmd-chan-in {:cmd (command/alive 2 "label" true 199) :node-id "remote:3456"})
+           (>!! cmd-chan-in {:cmd command/CMD_ALIVE,
+                             :active true,
+                             :subscription "label"
+                             :session-index 1,
+                             :msg-seq-nbr 1000,
+                             :node-id "remote:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
            (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 0 @my-session-index))
@@ -79,7 +86,12 @@
                task (handle-receiver-status 2 "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (Thread/sleep 10)
            (is (= 1 @receiver-count))
-           (>!! cmd-chan-in {:cmd (command/alive 1 "label" true 200) :node-id "aaa:3456"})
+           (>!! cmd-chan-in {:cmd command/CMD_ALIVE,
+                             :active true,
+                             :subscription "label",
+                             :session-index @my-session-index,
+                             :msg-seq-nbr 1000,
+                             :node-id "aaa:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
            (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 1 @my-session-index))
@@ -92,7 +104,12 @@
                session-receivers (atom {my-session {:expires Long/MAX_VALUE}})
                cmd-chan-in (chan 1)
                task (handle-receiver-status 2  "label" cmd-chan-in session-receivers my-session-index receiver-count)]
-           (>!! cmd-chan-in {:cmd (command/alive 1 "label" true 200) :node-id "remote:3456"})
+           (>!! cmd-chan-in {:cmd command/CMD_ALIVE,
+                             :subscription "label",
+                             :active true,
+                             :session-id 0,
+                             :msg-seq-nbr 1000,
+                             :node-id "remote:3456"})
            (Thread/sleep 100) ; todo add a better way to synchronize
            (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
            (is (= 2 @receiver-count))
@@ -105,38 +122,129 @@
        )))
 
 (deftest test-filter-my-messages
-  (let [fix (message/create-message "abc" "def" "payload")
+  (let [fix (message/create-message "abc" "def" 4 "payload")
         zero (atom 0)
         two (atom 2)
         four (atom 4)
+        seq-no-chan (chan 1)
         one (atom 1)]
     (testing "match"
-      (is (is-my-message "abc" one four fix)))
-    (testing "match regex"
-      (is (is-my-message #"ab." one four fix)))
-    (testing "wrong label"
-      (is (not (is-my-message #"xyz" one four fix))))
+      (is (is-my-message seq-no-chan zero four fix)))
     (testing "wrong index"
-      (is (not (is-my-message #"abc" two four fix))))
+      (is (not (is-my-message seq-no-chan two four fix))))
     (testing "only one receiver"
-      (is (is-my-message "abc" zero one fix)))
+      (is (is-my-message seq-no-chan zero one fix)))
+    ))
+
+(deftest test-prepare-to-join
+  (testing "simple case without timing"
+    (let [c (chan 20)
+          a-join-seq-no (atom 10000)]
+      (onto-chan c (range 100 121))
+      (is (= a-join-seq-no(prepare-to-join c a-join-seq-no)))
+      (Thread/sleep 10)
+      (is (= 140 @a-join-seq-no))))
+  (testing "simple case with timeout"
+    (let [c (timeout 50)
+          a-join-seq-no (atom 10000)]
+      (onto-chan c (range 100 121))
+      (is (= a-join-seq-no (prepare-to-join c a-join-seq-no)))
+      (Thread/sleep 10)
+      (is (= 140 @a-join-seq-no))))
+  (testing "true timeout"
+    (let [c (timeout 250)
+          a-join-seq-no (atom 10000)]
+      (go-loop [s 100]
+        (<! (timeout 25))
+        ;(Thread/sleep 50)
+        (when (>! c s)
+          (recur (inc s))))
+      (is (= a-join-seq-no (prepare-to-join c a-join-seq-no)))
+      (Thread/sleep 300)
+      (is (not= 10000 @a-join-seq-no))))
+  )
+
+(deftest test-stateless-session-handler
+  (testing "normal session startup and one message"
+    (let [fix-msgs1 (map #(message/create-message "s1" (str "co" %) (+ 1000 %) (str "Payload " %))
+                         (range 1 21))
+          fix-msgs2 (map #(message/create-message "s1" (str "co" %) (+ 1000 %) (str "Payload " %))
+                         (range 40 60))
+          fix-cmd (map #(hash-map :cmd command/CMD_ALIVE,
+                                  :subscription "s1",
+                                  :active true,
+                                  :node-id (str (+ 100 %)),
+                                  :msg-seq-nbr (+ 1000 %))
+                       (range 1 6))]
+      (with-redefs-fn {#'command/command-receiver (fn [session event-chan cmd-chan]),
+                       #'command/command-sender   (fn [session event-chan cmd-chan]),
+                       #'norm/get-node-name       (fn [node-id]
+                                                    node-id),
+                       #'norm/get-local-node-id   (fn [session] 1),
+                       #'norm/start-sender        (fn [_ _ _ _ _ _]),
+                       #'moments/schedule-every   (fn [_ _ _]),
+                       #'prepare-to-join          (fn [seq-no-chan a-join-seq-no]
+                                                    (go-loop [s (<! seq-no-chan)]
+                                                      (when s
+                                                        (recur (<! seq-no-chan))))
+                                                    (log/trace "join with 1020")
+                                                    (reset! a-join-seq-no 1020)),
+                       #'handle-receiver-status   (fn [session label cmd-chan-in a-session-receivers a-my-session-index a-receiver-count]
+                                                     (reset! a-my-session-index 0)),
+                       #'monitor/record-number-of-sl-receivers
+                                                  (fn [_ rec-count]
+                                                    (log/tracef "record number of receivers %d"
+                                                                rec-count)),
+                       #'receiver/create-receiver (fn [session event-chan msg-chan msg-filter]
+                                                    (log/trace "creating fake receiver")
+                                                    (let [m-chan (chan 20)]
+                                                      (pipeline 1 msg-chan msg-filter m-chan)
+                                                      (log/trace "pushing init messages")
+                                                      (onto-chan m-chan (map message/Message->bytes fix-msgs1) false)
+                                                      ;(log/trace "wait to join")
+                                                      ;(<!! (timeout (* 3 alive-interval)))
+                                                      ;(Thread/sleep (* 3 alive-interval))
+                                                      (log/trace "pushing data messages")
+                                                      (onto-chan m-chan (map message/Message->bytes fix-msgs2))
+                                                      (log/trace "push complete")))}
+      #(let [msg-chan (timeout 1000)]
+         (stateless-session-handler 1 "s1" nil msg-chan)
+         (is (= "Payload 40" (:payload (<!! msg-chan))))
+        )))))
+
+(deftest test-is-my-message
+  (let [fix (message/create-message "abc" "def" 1005 "payload")
+        a-my-index1 (atom 1)
+        a-my-index2 (atom 0)
+        a-receiver-count (atom 4)]
+    (testing "is my message"
+      (is (is-my-message nil a-my-index1 a-receiver-count fix)))
+    (testing "is not my message"
+      (is (not (is-my-message nil a-my-index2 a-receiver-count fix))))
+    (testing "not initialized"
+      (let [c (chan 1)]
+        (is (not (is-my-message c (atom nil) a-receiver-count fix)))
+        (is (= 1005 (poll! c)))))
     ))
 
 (deftest test-message-rebuild-and-filter
   (testing "passende message"
     (let [one (atom 1)
           four (atom 4)
-          msg1 (message/create-message "abc" "def" "payload")
+          msg1 (message/create-message "abc" "def" 1005 "payload")
           c (chan 1 (comp message/message-rebuilder
-                          (filter (partial is-my-message "abc" one four))))]
+                          (filter #(message/label-match "abc" %))
+                          (filter (partial is-my-message nil one four))))]
       (>!! c (message/Message->bytes msg1))
+      (close! c)
       (is (message/msg= msg1 (<!! c)))))
   (testing "passiert den Filter nicht"
     (let [two (atom 2)
           four (atom 2)
-          msg1 (message/create-message "abc" "def" "payload")
+          msg1 (message/create-message "abc" "def" 1005 "payload")
           c (chan 1 (comp message/message-rebuilder
-                          (filter (partial is-my-message "abc" two four))))]
+                          (filter #(message/label-match "abc" %))
+                          (filter (partial is-my-message nil two four))))]
       (>!! c (message/Message->bytes msg1))
       (close! c)
       (is (nil? (<!! c)))))
@@ -157,20 +265,20 @@
       (is (nil? (<!! c-out)))
      ))
   (testing "filter auf array"
-    (let [msg1 (message/create-message "abc" "def" "payload")
-          msg2 (message/create-message "abc" "ghi" "payload")
+    (let [msg1 (message/create-message "abc" "def" 1005 "payload")
+          msg2 (message/create-message "abc" "ghi" 1004 "payload")
           one (atom 1)
           four (atom 4)]
-      (is (= [msg1] (into [] (filter (partial is-my-message "abc" one four)) [msg1 msg2])))
+      (is (= [msg1] (into [] (filter (partial is-my-message nil one four)) [msg1 msg2])))
     ))
   (testing "pipeline with message filter"
-    (let [msg1 (message/create-message "abc" "def" "payload")
-          msg2 (message/create-message "abc" "ghi" "payload")
+    (let [msg1 (message/create-message "abc" "def" 1005 "payload")
+          msg2 (message/create-message "abc" "ghi" 1004 "payload")
           c-in (chan 3)
           c-out (chan 3)
           one (atom 1)
           four (atom 4)]
-      (pipeline 1 c-out (filter (partial is-my-message "abc" one four)) c-in)
+      (pipeline 1 c-out (filter (partial is-my-message nil one four)) c-in)
       (>!! c-in msg1)
       (>!! c-in msg2)
       (close! c-in)

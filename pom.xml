@@ -14,9 +14,7 @@
     </license>
   </licenses>
   <scm>
-    <tag>227796182c4a8df85499569ff34c9d86f4e9eba2
-</tag>
-    <url/>
+    <tag>3f0bbeb4990fb1e8a74fe9e86e545be9cc89774c</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -51,7 +49,7 @@
     </repository>
     <repository>
       <id>clojars</id>
-      <url>https://clojars.org/repo/</url>
+      <url>https://repo.clojars.org/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
