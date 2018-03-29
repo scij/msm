@@ -3,18 +3,18 @@
             [clojure.core.async :refer [chan <!!]]
             [com.senacor.msm.core.control :refer :all]
             [com.senacor.msm.core.norm-api :as norm]
-            [clojure.tools.logging :as log]
             [com.senacor.msm.core.monitor :as monitor]))
 
 (deftest test-event-loop
   (let [count (atom 0)]
-    (with-redefs-fn {#'norm/next-event (fn [instance]
+    (with-redefs-fn {#'norm/next-event (fn [_]
                                          (swap! count inc)
                                          (case @count
                                            1 {:session 1, :event-type :rx-object-new}
                                            2 {:session 1, :event-type :event-invalid}
                                            {:session 1, :event-type :zzz})
-                                         )}
+                                         ),
+                     #'norm/destroy-instance (fn [_])}
       #(let [event-chan (chan 1)
              evt (future (event-loop 1 event-chan))]
          (is (= {:session 1, :event-type :rx-object-new} (<!! event-chan)))

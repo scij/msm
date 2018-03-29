@@ -8,45 +8,45 @@
 (deftest test-concat
   (testing "array cat"
     (is (= "hallo"
-           (String. (cat-byte-array (.getBytes "") (.getBytes "hallo")))))
+           (String. ^bytes (cat-byte-array (.getBytes "") (.getBytes "hallo")))))
     (is (= "hallo"
-           (String. (cat-byte-array (.getBytes "ha") (.getBytes "llo")))))
+           (String. ^bytes (cat-byte-array (.getBytes "ha") (.getBytes "llo")))))
     (is (= "hallo"
-           (String. (cat-byte-array (.getBytes "h") (.getBytes "allo")))))
+           (String. ^bytes (cat-byte-array (.getBytes "h") (.getBytes "allo")))))
     (is (= "hallo"
-           (String. (cat-byte-array (.getBytes "hall") (.getBytes "o")))))
+           (String. ^bytes (cat-byte-array (.getBytes "hall") (.getBytes "o")))))
     ))
 
 (deftest test-tail
   (testing "array substr tail"
     (is (= "hallo"
-           (String. (byte-array-rest (.getBytes "hallo") 0))))
+           (String. ^bytes (byte-array-rest (.getBytes "hallo") 0))))
     (is (= "allo"
-           (String. (byte-array-rest (.getBytes "hallo") 1))))
+           (String. ^bytes (byte-array-rest (.getBytes "hallo") 1))))
     (is (= "llo"
-           (String. (byte-array-rest (.getBytes "hallo") 2))))
+           (String. ^bytes (byte-array-rest (.getBytes "hallo") 2))))
     (is (= "lo"
-           (String. (byte-array-rest (.getBytes "hallo") 3))))
+           (String. ^bytes (byte-array-rest (.getBytes "hallo") 3))))
     (is (= "o"
-           (String. (byte-array-rest (.getBytes "hallo") 4))))
+           (String. ^bytes (byte-array-rest (.getBytes "hallo") 4))))
     (is (= ""
-           (String. (byte-array-rest (.getBytes "hallo") 5))))
+           (String. ^bytes (byte-array-rest (.getBytes "hallo") 5))))
     ))
 
 (deftest test-head
   (testing "array substr head"
     (is (= ""
-           (String. (byte-array-head (.getBytes "hallo") 0))))
+           (String. ^bytes (byte-array-head (.getBytes "hallo") 0))))
     (is (= "h"
-           (String. (byte-array-head (.getBytes "hallo") 1))))
+           (String. ^bytes (byte-array-head (.getBytes "hallo") 1))))
     (is (= "ha"
-           (String. (byte-array-head (.getBytes "hallo") 2))))
+           (String. ^bytes (byte-array-head (.getBytes "hallo") 2))))
     (is (= "hal"
-           (String. (byte-array-head (.getBytes "hallo") 3))))
+           (String. ^bytes (byte-array-head (.getBytes "hallo") 3))))
     (is (= "hall"
-           (String. (byte-array-head (.getBytes "hallo") 4))))
+           (String. ^bytes (byte-array-head (.getBytes "hallo") 4))))
     (is (= "hallo"
-           (String. (byte-array-head (.getBytes "hallo") 5))))
+           (String. ^bytes (byte-array-head (.getBytes "hallo") 5))))
     ))
 
 (deftest test-parse-network-spec
@@ -132,7 +132,7 @@
       (bb/put-byte buf (byte \b))
       (bb/put-byte buf (byte \c))
       (bb/put-byte buf (byte \d))
-      (.flip buf)
+      (.flip ^ByteBuffer buf)
       (is (= (take-string buf) "abcd"))))
   (testing "take string length exceeded"
     (let [buf (bb/byte-buffer 5)]
@@ -141,12 +141,12 @@
       (bb/put-byte buf (byte \b))
       (bb/put-byte buf (byte \c))
       (bb/put-byte buf (byte \d))
-      (.flip buf)
+      (.flip ^ByteBuffer buf)
       (is (= (take-string buf) "abcd"))))
   (testing "empty buffer"
     (let [buf (bb/byte-buffer 1)]
       (bb/put-byte buf 0)
-      (.flip buf)
+      (.flip ^ByteBuffer buf)
       (bb/take-byte buf)
       (is (= "" (take-string buf))))))
 

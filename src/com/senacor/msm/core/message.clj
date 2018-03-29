@@ -16,16 +16,24 @@
 (defrecord Message
   [^String label
    ^String correlation-id
+   ^Long   msg-seq-nbr
    ^String payload
    ^Date   receive-ts])
 
 (defn create-message
-  ([^String label ^String corr-id ^String payload]
+  ([^String label ^String corr-id ^Long seq-nbr ^String payload]
    (assert label "Label must not be nil")
    (assert (not (str/blank? label)) "Label must not be empty")
-   (->Message label corr-id payload (Date.)))
+   (->Message label corr-id seq-nbr payload (Date.)))
+  ([^String label ^String corr-id ^String payload]
+   (create-message label corr-id 0 payload))
   ([^String label ^String payload]
-   (->Message label (str (UUID/randomUUID)) payload (Date.))))
+   (create-message label (str (UUID/randomUUID)) 0 payload)))
+
+(defn set-seq-nbr
+  [message seq-nbr]
+  (->Message (:label message) (:correlation-id message) seq-nbr
+             (:payload message) (:receive-ts message)))
 
 (defn msg= [a b]
   (and (= (:label a) (:label b))
@@ -59,6 +67,7 @@
 ;; header var part length short
 ;; payload length int
 ;; -- end of header fixed part (10 Bytes)
+;; message-sequence-nbr long
 ;; label-length 1 byte
 ;; label label-length bytes
 ;; corr-id-length 1 byte
@@ -78,6 +87,7 @@
 (defn message-length
   [label corr-id payload]
   (+ hdr-len
+     8
      1 (count label)
      1 (count corr-id)
      (count payload)))
@@ -86,6 +96,7 @@
   [corr-id error-msg]
   (->Message "/sys/fault"
              (or corr-id "")
+             0
              error-msg
              (Date.)))
 
@@ -103,13 +114,15 @@
       (bb/put-byte msg-prefix-x)
       (bb/put-byte version-major)
       (bb/put-byte version-minor)
-      (bb/put-short (+ 1 (count b-label) 1 (count b-corr-id)))
+      (bb/put-short (+ 8 1 (count b-label) 1 (count b-corr-id)))
       (bb/put-int (count b-payload))
       ;; Header var part
+      (bb/put-long (:msg-seq-nbr msg))
       (bb/put-byte (count b-label))
       (.put b-label)
       (bb/put-byte (count b-corr-id))
       (.put b-corr-id)
+      ;; Payload
       (.put b-payload)
       (.flip))
     b-array))
@@ -131,7 +144,7 @@
         hdr-var-length (bb/take-short buf)
         payload-length (bb/take-int buf)]
     (.mark buf)
-    (log/tracef "hdr %d %d %d.%d hdr-len=%d payload-len=%d"
+    (log/tracef "hdr %d %d %d.%d hdr-len=%d payload-len=%d msg-seq=%d"
                 magic1 magic2 major-v minor-v
                 hdr-var-length payload-length)
     (if (or (not= magic1 msg-prefix-m) (not= magic2 msg-prefix-x))
@@ -142,7 +155,7 @@
         (do
           (log/errorf "Invalid msg version: %d %d" major-v minor-v)
           [0 0])
-        (if (< hdr-var-length 4)
+        (if (< hdr-var-length 12)
           (do
             (log/errorf "Invalid var header length %d" hdr-var-length)
             [0 0])
@@ -161,12 +174,13 @@
 (defn parse-var-header
   "Parse the var length metadata from the message header."
   [buf]
-  (let [label (util/take-string buf)
+  (let [msg-seq (bb/take-long buf)
+        label (util/take-string buf)
         corr-id (util/take-string buf)]
-    (if (= corr-id "")
-      (log/errorf "Corr-id is empty, label is \"%s\"" label)
-      (log/tracef "Var header is \"%s\" \"%s\"" label corr-id))
-    [label corr-id]))
+    (if (empty? corr-id)
+      (log/errorf "Corr-id is empty, seq=%d label=\"%s\"" msg-seq label)
+      (log/tracef "Var header is %d \"%s\" \"%s\"" msg-seq label corr-id))
+    [msg-seq label corr-id]))
 
 (defn parse-payload
   "Returns the payload string from buf. The expected payload length has been read
@@ -214,10 +228,28 @@
   [b-arr]
   (let [buf (ByteBuffer/wrap b-arr)
         [var-hdr-len payload-len] (parse-fixed-header buf)
-        [label corr-id] (parse-var-header buf)
+        [seq-nbr label corr-id] (parse-var-header buf)
         payload (parse-payload payload-len buf)]
-  (create-message label corr-id payload)))
+  (create-message label corr-id seq-nbr payload)))
 
 (def message-rebuilder
   (comp (align-byte-arrays)
         (map parse-message)))
+
+(defn number-messages
+  "Returns a transducer that sets processes messages returning
+  them with a sequence number set"
+  []
+  (fn [step]
+    (let [seq-no (volatile! 0)]
+      (fn
+      ([] step)
+      ([result] (step result))
+      ([result input]
+        (vswap! seq-no inc)
+        (step result (set-seq-nbr input @seq-no)))))))
+
+(def message-encoder
+  (comp (number-messages)
+        (map Message->bytes)))
+

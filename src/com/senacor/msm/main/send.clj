@@ -62,7 +62,7 @@
   [net-spec label message options]
   (let [event-chan (chan 512)
         event-chan-m (mult event-chan)
-        msg-chan (chan 128 (map message/Message->bytes))
+        msg-chan (chan 128 message/message-encoder)
         sync-chan (chan)
         [if-name network port] (util/parse-network-spec net-spec)
         instance (control/init-norm event-chan)

@@ -641,6 +641,8 @@
   returns the amout of data actually read. This is a non-blocking call. When no data is
   available it will return 0."
   [^NormStream handle ^bytes buffer ^Integer buffer-size]
+  (assert (some? buffer) "Buffer must not be null")
+  (assert (bytes? buffer))
   (.read handle buffer 0 buffer-size))
 
 (defn ^Boolean seek-message-start

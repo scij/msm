@@ -1,16 +1,19 @@
 (ns com.senacor.msm.core.command
   (:require [bytebuffer.buff :as bb]
-            [clojure.string :as str]
             [clojure.tools.logging :as log]
             [clojure.core.async :refer [chan sliding-buffer tap untap go-loop <! >!]]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.util :as util])
-  (:import (java.nio Buffer ByteBuffer)))
+  (:import (java.nio ByteBuffer)))
 
 
 (def ^:const CMD_ALIVE
   "A stateless or stateful process sends this command to inform it's peers
   that it is still alive and processing" 1)
+
+(def ^:const CMD_JOIN
+  "A stateless process sends this command to inform it's peers that
+  it intends to join processing" 2)
 
 (defn command-sender
   "Receive commands as byte array messages from cmd-chan and send them
@@ -26,21 +29,23 @@
         (recur (<! cmd-chan)))))
   cmd-chan)
 
+(declare parse-command)
+
 (defn command-receiver
   "Receive NORM commands and publish them as byte arrays on a channel.
   session is the NORM session on which the commands are broadcasted.
   event-chan is a mult of the control event channel where inbound commands
   are notified.
-  cmd-chan is a channel of byte array to which the events are published."
+  cmd-chan is a channel of maps containing the :cmd, a byte array with the raw
+  command and :node-id with the command sender node id"
   [session event-chan cmd-chan]
   (let [ec-tap (chan 20 (filter #(and (= :rx-object-cmd-new (:event-type %))
                                       (= session (:session %)))))]
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
-      (>! cmd-chan {:cmd (norm/get-command (:node event)),
-                    :node-id (:node event)})
+      (>! cmd-chan (merge (parse-command (norm/get-command (:node event)))
+                          {:node-id (:node event)}))
       (recur (<! ec-tap)))))
-
 
 ;; Command Structure
 ;;
@@ -77,11 +82,26 @@
   session-id is the current session.
   subscription is the message label the consumer is listening to. It is either a String
   or the String representing the regex.
-  active is true when this consumer assumes to be the active instance and false otherwise"
-  [session-id subscription active]
+  active is true when this consumer assumes to be the active instance and false otherwise
+  index of this session in the global session table.
+  msg-seq-nbr is the last message sequence number this client has processed"
+  [session-id subscription active my-session-index msg-seq-nbr]
   (let [result (bb/byte-buffer 256)]
     (put-fixed-header result CMD_ALIVE)
     (bb/put-byte result (if active 1 0))
+    (bb/put-int result my-session-index)
+    (bb/put-long result msg-seq-nbr)
+    (put-string result (str subscription))
+    (util/byte-array-head (.array result) (.position result))))
+
+(defn join
+  "Creates a JOIN command message informing all participating SL processes that the
+  current node intends to join processing, starting with a given message sequence
+  number. The message is returned as a byte array."
+  [session-id subscription msg-seq-nbr]
+  (let [result (bb/byte-buffer 256)]
+    (put-fixed-header result CMD_JOIN)
+    (bb/put-long result msg-seq-nbr)
     (put-string result (str subscription))
     (util/byte-array-head (.array result) (.position result))))
 
@@ -109,15 +129,24 @@
 (defn parse-alive-var-part
   [buf]
   {:active (= 1 (bb/take-byte buf))
+   :session-index (bb/take-int buf)
+   :msg-seq-nbr (bb/take-long buf)
    :subscription (util/take-string buf)})
+
+(defn parse-join-var-part
+  [buf]
+  {:msg-seq-nbr (bb/take-long buf),
+  :subscription (util/take-string buf)})
 
 (defn parse-command
   [b-arr]
   (let [buf (ByteBuffer/wrap b-arr)
         cmd (parse-fixed-header buf)]
     (merge {:cmd cmd}
-           (cond
-             (= cmd CMD_ALIVE) (parse-alive-var-part buf)
-             :else (do
-                     (log/errorf "Unknown command type %d" cmd)
-                     nil)))))
+            (cond
+              (= cmd CMD_ALIVE) (parse-alive-var-part buf)
+              (= cmd CMD_JOIN) (parse-join-var-part buf)
+              :else
+              (do
+                (log/errorf "Unknown command type %d" cmd)
+                nil)))))

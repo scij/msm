@@ -3,9 +3,7 @@
             [clojure.core.async :refer [chan close! mult poll! mix admix tap timeout <!! >!!]]
             [com.senacor.msm.core.receiver :refer :all]
             [com.senacor.msm.core.norm-api :as norm]
-            [com.senacor.msm.core.monitor :as monitor]
-            [com.senacor.msm.core.monitor :as mon]
-            [clojure.tools.logging :as log]))
+            [com.senacor.msm.core.monitor :as monitor]))
 
 (def bytearray-fx
   (map (fn [^bytes b] (String. b))))
@@ -47,6 +45,33 @@
            (is (nil? (poll! out-chan)))
            )
         )))
+  (testing "big blocks from the core"
+    (println "*** At" *testing-contexts*)
+    (let [out-chan (chan 64)
+          msg-len 64000
+          msgs (atom (repeatedly 10 #(byte-array msg-len)))]
+      (with-redefs-fn {#'norm/read-stream (fn [stream buffer size]
+                                            (if-let [this-msg (first @msgs)]
+                                              (do
+                                                (swap! msgs rest)
+                                                (System/arraycopy this-msg 0 buffer 0 msg-len)
+                                                msg-len)
+                                              0)),
+                       #'monitor/record-bytes-received (fn [_ _])}
+        #(do
+            (receive-data 1 1 out-chan 128000)
+            (is (= msg-len (count (<!! out-chan)))) ; 1
+            (is (= msg-len (count (<!! out-chan)))) ; 2
+            (is (= msg-len (count (<!! out-chan)))) ; 3
+            (is (= msg-len (count (<!! out-chan)))) ; 4
+            (is (= msg-len (count (<!! out-chan)))) ; 5
+            (is (= msg-len (count (<!! out-chan)))) ; 6
+            (is (= msg-len (count (<!! out-chan)))) ; 7
+            (is (= msg-len (count (<!! out-chan)))) ; 8
+            (is (= msg-len (count (<!! out-chan)))) ; 9
+            (is (= msg-len (count (<!! out-chan)))) ;10
+            (is (nil? (poll! out-chan)))
+            ))))
   )
 
 (deftest test-stream-handler

@@ -32,7 +32,7 @@
   ; Should not be a go-loop as this may change the order
   ; in which inbound messages are being processed.
   (loop [buffer (byte-array receiver-buffer-size)
-            bytes-read (norm/read-stream stream buffer receiver-buffer-size)]
+         bytes-read (norm/read-stream stream buffer receiver-buffer-size)]
     (mon/record-bytes-received session bytes-read)
     (log/tracef "message received, buf-size=%d len=%d" receiver-buffer-size bytes-read)
     ;(util/dump-bytes-to-file bytes-read buffer)
@@ -152,6 +152,7 @@
   message-builder is a transducer that combines byte-arrays to messages."
   [session event-chan out-chan message-builder
    & {:keys [cache-limit socket-buffer silent]}]
+  (log/trace "Creating receiver")
   (when cache-limit
     (norm/set-rx-cache-limit session cache-limit))
   (when socket-buffer

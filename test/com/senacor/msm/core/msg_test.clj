@@ -7,7 +7,7 @@
   (:import (java.nio ByteBuffer)
            (java.util UUID)))
 
-(def fix-msg (create-message "label" "uuid" "payload"))
+(def fix-msg (create-message "label" "uuid" 0 "payload"))
 
 (def fix-buflen (message-length "label" "uuid" "payload"))
 
@@ -31,8 +31,9 @@
       (is (= 88 (bb/take-byte fxb)))
       (is (= 1  (bb/take-byte fxb)))
       (is (= 0  (bb/take-byte fxb)))
-      (is (= 11 (bb/take-short fxb)))
+      (is (= 19 (bb/take-short fxb)))
       (is (= 7  (bb/take-int fxb)))
+      (is (= 0  (bb/take-long fxb)))
       (is (= 5  (bb/take-byte fxb)))
       (is (= (byte \l) (bb/take-byte fxb)))
       (is (= (byte \a) (bb/take-byte fxb)))
@@ -55,7 +56,7 @@
 
   (testing "encode and parse"
     (let [cid (str (UUID/randomUUID))
-          msg (create-message "/com/senacor/msm" cid "MSG 123")
+          msg (create-message "/com/senacor/msm" cid 0 "MSG 123")
           fxb (ByteBuffer/wrap (Message->bytes msg))]
       (is (msg= msg (parse-message (.array fxb)))))))
 
@@ -70,8 +71,9 @@
     (bb/put-byte 88)
     (bb/put-byte 1)
     (bb/put-byte 0)
-    (bb/put-short 11)
+    (bb/put-short 19)
     (bb/put-int 7)
+    (bb/put-long 0)
     (bb/put-byte 5)
     (bb/put-byte (byte \l))
     (bb/put-byte (byte \a))
@@ -98,6 +100,7 @@
 (deftest test-buffer-io
   (testing "Puffer vergleichen"
     (let [buf (fill-buffer-with-testdata (bb/byte-buffer fix-buflen) :no-flip)]
+      (is (util/byte-array-equal (.array buf) (Message->bytes fix-msg)))
       (is (= (String. ^"[B" (.array buf))
              (String. (Message->bytes fix-msg))))))
 
@@ -141,7 +144,7 @@
       (bb/put-byte buf (byte \c))
       (bb/put-byte buf (byte \d))
       (is (= 0 (.remaining buf))) ;; flip has set the limit to 2
-      (is (= "cd" (String. (.array buf) 0 2))))))
+      (is (= "cd" (String. ^bytes (.array buf) 0 2))))))
 
 
 
@@ -258,6 +261,7 @@
 (deftest test-parse-message
   (testing "well formed message"
     (let [bb (bb/byte-buffer fix-buflen)]
+      (fill-buffer-with-testdata bb)
       (is (msg= fix-msg (parse-message (.array bb))))))
   (testing "message with bad magic number first char"
     (let [bb (bb/byte-buffer fix-buflen)]
@@ -266,8 +270,9 @@
         (bb/put-byte 88)
         (bb/put-byte 1)
         (bb/put-byte 0)
-        (bb/put-short 4)
+        (bb/put-short 12)
         (bb/put-int 1)
+        (bb/put-long 0)
         (bb/put-byte 1)
         (bb/put-byte (byte \l))
         (bb/put-byte 1)
@@ -283,8 +288,9 @@
         (bb/put-byte 87)
         (bb/put-byte 1)
         (bb/put-byte 0)
-        (bb/put-short 4)
+        (bb/put-short 12)
         (bb/put-int 1)
+        (bb/put-long 0)
         (bb/put-byte 1)
         (bb/put-byte (byte \l))
         (bb/put-byte 1)
@@ -300,8 +306,9 @@
         (bb/put-byte 88)
         (bb/put-byte 2)
         (bb/put-byte 0)
-        (bb/put-short 4)
+        (bb/put-short 12)
         (bb/put-int 1)
+        (bb/put-long 0)
         (bb/put-byte 1)
         (bb/put-byte (byte \l))
         (bb/put-byte 1)
@@ -317,8 +324,9 @@
         (bb/put-byte 88)
         (bb/put-byte 1)
         (bb/put-byte 1)
-        (bb/put-short 4)
+        (bb/put-short 12)
         (bb/put-int 1)
+        (bb/put-long 0)
         (bb/put-byte 1)
         (bb/put-byte (byte \l))
         (bb/put-byte 1)
@@ -333,9 +341,10 @@
         (bb/put-byte 77)
         (bb/put-byte 88)
         (bb/put-byte 1)
-        (bb/put-byte 0)
-        (bb/put-short 1)
+        (bb/put-byte 1)
+        (bb/put-short 9)
         (bb/put-int 1)
+        (bb/put-long 0)
         (bb/put-byte 1)
         (bb/put-byte (byte \l))
         (bb/put-byte 1)
@@ -353,6 +362,7 @@
         (bb/put-byte 0)
         (bb/put-short 3) ; here
         (bb/put-int 1)
+        (bb/put-long 0)
         (bb/put-byte 1)
         (bb/put-byte (byte \l))
         (bb/put-byte 1)
@@ -370,6 +380,7 @@
         (bb/put-byte 0)
         (bb/put-short 4)
         (bb/put-int -1) ; here
+        (bb/put-long 0)
         (bb/put-byte 1)
         (bb/put-byte (byte \l))
         (bb/put-byte 1)
@@ -452,3 +463,13 @@
         (is (msg= fix-msg (first (into [] message-rebuilder [f1 f2 f3]))))
         (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2 f3]))))))))
 
+(deftest test-number-messages
+  (testing "Do the messages have numbers?"
+    (let [fix-msgs (map #(create-message "s1" "c1" (str %))
+                        (range 1 4))]
+      (is (= [1 2 3]
+             (map :msg-seq-nbr
+                  (into []
+                        (number-messages)
+                        fix-msgs))))))
+  )
