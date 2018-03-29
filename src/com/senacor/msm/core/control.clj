@@ -2,7 +2,6 @@
   (:require [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.monitor :as mon]
             [clojure.tools.logging :as log]
-            [clojure.java.jmx :as jmx]
             [clojure.string :as str]
             [clojure.core.async :refer [chan tap untap go-loop thread >! <! >!! close!]]))
 
@@ -30,6 +29,7 @@
       (recur (norm/next-event instance))))
   (close! event-chan)
   (log/trace "Exit control event loop")
+  (norm/destroy-instance instance)
   event-chan)
 
 (defn init-norm

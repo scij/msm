@@ -16,6 +16,8 @@
 
 (def ^:const alive-interval 10)
 
+(def a-last-message (atom 0))
+
 (defn active?
   "Returns true if the given session is the current active one.
   Consumers are required to check this information before they create
@@ -25,7 +27,7 @@
 
 (defn my-status
   [session subscription]
-  (command/alive session subscription (active? subscription)))
+  (command/alive session subscription (active? subscription) 0 @a-last-message))
 
 (defn record-session-status
   [session-active remote-node-id remote-label remote-active now]

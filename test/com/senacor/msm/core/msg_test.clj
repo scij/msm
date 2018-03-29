@@ -144,7 +144,7 @@
       (bb/put-byte buf (byte \c))
       (bb/put-byte buf (byte \d))
       (is (= 0 (.remaining buf))) ;; flip has set the limit to 2
-      (is (= "cd" (String. (.array buf) 0 2))))))
+      (is (= "cd" (String. ^bytes (.array buf) 0 2))))))
 
 
 
@@ -463,3 +463,13 @@
         (is (msg= fix-msg (first (into [] message-rebuilder [f1 f2 f3]))))
         (is (msg= fix-msg (second (into [] message-rebuilder [f1 f2 f3]))))))))
 
+(deftest test-number-messages
+  (testing "Do the messages have numbers?"
+    (let [fix-msgs (map #(create-message "s1" "c1" (str %))
+                        (range 1 4))]
+      (is (= [1 2 3]
+             (map :msg-seq-nbr
+                  (into []
+                        (number-messages)
+                        fix-msgs))))))
+  )

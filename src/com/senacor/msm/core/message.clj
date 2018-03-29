@@ -235,3 +235,21 @@
 (def message-rebuilder
   (comp (align-byte-arrays)
         (map parse-message)))
+
+(defn number-messages
+  "Returns a transducer that sets processes messages returning
+  them with a sequence number set"
+  []
+  (fn [step]
+    (let [seq-no (volatile! 0)]
+      (fn
+      ([] step)
+      ([result] (step result))
+      ([result input]
+        (vswap! seq-no inc)
+        (step result (set-seq-nbr input @seq-no)))))))
+
+(def message-encoder
+  (comp (number-messages)
+        (map Message->bytes)))
+

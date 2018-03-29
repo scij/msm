@@ -171,3 +171,13 @@ byte.  Works for chars as well."
   ;Scheduled executor to run keep alive and house keeping
   (moments/executor 2))
 
+(defn log-xfn
+  "Returns a transducer that takes incoming byte arrays
+  and returns new byte arrays broken at message boundaries."
+  [step]
+  (fn
+    ([] step)
+    ([result] (step result))
+    ([result input]
+     (log/trace "xfn" input)
+      result)))

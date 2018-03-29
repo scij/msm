@@ -1,11 +1,10 @@
 (ns com.senacor.msm.core.command
   (:require [bytebuffer.buff :as bb]
-            [clojure.string :as str]
             [clojure.tools.logging :as log]
             [clojure.core.async :refer [chan sliding-buffer tap untap go-loop <! >!]]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.util :as util])
-  (:import (java.nio Buffer ByteBuffer)))
+  (:import (java.nio ByteBuffer)))
 
 
 (def ^:const CMD_ALIVE

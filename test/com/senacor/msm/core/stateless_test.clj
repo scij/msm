@@ -8,7 +8,8 @@
             [com.senacor.msm.core.monitor :as monitor]
             [com.senacor.msm.core.receiver :as receiver]
             [clojure.tools.logging :as log]
-            [me.raynes.moments :as moments]))
+            [me.raynes.moments :as moments]
+            [com.senacor.msm.core.util :as util]))
 
 (deftest test-alive-sessions
   (let [fix {1 {:expires 100, :subscription "100"},
@@ -124,16 +125,50 @@
 (deftest test-filter-my-messages
   (let [fix (message/create-message "abc" "def" 4 "payload")
         zero (atom 0)
+        a-nil (atom nil)
         two (atom 2)
         four (atom 4)
         seq-no-chan (chan 1)
         one (atom 1)]
     (testing "match"
       (is (is-my-message seq-no-chan zero four fix)))
-    (testing "wrong index"
+    (testing "wrong index, not my message"
       (is (not (is-my-message seq-no-chan two four fix))))
     (testing "only one receiver"
       (is (is-my-message seq-no-chan zero one fix)))
+    (testing "index not yet set"
+      (is (not (is-my-message seq-no-chan a-nil one fix)))
+      (is (= 4 (<!! seq-no-chan))))
+    ))
+
+(deftest test-message-filter
+  (let [fix-msgs (map #(message/create-message "s1" (str "co" %) (+ 1000 %) (str "Payload " %))
+                      (range 1 20))
+        fix-b-arrs (map message/Message->bytes fix-msgs)
+        fix-one-b-arr (reduce util/cat-byte-array (map message/Message->bytes fix-msgs))
+        a-zero (atom 0)
+        a-one  (atom 1)
+        a-two  (atom 2)
+        seq-no-chan (timeout 100)]
+    (testing "message filter test - one consumber"
+      (is (= (map #(dissoc % :receive-ts) fix-msgs)
+             (map #(dissoc % :receive-ts)
+                  (into []
+                        (filter-fn-builder "s1" a-zero a-zero a-one seq-no-chan)
+                        fix-b-arrs)))))
+    (testing "message filter test - two consumers"
+      (is (= (map #(dissoc % :receive-ts)
+                  (filter #(even? (:msg-seq-nbr %)) fix-msgs))
+             (map #(dissoc % :receive-ts)
+                  (into []
+                        (filter-fn-builder "s1" a-zero a-zero a-two seq-no-chan)
+                        fix-b-arrs)))))
+    (testing "message filter test - one consumer and one byte array"
+      (is (= (map #(dissoc % :receive-ts) fix-msgs)
+             (map #(dissoc % :receive-ts)
+                  (into []
+                        (filter-fn-builder "s1" a-zero a-zero a-one seq-no-chan)
+                        [fix-one-b-arr])))))
     ))
 
 (deftest test-prepare-to-join
@@ -151,6 +186,12 @@
       (is (= a-join-seq-no (prepare-to-join c a-join-seq-no)))
       (Thread/sleep 10)
       (is (= 140 @a-join-seq-no))))
+  (testing "alone in the dark"
+    (let [c (timeout 10)
+          a-join-seq-no (atom 10000)]
+      (is (= a-join-seq-no (prepare-to-join c a-join-seq-no)))
+      (Thread/sleep 20)
+      (is (= 0 @a-join-seq-no))))
   (testing "true timeout"
     (let [c (timeout 250)
           a-join-seq-no (atom 10000)]
@@ -169,13 +210,7 @@
     (let [fix-msgs1 (map #(message/create-message "s1" (str "co" %) (+ 1000 %) (str "Payload " %))
                          (range 1 21))
           fix-msgs2 (map #(message/create-message "s1" (str "co" %) (+ 1000 %) (str "Payload " %))
-                         (range 40 60))
-          fix-cmd (map #(hash-map :cmd command/CMD_ALIVE,
-                                  :subscription "s1",
-                                  :active true,
-                                  :node-id (str (+ 100 %)),
-                                  :msg-seq-nbr (+ 1000 %))
-                       (range 1 6))]
+                         (range 40 60))]
       (with-redefs-fn {#'command/command-receiver (fn [session event-chan cmd-chan]),
                        #'command/command-sender   (fn [session event-chan cmd-chan]),
                        #'norm/get-node-name       (fn [node-id]

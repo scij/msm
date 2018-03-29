@@ -107,14 +107,33 @@
   (go-loop [initial-seq-no (<! seq-no-chan)
             prev-seq-no initial-seq-no
             seq-no (<! seq-no-chan)]
-    (if seq-no
-      (recur initial-seq-no seq-no (<! seq-no-chan))
-      (do
-        (assert (some? initial-seq-no) "Premature timeout on seq-no-chan")
+    (cond
+      seq-no
+        (recur initial-seq-no seq-no (<! seq-no-chan))
+      (and (not seq-no) initial-seq-no)
         (let [join-seq-no (+ (* 2 (- prev-seq-no initial-seq-no)) initial-seq-no)]
           (reset! a-join-seq-no join-seq-no)
-          (log/infof "Prepare to join complete. Join with %d" join-seq-no)))))
+          (log/infof "Prepare to join complete. Join with %d" join-seq-no))
+      :else
+        (do
+          (reset! a-join-seq-no 0)
+          (log/info "Prepare to join complete. No traffic yet. Join with 0"))))
   a-join-seq-no)
+
+(defn filter-fn-builder
+  "Returns a transducer that transforms and filters the byte stream from NORM
+  into a relevant (i.e. subscribed) messages.
+  subscription A string or regex against which the message labels are matched.
+  a-join-seq-no The first message sequence number this session will handle.
+  a-my-session-index This sessions index in the session table.
+  a-receiver-count Number of receivers with the same subscription.
+  seq-no-chan The join seq no will be posted to this channel."
+  [subscription a-join-seq-no a-my-session-index a-receiver-count seq-no-chan]
+  (comp
+    message/message-rebuilder
+    (filter #(message/label-match subscription %))
+    (filter #(> (:msg-seq-nbr %) @a-join-seq-no))
+    (filter (partial is-my-message seq-no-chan a-my-session-index a-receiver-count))))
 
 (defn stateless-session-handler
   "Starts sending out the alive-status messages and at the same time
@@ -150,13 +169,14 @@
       ; start watching incoming messages and choose the sequence number to join at
       (prepare-to-join seq-no-chan a-join-seq-no)
       ; start processing incoming messages
-      (receiver/create-receiver session event-chan msg-chan
-                                (comp message/message-rebuilder
-                                      (filter #(message/label-match subscription %))
-                                      (filter #(> (:msg-seq-nbr %) @a-join-seq-no))
-                                      (filter (partial is-my-message seq-no-chan
-                                                       a-my-session-index a-receiver-count))))
-  )))
+      (receiver/create-receiver session
+                                event-chan
+                                msg-chan
+                                (filter-fn-builder subscription
+                                                   a-join-seq-no
+                                                   a-my-session-index
+                                                   a-receiver-count
+                                                   seq-no-chan)))))
 
 (defn create-session
   "Create a stateless session consuming matching messages in specified session
