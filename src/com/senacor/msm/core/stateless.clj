@@ -19,12 +19,10 @@
   dead otherwise. Must be greater than alive-interval"
   (* 2 alive-interval))
 
-(def ^:const my-session "me")
-
 (defn alive-sessions
   "Returns the map with all items removed where val->:expires is in the past"
   [sessions now]
-  (log/trace "Alive sessions" sessions)
+  (log/trace "Alive sessions at" now sessions)
   (into (sorted-map)
         (filter (fn [rec]
                   (< now (:expires (second rec))))
@@ -34,7 +32,6 @@
   "Returns a map of sessions with the given session having its lifetimer extended"
   [sessions remote-node-id subscription now]
   (log/tracef "Session is alive. Node=%s, Subscription=%s" remote-node-id subscription)
-  ; todo gnothi seauton
   (merge sessions {remote-node-id {:expires (+ expiry-threshold now),
                                    :subscription subscription}}))
 
@@ -45,9 +42,9 @@
 
 (defn find-my-index
   "Returns the index of the current session in the sessions table"
-  [_ sessions]
+  [sessions local-node-id]
   (log/trace "Find my index" sessions)
-  (.indexOf (keys sessions) my-session))
+  (.indexOf (keys sessions) local-node-id))
 
 (defn handle-receiver-status
   [session label cmd-chan-in a-session-receivers a-my-session-index a-receiver-count]
@@ -55,9 +52,11 @@
     (when cmd
       (log/trace "Command received" cmd)
       (let [remote-label (:subscription cmd)
-            remote-node-id (norm/get-node-name (:node-id cmd))
+            remote-node-id (norm/get-node-id (:node-id cmd))
             now (System/currentTimeMillis)]
-        (when (= remote-label label)
+        (when (and
+                (not= remote-node-id (norm/get-local-node-id session))
+                (= remote-label label))
           (swap! a-session-receivers session-is-alive remote-node-id remote-label now))
         )
       (recur (<! cmd-chan-in)))))
@@ -77,7 +76,7 @@
   ;(log/tracef "After count sessions %d" @a-receiver-count)
   (monitor/record-number-of-sl-receivers session @a-receiver-count)
   (monitor/record-sl-receivers session @a-session-receivers)
-  (swap! a-my-session-index find-my-index @a-session-receivers)
+  (reset! a-my-session-index (find-my-index @a-session-receivers (norm/get-local-node-id session)))
   (log/tracef "My session index %d" @a-my-session-index)
   ;(log/trace "Exit housekeeping")
   )
@@ -190,8 +189,8 @@
   ; todo buffer messages in case we need to reprocess them after another consumer failed
   [session subscription event-chan msg-chan]
   (let [cmd-chan-out (chan 16)
-        a-session-receivers (atom (sorted-map my-session {:expires Long/MAX_VALUE,
-                                                          :subscription subscription}))
+        a-session-receivers (atom (sorted-map (norm/get-local-node-id session) {:expires Long/MAX_VALUE,
+                                                                                :subscription subscription}))
         a-my-session-index (atom nil)
         a-my-session-last-msg (atom 0)
         a-receiver-count (atom 1)]

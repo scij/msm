@@ -38,32 +38,34 @@
 
 (deftest test-find-my-index
   (testing "one entry"
-    (let [fix (sorted-map my-session {:expires 500, :subscription "smy"})]
-      (is (= 0 (find-my-index 0 fix)))))
+    (let [fix (sorted-map 4711 {:expires 500, :subscription "smy"})]
+      (is (= 0 (find-my-index fix 4711)))))
   (testing "two entries, my session 2nd"
-    (let [fix (sorted-map my-session {:expires 500, :subscription "smy"}
-                          "a-session" {:expires 600, :subscription "s600"})]
-      (is (= 1 (find-my-index 0 fix)))))
+    (let [fix (sorted-map 4711 {:expires 500, :subscription "smy"}
+                          4710 {:expires 600, :subscription "s600"})]
+      (is (= 1 (find-my-index fix 4711)))))
   (testing "two entries, my session 1st"
-    (let [fix (sorted-map my-session {:expires 500, :subscription "smy"}
-                          "new-session" {:expires 600, :subscription "s600"})]
-      (is (= 0 (find-my-index 0 fix)))))
+    (let [fix (sorted-map 4711 {:expires 500, :subscription "smy"}
+                          4712 {:expires 600, :subscription "s600"})]
+      (is (= 0 (find-my-index fix 4711)))))
   (testing "three entries, my session in the middle"
-    (let [fix (sorted-map my-session {:expires 500, :subscription "smy"}
-                          "new-session" {:expires 600, :subscription "s600"}
-                          "a-session" {:expires 300, :subscription "s300"})]
-      (is (= 1 (find-my-index 0 fix))))))
+    (let [fix (sorted-map 4711 {:expires 500, :subscription "smy"}
+                          4712 {:expires 600, :subscription "s600"}
+                          4710 {:expires 300, :subscription "s300"})]
+      (is (= 1 (find-my-index fix 4711))))))
 
 (deftest test-handle-receiver-status
   (with-redefs-fn {#'norm/get-local-node-id (fn [sess] sess),
-                   #'norm/get-node-name (fn [node] (str node)),
+                   #'norm/get-node-id (fn [node] node),
                    #'monitor/record-number-of-sl-receivers (fn [_ _])
                    #'monitor/record-sl-receivers (fn [_ _])}
     #(do
        (testing "add another receiver"
-         (let [my-session-index (atom 0)
+         (log/trace "### Enter" *testing-contexts*)
+         (let [session 1
+               my-session-index (atom 0)
                receiver-count (atom 1)
-               session-receivers (atom {my-session {:expires Long/MAX_VALUE}})
+               session-receivers (atom {session {:expires Long/MAX_VALUE}})
                cmd-chan-in (chan 1)
                task (handle-receiver-status 1 "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (Thread/sleep 10)
@@ -73,19 +75,21 @@
                              :subscription "label"
                              :session-index 1,
                              :msg-seq-nbr 1000,
-                             :node-id "remote:3456"})
+                             :node-id 2})
            (Thread/sleep 100) ; todo add a better way to synchronize
-           (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
+           (receiver-status-housekeeping session session-receivers receiver-count my-session-index)
            (is (= 0 @my-session-index))
            (is (= 2 @receiver-count))
            (close! cmd-chan-in)
            ))
        (testing "add another receiver with a lower session id"
+         (log/trace "### Enter" *testing-contexts*)
          (let [my-session-index (atom 0)
                receiver-count (atom 1)
-               session-receivers (atom {my-session {:expires Long/MAX_VALUE}})
+               session 2
+               session-receivers (atom {session {:expires Long/MAX_VALUE}})
                cmd-chan-in (chan 1)
-               task (handle-receiver-status 2 "label" cmd-chan-in session-receivers my-session-index receiver-count)]
+               task (handle-receiver-status session "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (Thread/sleep 10)
            (is (= 1 @receiver-count))
            (>!! cmd-chan-in {:cmd command/CMD_ALIVE,
@@ -93,31 +97,33 @@
                              :subscription "label",
                              :session-index @my-session-index,
                              :msg-seq-nbr 1000,
-                             :node-id "aaa:3456"})
+                             :node-id 1})
            (Thread/sleep 100) ; todo add a better way to synchronize
-           (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
+           (receiver-status-housekeeping session session-receivers receiver-count my-session-index)
            (is (= 1 @my-session-index))
            (is (= 2 @receiver-count))
            (close! cmd-chan-in)
            ))
        (testing "expire another receiver"
+         (log/trace "### Enter" *testing-contexts*)
          (let [my-session-index (atom 0)
                receiver-count (atom 1)
-               session-receivers (atom {my-session {:expires Long/MAX_VALUE}})
+               session 2
+               session-receivers (atom {session {:expires Long/MAX_VALUE}})
                cmd-chan-in (chan 1)
-               task (handle-receiver-status 2  "label" cmd-chan-in session-receivers my-session-index receiver-count)]
+               task (handle-receiver-status session "label" cmd-chan-in session-receivers my-session-index receiver-count)]
            (>!! cmd-chan-in {:cmd command/CMD_ALIVE,
                              :subscription "label",
                              :active true,
                              :session-id 0,
                              :msg-seq-nbr 1000,
-                             :node-id "remote:3456"})
+                             :node-id 1})
            (Thread/sleep 100) ; todo add a better way to synchronize
-           (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
+           (receiver-status-housekeeping session session-receivers receiver-count my-session-index)
            (is (= 2 @receiver-count))
-           (is (= 0 @my-session-index))
+           (is (= 1 @my-session-index))
            (Thread/sleep (+ expiry-threshold 10))
-           (receiver-status-housekeeping 1 session-receivers receiver-count my-session-index)
+           (receiver-status-housekeeping session session-receivers receiver-count my-session-index)
            (is (= 1 @receiver-count))
            (is (= 0 @my-session-index))
            ))
@@ -230,7 +236,8 @@
     (let [ctl-chan (chan 1)]
       (with-redefs-fn {#'monitor/record-sl-receivers (fn [_ _]),
                        #'monitor/record-number-of-sl-receivers (fn [_ _]),
-                       #'norm/get-node-name (fn [n] n),
+                       #'norm/get-local-node-id (fn [n] n),
+                       #'norm/get-node-id (fn [n] n)
                        #'moments/schedule-every (fn [_ interval f]
                                                   (f)
                                                   (Thread/sleep interval)
@@ -238,16 +245,17 @@
                                                   :scheduled),
                        #'command/command-receiver (fn [_ _ cc]
                                                     (>!! cc {:subscription "s1",
-                                                            :node-id "N1"})
+                                                            :node-id 2})
                                                     (>!! cc {:subscription "s1",
-                                                            :node-id "N2"}))}
+                                                            :node-id 3}))}
         (fn []
           (let [cmd-chan (chan 4)
-               a-session-receivers (atom (sorted-map my-session {:expires Long/MAX_VALUE,
+                session 1
+               a-session-receivers (atom (sorted-map session {:expires Long/MAX_VALUE,
                                                                  :subscription "s1"}))
                a-my-session-index (atom 0)
                a-receiver-count (atom 1)]
-           (is (= :scheduled (receive-status-messages 1 "s1" nil a-session-receivers a-my-session-index a-receiver-count)))
+           (is (= :scheduled (receive-status-messages session "s1" nil a-session-receivers a-my-session-index a-receiver-count)))
            (is (= 3 @a-receiver-count))
            )))))
   (testing "receiving data"
