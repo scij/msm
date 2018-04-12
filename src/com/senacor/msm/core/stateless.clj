@@ -1,5 +1,5 @@
 (ns com.senacor.msm.core.stateless
-  (:require [clojure.core.async :refer [go-loop close! poll! chan pipeline <! >! <!! >!! timeout]]
+  (:require [clojure.core.async :refer [go go-loop close! poll! put! chan pipeline <! >! <!! >!! timeout]]
             [me.raynes.moments :as moments]
             [com.senacor.msm.core.util :as util]
             [com.senacor.msm.core.control :as control]
@@ -70,70 +70,115 @@
   a-receiver-count an atom holding the number of active receivers (including self).
   a-my-session-index an atom holding the index of the current session in session-receivers."
   [session a-session-receivers a-receiver-count a-my-session-index]
-  (log/trace "Enter housekeeping")
+  ;(log/trace "Enter housekeeping")
   (swap! a-session-receivers alive-sessions (System/currentTimeMillis))
-  (log/trace "After alive-sessions" @a-session-receivers)
+  ;(log/trace "After alive-sessions" @a-session-receivers)
   (swap! a-receiver-count number-of-sessions-alive @a-session-receivers)
-  (log/tracef "After count sessions %d" @a-receiver-count)
+  ;(log/tracef "After count sessions %d" @a-receiver-count)
   (monitor/record-number-of-sl-receivers session @a-receiver-count)
+  (monitor/record-sl-receivers session @a-session-receivers)
   (swap! a-my-session-index find-my-index @a-session-receivers)
-  (log/tracef "After my-index %d" @a-my-session-index)
-  (log/trace "Exit housekeeping"))
+  (log/tracef "My session index %d" @a-my-session-index)
+  ;(log/trace "Exit housekeeping")
+  )
 
 (defn is-my-message
   "Returns true if the message sequence number matches the shard key
-  and false otherwise. When the subscription has not been established yet
-  false is returned and the sequence number is sent to the seq-no-chan.
-  subscription is a regex
-  seq-no-chan is an outbound channel where the message seq-nos are written
-   as long as no subscription has been established.
+  and false otherwise.
   a-my-index and a-receiver-count are the ingredients to compute the sharding key.
   message is a msm message record\n"
-  [seq-no-chan a-my-index a-receiver-count message]
+  [a-my-index a-receiver-count message]
   (log/tracef "is my message: my index %d receiver count %d seq-no %d"
               @a-my-index @a-receiver-count (:msg-seq-nbr message))
-  (or
-    (and (nil? @a-my-index)
-         (>!! seq-no-chan (:msg-seq-nbr message))
-         false)
-    (and (some? @a-my-index)
-         (= @a-my-index (mod (:msg-seq-nbr message) @a-receiver-count)))))
+  (and (some? @a-my-index)
+       (= @a-my-index (mod (:msg-seq-nbr message) @a-receiver-count))))
 
-(defn prepare-to-join
-  "Collects the message sequence numbers on seq-no-chan until it closes (by timeout),
-  computes an estimate for the sequence number this session should join."
-  [seq-no-chan a-join-seq-no]
-  (log/info "Preparing to join - collecting data")
-  (go-loop [initial-seq-no (<! seq-no-chan)
-            prev-seq-no initial-seq-no
-            seq-no (<! seq-no-chan)]
-    (cond
-      seq-no
-        (recur initial-seq-no seq-no (<! seq-no-chan))
-      (and (not seq-no) initial-seq-no)
-        (let [join-seq-no (+ (* 2 (- prev-seq-no initial-seq-no)) initial-seq-no)]
-          (reset! a-join-seq-no join-seq-no)
-          (log/infof "Prepare to join complete. Join with %d" join-seq-no))
-      :else
-        (do
-          (reset! a-join-seq-no 0)
-          (log/info "Prepare to join complete. No traffic yet. Join with 0"))))
-  a-join-seq-no)
+(defn join-filter
+  "Returns a transducer on messages that first counts messages for two alive-intervals
+  and estimates the message sequence number where this session will join processing
+  (aka join-seq-no). No message with a sequence number below join-seq-no will pass this
+  filter. All messages above this number will pass.
+  cmd-chan-out is the channel where the join command will be published."
+  [join-cmd-fn cmd-chan-out]
+  (fn [step]
+    (let [join-seq-no (volatile! Long/MAX_VALUE)
+          first-seq-no (volatile! 0)
+          wait-end-ts (+ (util/now-ts) alive-interval alive-interval)]
+      (fn
+         ([] (step))
+         ([result] (step result))
+         ([result msg]
+          (when (zero? @first-seq-no)
+            (vreset! first-seq-no (:msg-seq-nbr msg))
+            (log/tracef "First seq no %d" @first-seq-no))
+          (when (and
+                  (> (:receive-ts msg) wait-end-ts)
+                  (= @join-seq-no Long/MAX_VALUE))
+            (vreset! join-seq-no (+ (* 2 (- (:msg-seq-nbr msg) @first-seq-no)) @first-seq-no))
+            (go
+              (>! cmd-chan-out (join-cmd-fn @join-seq-no)))
+            (log/tracef "Join seq no %d" @join-seq-no))
+          (if (> (:msg-seq-nbr msg) @join-seq-no)
+            (step result msg)
+            result)
+           )))))
 
 (defn filter-fn-builder
   "Returns a transducer that transforms and filters the byte stream from NORM
   into a relevant (i.e. subscribed) messages.
   subscription A string or regex against which the message labels are matched.
-  a-join-seq-no The first message sequence number this session will handle.
   a-my-session-index This sessions index in the session table.
-  a-receiver-count Number of receivers with the same subscription.
-  seq-no-chan The join seq no will be posted to this channel."
-  [subscription a-join-seq-no a-my-session-index a-receiver-count seq-no-chan]
+  a-receiver-count Number of receivers with the same subscription."
+  [session subscription cmd-chan-out a-my-session-index a-receiver-count]
   (comp
     message/message-rebuilder
-    (filter #(message/label-match subscription %))
-    (filter #(> (:msg-seq-nbr %) @a-join-seq-no))
-    (filter (partial is-my-message seq-no-chan a-my-session-index a-receiver-count))))
+    (filter (partial message/label-match subscription))
+    (join-filter (partial command/join session subscription) cmd-chan-out)
+    (filter (partial is-my-message a-my-session-index a-receiver-count))))
+
+(defn send-status-messages
+  "Sends status messages every 'alive-interval'."
+  [session subscription event-chan cmd-chan-out a-my-session-index a-my-session-last-msg]
+  (norm/start-sender session (norm/get-local-node-id session) 2048 256 64 16)
+  (command/command-sender session event-chan cmd-chan-out)
+  (moments/schedule-every util/sl-exec alive-interval
+                          (fn []
+                            (log/trace "sending alive command msg")
+                            (go (>! cmd-chan-out
+                                    (command/alive session
+                                                   subscription
+                                                   true
+                                                   @a-my-session-index
+                                                   @a-my-session-last-msg)))
+                            )))
+
+(defn receive-status-messages
+  "Listens for and provesses incoming status messages from other sessions."
+  [session subscription event-chan a-session-receivers a-my-session-index a-receiver-count]
+  ; process status messages from other receivers
+  (let [cmd-chan-in (chan 64)]
+    (handle-receiver-status session subscription cmd-chan-in a-session-receivers a-my-session-index a-receiver-count)
+    (command/command-receiver session event-chan cmd-chan-in)
+    (moments/schedule-every util/sl-exec alive-interval
+                            (fn []
+                              (receiver-status-housekeeping session
+                                                            a-session-receivers
+                                                            a-receiver-count
+                                                            a-my-session-index)))
+    ))
+
+(defn receive-data
+  "Receive data messages from the stream."
+  [session subscription event-chan msg-chan cmd-chan-out a-my-session-index a-receiver-count]
+  ; start receiving data. First in passive mode and once successfully joined actively
+  (receiver/create-receiver session
+                            event-chan
+                            msg-chan
+                            (filter-fn-builder session
+                                               subscription
+                                               cmd-chan-out
+                                               a-my-session-index
+                                               a-receiver-count)))
 
 (defn stateless-session-handler
   "Starts sending out the alive-status messages and at the same time
@@ -145,38 +190,14 @@
   ; todo buffer messages in case we need to reprocess them after another consumer failed
   [session subscription event-chan msg-chan]
   (let [cmd-chan-out (chan 16)
-        cmd-chan-in  (chan 64)
         a-session-receivers (atom (sorted-map my-session {:expires Long/MAX_VALUE,
                                                           :subscription subscription}))
         a-my-session-index (atom nil)
         a-my-session-last-msg (atom 0)
         a-receiver-count (atom 1)]
-    ; send out status messages
-    (norm/start-sender session (norm/get-local-node-id session) 2048 256 64 16)
-    (command/command-sender session event-chan cmd-chan-out)
-    (moments/schedule-every util/sl-exec alive-interval
-                            (fn []
-                              (log/trace "sending alive command msg")
-                              (>!! cmd-chan-out (command/alive session subscription true @a-my-session-index @a-my-session-last-msg))))
-    ; process status messages from other receivers
-    (handle-receiver-status session subscription cmd-chan-in a-session-receivers a-my-session-index a-receiver-count)
-    (moments/schedule-every util/sl-exec alive-interval
-                            #(receiver-status-housekeeping session a-session-receivers a-receiver-count a-my-session-index))
-    (command/command-receiver session event-chan cmd-chan-in)
-    ; start receiving data. First in passive mode and once successfully joined actively
-    (let [seq-no-chan  (timeout (* 2 alive-interval))
-          a-join-seq-no (atom Long/MAX_VALUE)]
-      ; start watching incoming messages and choose the sequence number to join at
-      (prepare-to-join seq-no-chan a-join-seq-no)
-      ; start processing incoming messages
-      (receiver/create-receiver session
-                                event-chan
-                                msg-chan
-                                (filter-fn-builder subscription
-                                                   a-join-seq-no
-                                                   a-my-session-index
-                                                   a-receiver-count
-                                                   seq-no-chan)))))
+    (send-status-messages session subscription event-chan cmd-chan-out a-my-session-index a-my-session-last-msg)
+    (receive-status-messages session subscription event-chan a-session-receivers a-my-session-index a-receiver-count)
+    (receive-data session subscription event-chan msg-chan cmd-chan-out a-my-session-index a-receiver-count)))
 
 (defn create-session
   "Create a stateless session consuming matching messages in specified session

@@ -761,6 +761,9 @@
          "/"
          (get-node-id node))
     ""))
+
+(defn get-local-node-name
+  [if-name session])
 ;;
 ;; Debug
 ;;

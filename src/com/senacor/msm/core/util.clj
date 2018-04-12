@@ -5,7 +5,8 @@
             [clojure.tools.logging :as log]
             [bytebuffer.buff :as bb]
             [me.raynes.moments :as moments])
-  (:import (java.nio ByteBuffer)))
+  (:import (java.nio ByteBuffer)
+           (java.lang.management ManagementFactory)))
 
 ;; Based on m0smith's code at https://gist.github.com/m0smith/1684476#file-hexlify-clj
 (defprotocol Hexl
@@ -135,6 +136,7 @@ byte.  Works for chars as well."
   Throws a number format exception when port is not numeric."
   [network-spec]
   (let [[interface mc-addr port] (str/split network-spec #"[;:]")]
+    (log/tracef "IF '%s' Net '%s' Port '%s'" interface mc-addr port)
     [interface
      mc-addr
      (Integer/parseInt port)]))
@@ -165,6 +167,7 @@ byte.  Works for chars as well."
 (defn init-logging
   [app-name]
   (System/setProperty "app" app-name)
+  (System/setProperty "pid" (.getName (ManagementFactory/getRuntimeMXBean)))
   (log/infof "App startup %s" app-name))
 
 (def sl-exec
@@ -181,3 +184,9 @@ byte.  Works for chars as well."
     ([result input]
      (log/trace "xfn" input)
       result)))
+
+(defn now-ts
+  "Returns the current time in milliseconds. Actually a wrapper around System/currentTimeMillis
+  to make this call mockable"
+  []
+  (System/currentTimeMillis))

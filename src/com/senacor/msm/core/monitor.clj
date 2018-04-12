@@ -43,9 +43,16 @@
     (jmx-write mbean :bytes-received (+ (or (jmx/read mbean :bytes-received) 0) bytes-received))))
 
 (defn record-number-of-sl-receivers
-  [session sl-receivers]
+  [session sl-receiver-count]
   (let [mbean (get @session-names session)]
-    (jmx-write mbean :sl-receiver-count sl-receivers)))
+    (jmx-write mbean :sl-receiver-count sl-receiver-count)))
+
+(defn record-sl-receivers
+  [session rec-table]
+  (let [mbean (get @session-names session)
+        wrt (java.io.StringWriter.)]
+    (clojure.pprint/pprint rec-table wrt)
+    (jmx-write mbean :sl-receivers (.toString wrt))))
 
 (defn mon-event-loop
   "Event handler for monitoring events. Subscribes to

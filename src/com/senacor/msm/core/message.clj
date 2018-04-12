@@ -18,13 +18,13 @@
    ^String correlation-id
    ^Long   msg-seq-nbr
    ^String payload
-   ^Date   receive-ts])
+   ^Long   receive-ts])
 
 (defn create-message
   ([^String label ^String corr-id ^Long seq-nbr ^String payload]
    (assert label "Label must not be nil")
    (assert (not (str/blank? label)) "Label must not be empty")
-   (->Message label corr-id seq-nbr payload (Date.)))
+   (->Message label corr-id seq-nbr payload (util/now-ts)))
   ([^String label ^String corr-id ^String payload]
    (create-message label corr-id 0 payload))
   ([^String label ^String payload]

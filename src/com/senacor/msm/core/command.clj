@@ -20,10 +20,12 @@
   to all NORM receivers of this session. Use event-chan to receive
   confirmation that messages have been sent."
   [session event-chan cmd-chan]
-  (let [ec-tap (chan (sliding-buffer 5))]
+  (log/trace "Starting command sender")
+  (let [ec-tap (chan 3 (filter #(= (:event-type %) :tx-cmd-sent)))]
     (tap event-chan ec-tap)
     (go-loop [cmd (<! cmd-chan)]
       (when cmd
+        (log/trace "Send command" cmd)
         (norm/send-command session cmd (count cmd) true)
         (util/wait-for-events ec-tap session #{:tx-cmd-sent})
         (recur (<! cmd-chan)))))
@@ -39,12 +41,15 @@
   cmd-chan is a channel of maps containing the :cmd, a byte array with the raw
   command and :node-id with the command sender node id"
   [session event-chan cmd-chan]
+  (log/trace "Starting command receiver")
   (let [ec-tap (chan 20 (filter #(and (= :rx-object-cmd-new (:event-type %))
                                       (= session (:session %)))))]
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
-      (>! cmd-chan (merge (parse-command (norm/get-command (:node event)))
-                          {:node-id (:node event)}))
+      (let [cmd (merge (parse-command (norm/get-command (:node event)))
+                       {:node-id (:node event)})]
+        (log/trace "Received command" cmd)
+        (>! cmd-chan cmd))
       (recur (<! ec-tap)))))
 
 ;; Command Structure
@@ -128,6 +133,7 @@
 
 (defn parse-alive-var-part
   [buf]
+  (log/trace "Alive received")
   {:active (= 1 (bb/take-byte buf))
    :session-index (bb/take-int buf)
    :msg-seq-nbr (bb/take-long buf)
@@ -135,6 +141,7 @@
 
 (defn parse-join-var-part
   [buf]
+  (log/trace "Join received")
   {:msg-seq-nbr (bb/take-long buf),
   :subscription (util/take-string buf)})
 

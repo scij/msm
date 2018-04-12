@@ -46,7 +46,7 @@
          (let [node-id (System/currentTimeMillis)
                fix (register 1 "239.192.0.1" 7100 node-id)]
            (update-mon-status {:session 1,
-                          :event-type :grtt-updated})
+                               :event-type :grtt-updated})
            (is (= 4711 (jmx/read (get @session-names 1) :grtt)))
            (unregister 1)))))
   )
@@ -85,6 +85,12 @@
           fix (register 1 "239.192.0.1" 7100 node-id)]
       (is (nil? (record-number-of-sl-receivers 1 5)))
       (is (= 5 (jmx/read (get @session-names 1) :sl-receiver-count)))))
+  (testing "record-sl-receivers"
+    (let [node-id (System/currentTimeMillis)
+          fix (register 1 "239.192.0.1" 7100 node-id)]
+      (is (nil? (record-sl-receivers 1 {:a 1, :b 2})))
+      (is (= "{:a 1, :b 2}\n"
+             (jmx/read (get @session-names 1) :sl-receivers)))))
   )
 
 (deftest test-mon-event-loop

@@ -3,7 +3,9 @@
             [com.senacor.msm.core.command :refer :all]
             [bytebuffer.buff :as bb]
             [clojure.core.async :refer [chan timeout mult >!! <!! poll! close!]]
-            [com.senacor.msm.core.norm-api :as norm])
+            [com.senacor.msm.core.norm-api :as norm]
+            [clojure.tools.logging :as log]
+            [com.senacor.msm.core.util :as util])
   (:import (java.nio ByteBuffer)))
 
 (deftest test-put-fixed-header
@@ -116,7 +118,8 @@
 (deftest test-command-sender
   (let [sent-msg-chan (timeout 100)]
     (with-redefs-fn {#'norm/send-command (fn [_ buf len _]
-                                           (>!! sent-msg-chan [buf len]))}
+                                           (>!! sent-msg-chan [buf len])
+                                           (log/trace "cmd sent"))}
       #(let [session 1
              event-chan (chan 1)
              cmd-chan (chan 2)
@@ -125,8 +128,9 @@
          (>!! cmd-chan fix-alive)
          (>!! event-chan {:session session, :event-type :tx-cmd-sent})
          (let [result (<!! sent-msg-chan)]
-           (is (not (nil? result)))
-           (is (= 23 (second result))))
+           (is (some? result))
+           (is (= 23 (second result)))
+           (is (util/byte-array-equal fix-alive (first result))))
          (close! event-chan)
          (close! cmd-chan)
          ))))
