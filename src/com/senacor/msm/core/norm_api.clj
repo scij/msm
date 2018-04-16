@@ -485,7 +485,10 @@
 
 (defn ^Boolean send-command
   "Sends an application defined command. A :tx-cmd-sent event is generated
-  when the command has been sent.
+  when the command has been sent (incl. repetitions for robustness). Returns
+  true if the command has been sent and false otherwise. Sending commands could
+  fail if the command size exceeds the session's segment size, the session
+  does not have a started sender or a preceding command has not been sent yet.
   handle is the NORM session handle
   buffer is a byte array containing the command data.
   length is the number of bytes used in the buffer.

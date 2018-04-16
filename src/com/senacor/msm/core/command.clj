@@ -26,7 +26,7 @@
     (go-loop [cmd (<! cmd-chan)]
       (when cmd
         (log/trace "Send command" cmd)
-        (norm/send-command session cmd (count cmd) true)
+        (norm/send-command session cmd (count cmd) false)
         (util/wait-for-events ec-tap session #{:tx-cmd-sent})
         (recur (<! cmd-chan)))))
   cmd-chan)

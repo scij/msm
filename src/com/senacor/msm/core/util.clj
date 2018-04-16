@@ -60,6 +60,8 @@ byte.  Works for chars as well."
                      (partition-all 4 (str/join charc))))
          (hexlify b-arr))))
 
+;; Byte array operations
+
 (defn cat-byte-array
   "Returns a new byte array containing the data from b1 and be
   concatenated"
@@ -109,6 +111,8 @@ byte.  Works for chars as well."
             (recur (inc i) (get ba1 i) (get ba2 i)))
           false)))))
 
+;; Byte buffer ops
+
 (defn take-string
   "Reads a string from a byte buffer. The first variant reads
   a one byte length field from the buffer, the second takes
@@ -127,6 +131,8 @@ byte.  Works for chars as well."
      (.get buf b 0 net-len)
      (String. b))))
 
+;; Command line helper
+
 (defn parse-network-spec
   "Parses the network spec into its three elements
   1. network interface or network address of the interface
@@ -142,10 +148,17 @@ byte.  Works for chars as well."
      (Integer/parseInt port)]))
 
 
+(defn get-my-process-id
+  "Returns the PID of the current process"
+  []
+  (Integer/parseInt (first (str/split (.getName (ManagementFactory/getRuntimeMXBean)) #"@"))))
+
 (defn default-node-id
   "Returns the process id as a default value for the node id."
   []
-  (Integer/parseInt (first (str/split (jmx/read "java.lang:type=Runtime" :Name) #"@"))))
+  (get-my-process-id))
+
+;; NORM event handling helper
 
 (defn wait-for-events
   "Pseudo-blocks waiting for one or more events.
@@ -167,8 +180,8 @@ byte.  Works for chars as well."
 (defn init-logging
   [app-name]
   (System/setProperty "app" app-name)
-  (System/setProperty "pid" (.getName (ManagementFactory/getRuntimeMXBean)))
-  (log/infof "App startup %s" app-name))
+  (System/setProperty "pid" (get-my-process-id))
+  (log/infof "App startup %s %d" app-name (get-my-process-id)))
 
 (def sl-exec
   ;Scheduled executor to run keep alive and house keeping

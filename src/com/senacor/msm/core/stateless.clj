@@ -50,7 +50,6 @@
   [session label cmd-chan-in a-session-receivers a-my-session-index a-receiver-count]
   (go-loop [cmd (<! cmd-chan-in)]
     (when cmd
-      (log/trace "Command received" cmd)
       (let [remote-label (:subscription cmd)
             remote-node-id (norm/get-node-id (:node-id cmd))
             now (System/currentTimeMillis)]
@@ -100,6 +99,7 @@
   cmd-chan-out is the channel where the join command will be published."
   [join-cmd-fn cmd-chan-out]
   (fn [step]
+    ; todo handle case where no message has been received
     (let [join-seq-no (volatile! Long/MAX_VALUE)
           first-seq-no (volatile! 0)
           wait-end-ts (+ (util/now-ts) alive-interval alive-interval)]

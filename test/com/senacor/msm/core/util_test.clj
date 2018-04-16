@@ -168,3 +168,7 @@
     (is (not (byte-array-equal (.getBytes "hallo") (.getBytes "hall"))))
     (is (not (byte-array-equal (.getBytes "") nil)))
     ))
+
+(deftest test-get-local-process-id
+  (is (< 0 (get-my-process-id)))
+  (is (> Integer/MAX_VALUE (get-my-process-id))))

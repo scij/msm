@@ -42,17 +42,31 @@ Details can be found at [The clojure.core.async github page](https://github.com/
 
 ## Usage
 
-    (let [event-chan-out (chan 5)
-          event-chan-in (mult event-chan-out)
+### A simple sender
+
+    (let [event-chan (chan 512)
+          msg-chan (chan 128 message/message-encoder)
           sync-chan (chan)
-          instance (ctl/init-norm event-chan-out)]
-      (let [session (ctl/start-norm-session instance "239.192.0.1" 7100 1 :loopback true)]
-        (mon/mon-event-loop event-chan-in)
-        (let [out-chan (chan)
-              sndr (snd/create-sender session 0 event-chan out-chan sync-chan 128)]
-          (>!! out-chan (msg/Message->bytes (msg/create-message "DEMO.COUNT" "Message")))
-          (close! out-chan))))
-        
+          [if-name network port] (util/parse-network-spec net-spec)
+          instance (control/init-norm event-chan)
+          session (control/start-session instance if-name network port options)]
+      (sender/create-sender session (:node-id options)
+                            event-chan msg-chan sync-chan
+                            (:size options))
+    (doseq [i (range 1000)]
+      (>!! out-chan (message/create-message label (str "Message " i)))
+    (close! out-chan))
+    
+### A simple receiver
+
+    (let [event-chan (chan 512)
+          msg-chan (chan 128)
+          instance (control/init-norm event-chan)]
+          session (topic/create-session instance net-spec label event-chan msg-chan options)]
+      (go-loop [msg (<! msg-chan)]
+        (when msg
+          (println msg)
+          (recur (<! msg-chan)))))
 
 ## Related work
 
