@@ -29,7 +29,7 @@
   event is the NORM event containing the input stream handle.
   receive-buffer-size is the number of bytes to reserve for incoming data"
   [session stream out-chan receiver-buffer-size]
-  ; Should not be a go-loop as this may change the order
+  ; Can not be a go-loop as this may change the order
   ; in which inbound messages are being processed.
   (loop [buffer (byte-array receiver-buffer-size)
          bytes-read (norm/read-stream stream buffer receiver-buffer-size)]
@@ -66,8 +66,9 @@
   [session stream event-chan out-mix message-builder]
   (log/debug "Enter stream handler" session stream)
   (synch-message stream)
+  (norm/retain stream)
   (let [stream-events (chan 64 (filter #(and (= session (:session %))
-                                            (= stream (:object %)))))
+                                             (= stream (:object %)))))
         stream-chan (chan 128 message-builder)
         receive-buffer-size (* 2 (norm/get-size stream))]
     (tap event-chan stream-events)
@@ -87,6 +88,7 @@
           (:rx-object-completed :rx-object-aborted)
           (do
             (log/info "Stream closed:" (norm/event->str event))
+            (norm/release (:object event))
             (unmix out-mix stream-chan))
           ;default
           (recur (<! stream-events)))

@@ -41,7 +41,6 @@
   sync-chan is an outbound channel where the loop signals, that
     transmission is complete.
   max-msg-size in bytes, used to appropriately size the NORM buffers."
-  ;; todo wir müssen noch eine message sequence number in den header einbauen.
   [session instance-id event-chan in-chan sync-chan max-msg-size]
   (norm/set-congestion-control session true true)
   (norm/start-sender session instance-id buffer-size max-msg-size 64 16)

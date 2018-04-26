@@ -32,6 +32,7 @@
   "Returns a map of sessions with the given session having its lifetimer extended"
   [sessions remote-node-id subscription now]
   (log/tracef "Session is alive. Node=%s, Subscription=%s" remote-node-id subscription)
+  ; todo handle the case "new session" with a new map version bound to the join-seq-no
   (merge sessions {remote-node-id {:expires (+ expiry-threshold now),
                                    :subscription subscription}}))
 
@@ -68,11 +69,8 @@
   a-receiver-count an atom holding the number of active receivers (including self).
   a-my-session-index an atom holding the index of the current session in session-receivers."
   [session a-session-receivers a-receiver-count a-my-session-index]
-  ;(log/trace "Enter housekeeping")
   (swap! a-session-receivers alive-sessions (System/currentTimeMillis))
-  ;(log/trace "After alive-sessions" @a-session-receivers)
   (swap! a-receiver-count number-of-sessions-alive @a-session-receivers)
-  ;(log/tracef "After count sessions %d" @a-receiver-count)
   (monitor/record-number-of-sl-receivers session @a-receiver-count)
   (monitor/record-sl-receivers session @a-session-receivers)
   (reset! a-my-session-index (find-my-index @a-session-receivers (norm/get-local-node-id session)))

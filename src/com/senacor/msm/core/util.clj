@@ -180,7 +180,7 @@ byte.  Works for chars as well."
 (defn init-logging
   [app-name]
   (System/setProperty "app" app-name)
-  (System/setProperty "pid" (get-my-process-id))
+  (System/setProperty "pid" (str (get-my-process-id)))
   (log/infof "App startup %s %d" app-name (get-my-process-id)))
 
 (def sl-exec
