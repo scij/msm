@@ -52,7 +52,7 @@
   (let [mbean (get @session-names session)
         wrt (java.io.StringWriter.)]
     (clojure.pprint/pprint rec-table wrt)
-    (jmx-write mbean :sl-receivers (.toString wrt))))
+    (jmx-write mbean :sl-receivers (str wrt))))
 
 (defn mon-event-loop
   "Event handler for monitoring events. Subscribes to

@@ -17,7 +17,8 @@
   :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]
   :profiles {:test    {:resource-paths ["test-resources"]}
              :qa      {:plugins [[lein-kibit "0.1.6"]
-                                [lein-cloverage "1.0.10"]]}
+                                [lein-cloverage "1.0.10"]
+                                 [lein-test-out "0.3.1"]]}
              :uberjar {:aot      :all}
              :docker  {:docker {:image-name "test/msm-send"
                                 :dockerfile "Dockerfile.send"}

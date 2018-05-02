@@ -89,6 +89,8 @@
                                           (>!! c "hallo")
                                           (>!! c ""))),
                        #'norm/seek-message-start (fn [_] true),
+                       #'norm/retain (fn [_]),
+                       #'norm/release (fn [_]),
                        #'norm/get-size (fn [_] 1024)}
         #(do
            (stream-handler session stream (mult event-chan) out-mix fx-x)
@@ -105,7 +107,9 @@
           out-chan (chan 2)
           out-mix (mix out-chan)]
       (with-redefs-fn {#'receive-data (fn [_ _ c _] (>!! c "hallo")),
-                       #'norm/seek-message-start (fn [_] true)
+                       #'norm/seek-message-start (fn [_] true),
+                       #'norm/retain (fn [_]),
+                       #'norm/release (fn [_]),
                        #'norm/get-size (fn [_] 1024)}
         #(do
             (stream-handler session stream (mult event-chan) out-mix fx-x)
@@ -207,6 +211,7 @@
                        #'norm/seek-message-start (fn [_]
                                                    (>!! ctl-chan :ready)
                                                    true)
+                       #'norm/retain (fn [_]),
                        #'norm/get-size (fn [_] 1024)}
         #(do
            (receiver-handler session (mult event-chan) out-chan fx-x)

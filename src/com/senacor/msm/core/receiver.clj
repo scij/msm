@@ -66,6 +66,7 @@
   [session stream event-chan out-mix message-builder]
   (log/debug "Enter stream handler" session stream)
   (synch-message stream)
+  ; prevent automatic disposal of stream handle when the sender closes the stream
   (norm/retain stream)
   (let [stream-events (chan 64 (filter #(and (= session (:session %))
                                              (= stream (:object %)))))
