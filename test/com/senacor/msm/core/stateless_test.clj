@@ -1,7 +1,8 @@
 (ns com.senacor.msm.core.stateless-test
   (:require [clojure.test :refer :all]
             [com.senacor.msm.core.stateless :refer :all]
-            [clojure.core.async :refer [mult go go-loop onto-chan close! chan onto-chan timeout pipe pipeline poll! <! >! <!! >!!]]
+            [clojure.core.async :refer [mult go go-loop onto-chan close! chan onto-chan timeout pipe pipeline poll!
+                                        sliding-buffer <! >! <!! >!!]]
             [com.senacor.msm.core.command :as command]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.message :as message]
@@ -156,27 +157,41 @@
                             (range 1 500))
               fix-b-arrs (map message/Message->bytes fix-msgs)
               fix-one-b-arr (reduce util/cat-byte-array (map message/Message->bytes fix-msgs))
+              out-chan (chan (sliding-buffer 1))
               a-zero (atom 0)
               a-one (atom 1)
               a-two (atom 2)]
           (testing "message filter test - one consumber"
+            (println "*** At" *testing-contexts*)
             (reset! ts -1)
-            (is (= (take-last 98 fix-msgs)
+            (is (= (into [] (take-last 99 fix-msgs))
                    (into []
-                         (filter-fn-builder 1 "s1" nil a-zero a-one)
+                         (filter-fn-builder 1 "s1" out-chan a-zero a-one)
                          fix-b-arrs))))
           (testing "message filter test - two consumers"
+            (println "*** At" *testing-contexts*)
             (reset! ts -1)
             (is (= (filter #(even? (:msg-seq-nbr %)) (take-last 98 fix-msgs))
                    (into []
-                         (filter-fn-builder 1 "s1" nil a-zero a-two)
+                         (filter-fn-builder 1 "s1" out-chan a-zero a-two)
                          fix-b-arrs))))
           (testing "message filter test - one consumer and one byte array"
+            (println "*** At" *testing-contexts*)
             (reset! ts -1)
-            (is (= (take-last 98 fix-msgs)
+            (is (= (into [] (take-last 99 fix-msgs))
                    (into []
-                         (filter-fn-builder 1 "s1" nil a-zero a-one)
+                         (filter-fn-builder 1 "s1" out-chan a-zero a-one)
                          [fix-one-b-arr]))))
+          (testing "Join timer expiry without a message"
+            (println "*** At" *testing-contexts*)
+            (with-redefs-fn
+              {#'join-wait-timestamp (fn [] 0)}
+              #(do
+                 (reset! ts 0)
+                 (is (= (into [] (take-last 499 fix-msgs))
+                        (into []
+                              (filter-fn-builder 1 "s1" out-chan a-zero a-one)
+                              fix-b-arrs))))))
           ))
       )))
 

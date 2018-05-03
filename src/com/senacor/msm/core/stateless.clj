@@ -53,7 +53,7 @@
     (when cmd
       (let [remote-label (:subscription cmd)
             remote-node-id (norm/get-node-id (:node-id cmd))
-            now (System/currentTimeMillis)]
+            now (util/now-ts)]
         (when (and
                 (not= remote-node-id (norm/get-local-node-id session))
                 (= remote-label label))
@@ -69,7 +69,7 @@
   a-receiver-count an atom holding the number of active receivers (including self).
   a-my-session-index an atom holding the index of the current session in session-receivers."
   [session a-session-receivers a-receiver-count a-my-session-index]
-  (swap! a-session-receivers alive-sessions (System/currentTimeMillis))
+  (swap! a-session-receivers alive-sessions (util/now-ts))
   (swap! a-receiver-count number-of-sessions-alive @a-session-receivers)
   (monitor/record-number-of-sl-receivers session @a-receiver-count)
   (monitor/record-sl-receivers session @a-session-receivers)
@@ -89,6 +89,10 @@
   (and (some? @a-my-index)
        (= @a-my-index (mod (:msg-seq-nbr message) @a-receiver-count))))
 
+(defn join-wait-timestamp
+  []
+  (+ (util/now-ts) alive-interval alive-interval))
+
 (defn join-filter
   "Returns a transducer on messages that first counts messages for two alive-intervals
   and estimates the message sequence number where this session will join processing
@@ -97,17 +101,25 @@
   cmd-chan-out is the channel where the join command will be published."
   [join-cmd-fn cmd-chan-out]
   (fn [step]
-    ; todo handle case where no message has been received
     (let [join-seq-no (volatile! Long/MAX_VALUE)
           first-seq-no (volatile! 0)
-          wait-end-ts (+ (util/now-ts) alive-interval alive-interval)]
+          wait-end-ts (join-wait-timestamp)]
       (fn
          ([] (step))
          ([result] (step result))
          ([result msg]
+          (log/tracef "First %d, Join %d, Wait ts %d, Msg Seq %d, Msg ts %d"
+                      @first-seq-no @join-seq-no wait-end-ts (:msg-seq-nbr msg) (:receive-ts msg))
           (when (zero? @first-seq-no)
             (vreset! first-seq-no (:msg-seq-nbr msg))
-            (log/tracef "First seq no %d" @first-seq-no))
+            (log/tracef "First seq no %d" @first-seq-no)
+            (when (and
+                    (> (:receive-ts msg) wait-end-ts)
+                    (= @join-seq-no Long/MAX_VALUE))
+              (vreset! join-seq-no @first-seq-no)
+              (go
+                (>! cmd-chan-out (join-cmd-fn @join-seq-no)))
+              (log/tracef "Join after timeout with %d" @join-seq-no)))
           (when (and
                   (> (:receive-ts msg) wait-end-ts)
                   (= @join-seq-no Long/MAX_VALUE))
@@ -115,7 +127,7 @@
             (go
               (>! cmd-chan-out (join-cmd-fn @join-seq-no)))
             (log/tracef "Join seq no %d" @join-seq-no))
-          (if (> (:msg-seq-nbr msg) @join-seq-no)
+          (if (>= (:msg-seq-nbr msg) @join-seq-no)
             (step result msg)
             result)
            )))))

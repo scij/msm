@@ -8,10 +8,9 @@
   <component name="ChangeListManager">
     <list default="true" id="2728eb43-e098-452b-b478-f18e8b8e4c1c" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project.clj" beforeDir="false" afterPath="$PROJECT_DIR$/project.clj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj" beforeDir="false" afterPath="$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/2018 Devcon.key" beforeDir="false" afterPath="$PROJECT_DIR$/doc/2018 Devcon.key" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" beforeDir="false" afterPath="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -63,17 +62,17 @@
       <file leaf-file-name="stateless.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="538">
-              <caret line="50" column="49" selection-start-line="50" selection-start-column="49" selection-end-line="50" selection-end-column="49" />
+            <state relative-caret-position="363">
+              <caret line="106" column="44" selection-start-line="106" selection-start-column="44" selection-end-line="106" selection-end-column="44" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="project.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/project.clj">
+      <file leaf-file-name="stateless_test.clj" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="58" selection-start-line="20" selection-start-column="58" selection-end-line="20" selection-end-column="58" />
+            <state relative-caret-position="239">
+              <caret line="187" column="17" selection-start-line="187" selection-start-column="17" selection-end-line="187" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -87,7 +86,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="receiver_test.clj" pinned="false" current-in-tab="true">
+      <file leaf-file-name="receiver_test.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="234">
@@ -101,15 +100,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="675">
               <caret line="45" selection-start-line="45" selection-end-line="45" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="listen.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1290">
-              <caret line="86" column="19" selection-start-line="86" selection-start-column="19" selection-end-line="86" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -135,7 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>grtt-updated</find>
       <find>flush</find>
       <find>stop</find>
       <find>command</find>
@@ -165,6 +154,7 @@
       <find>send-c</find>
       <find>str</find>
       <find>close</find>
+      <find>currentT</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
@@ -217,7 +207,6 @@
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/mon_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/message.clj" />
-        <option value="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" />
         <option value="$PROJECT_DIR$/README.md" />
@@ -229,12 +218,13 @@
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj" />
         <option value="$PROJECT_DIR$/doc/stateless.md" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/util.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj" />
         <option value="$PROJECT_DIR$/project.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
+        <option value="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" />
       </list>
     </option>
   </component>
@@ -389,7 +379,7 @@
       <recent name="$PROJECT_DIR$/test/com/senacor/msm/norm" />
     </key>
   </component>
-  <component name="ReplState" timestamp="1525242278582">{:repl-history {:ide [], :local [{:command &quot;(pr-str {:a 1, :b 2, :c {:aa 1}})&quot;, :offset 30, :ns &quot;user&quot;} {:command &quot;(repeatedly 3 (print))&quot;, :offset 20, :ns &quot;user&quot;} {:command &quot;(doall (range 3)\n       (println \&quot;hi\&quot;))&quot;, :offset 37, :ns &quot;user&quot;} {:command &quot;(doseq (range 3)\n  (println \&quot;hi\&quot;))&quot;, :offset 33, :ns &quot;user&quot;} {:command &quot;(doseq [i (range 3)]\n  (println \&quot;hi\&quot; i))&quot;, :offset 38, :ns &quot;user&quot;} {:command &quot;(defn f1 [f]\n  (f))&quot;, :offset 18, :ns &quot;user&quot;} {:command &quot;(f1 (fn [] (println \&quot;hi\&quot;)))&quot;, :offset 24, :ns &quot;user&quot;} {:command &quot;(repeat 10 (println \&quot;huhu\&quot;))&quot;, :offset 25, :ns &quot;user&quot;} {:command &quot;(+ 2 3)&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(let [start (System/currentTimeMillis)]\n  (loop [t start\n         seq 0]\n    (println \&quot;t\&quot;)\n    (when (&lt; t (+ start 100 100))\n      (recur (System/currentTimeMillis) (inc seq)))))&quot;, :offset 178, :ns &quot;user&quot;} {:command &quot;(let [start (System/currentTimeMillis)]\n  (loop [t start\n         seq 0]\n    (println t)\n    (when (&lt; t (+ start 100 100))\n      (recur (System/currentTimeMillis) (inc seq)))))&quot;, :offset 146, :ns &quot;user&quot;} {:command &quot;(zero? 0)&quot;, :offset 8, :ns &quot;user&quot;} {:command &quot;(zero? nil)&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(&gt; nil 100)&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(+ 1 2)&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(command/alive 1 \&quot;s1\&quot; true 3 6)&quot;, :offset 30, :ns &quot;user&quot;} {:command &quot;(count (command/alive 1 \&quot;s1\&quot; true 3 6))&quot;, :offset 39, :ns &quot;user&quot;} {:command &quot;(java.net.NetworkInterface/getByName \&quot;en3\&quot;)&quot;, :offset 41, :ns &quot;user&quot;} {:command &quot;(first (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 76, :ns &quot;user&quot;} {:command &quot;(.getInetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 61, :ns &quot;user&quot;} {:command &quot;(first (.inetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(.inetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 60, :ns &quot;user&quot;} {:command &quot;(first (.getInetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 71, :ns &quot;user&quot;} {:command &quot;(.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 68, :ns &quot;user&quot;} {:command &quot;(map .getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 17, :ns &quot;user&quot;} {:command &quot;(map InterfaceAddress/getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(map InterfaceAddress.getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(map ^InterfaceAddress getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(map .getAddress ^InterfaceAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 35, :ns &quot;user&quot;} {:command &quot;(map .getAddress (^InterfaceAddress .getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 36, :ns &quot;user&quot;} {:command &quot;(map .getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 18} {:command &quot;(map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 21, :ns &quot;user&quot;} {:command &quot;(filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))))&quot;, :offset 128, :ns &quot;user&quot;} {:command &quot;(.getName (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 139, :ns &quot;user&quot;} {:command &quot;(.getHostAddres (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 15, :ns &quot;user&quot;} {:command &quot;(.getHostAddress (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 16, :ns &quot;user&quot;} {:command &quot;(.getHostAddress (first (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))))))&quot;, :offset 154, :ns &quot;user&quot;}], :remote []}}</component>
+  <component name="ReplState" timestamp="1525376211186">{:repl-history {:ide [], :local [{:command &quot;(pr-str {:a 1, :b 2, :c {:aa 1}})&quot;, :offset 30, :ns &quot;user&quot;} {:command &quot;(repeatedly 3 (print))&quot;, :offset 20, :ns &quot;user&quot;} {:command &quot;(doall (range 3)\n       (println \&quot;hi\&quot;))&quot;, :offset 37, :ns &quot;user&quot;} {:command &quot;(doseq (range 3)\n  (println \&quot;hi\&quot;))&quot;, :offset 33, :ns &quot;user&quot;} {:command &quot;(doseq [i (range 3)]\n  (println \&quot;hi\&quot; i))&quot;, :offset 38, :ns &quot;user&quot;} {:command &quot;(defn f1 [f]\n  (f))&quot;, :offset 18, :ns &quot;user&quot;} {:command &quot;(f1 (fn [] (println \&quot;hi\&quot;)))&quot;, :offset 24, :ns &quot;user&quot;} {:command &quot;(repeat 10 (println \&quot;huhu\&quot;))&quot;, :offset 25, :ns &quot;user&quot;} {:command &quot;(+ 2 3)&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(let [start (System/currentTimeMillis)]\n  (loop [t start\n         seq 0]\n    (println \&quot;t\&quot;)\n    (when (&lt; t (+ start 100 100))\n      (recur (System/currentTimeMillis) (inc seq)))))&quot;, :offset 178, :ns &quot;user&quot;} {:command &quot;(let [start (System/currentTimeMillis)]\n  (loop [t start\n         seq 0]\n    (println t)\n    (when (&lt; t (+ start 100 100))\n      (recur (System/currentTimeMillis) (inc seq)))))&quot;, :offset 146, :ns &quot;user&quot;} {:command &quot;(zero? 0)&quot;, :offset 8, :ns &quot;user&quot;} {:command &quot;(zero? nil)&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(&gt; nil 100)&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(+ 1 2)&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(command/alive 1 \&quot;s1\&quot; true 3 6)&quot;, :offset 30, :ns &quot;user&quot;} {:command &quot;(count (command/alive 1 \&quot;s1\&quot; true 3 6))&quot;, :offset 39, :ns &quot;user&quot;} {:command &quot;(java.net.NetworkInterface/getByName \&quot;en3\&quot;)&quot;, :offset 41, :ns &quot;user&quot;} {:command &quot;(first (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 76, :ns &quot;user&quot;} {:command &quot;(.getInetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 61, :ns &quot;user&quot;} {:command &quot;(first (.inetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(.inetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 60, :ns &quot;user&quot;} {:command &quot;(first (.getInetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 71, :ns &quot;user&quot;} {:command &quot;(.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 68, :ns &quot;user&quot;} {:command &quot;(map .getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 17, :ns &quot;user&quot;} {:command &quot;(map InterfaceAddress/getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(map InterfaceAddress.getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(map ^InterfaceAddress getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(map .getAddress ^InterfaceAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 35, :ns &quot;user&quot;} {:command &quot;(map .getAddress (^InterfaceAddress .getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 36, :ns &quot;user&quot;} {:command &quot;(map .getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 18} {:command &quot;(map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 21, :ns &quot;user&quot;} {:command &quot;(filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))))&quot;, :offset 128, :ns &quot;user&quot;} {:command &quot;(.getName (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 139, :ns &quot;user&quot;} {:command &quot;(.getHostAddres (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 15, :ns &quot;user&quot;} {:command &quot;(.getHostAddress (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 16, :ns &quot;user&quot;} {:command &quot;(.getHostAddress (first (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))))))&quot;, :offset 154, :ns &quot;user&quot;}], :remote []}}</component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -599,13 +589,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1488727036841</updated>
-    </task>
-    <task id="LOCAL-00023" summary="Unit tests for Monitoring&#10;number of bytes sent and received recorded in jmx">
-      <created>1505159500663</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1505159500663</updated>
     </task>
     <task id="LOCAL-00024" summary="First stage of command and stateless&#10;Unit tests for command&#10;cloverage added">
       <created>1505926799180</created>
@@ -943,7 +926,14 @@
       <option name="project" value="LOCAL" />
       <updated>1524768233302</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="Fixed broken unit tests and kibit findings">
+      <created>1525242347866</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1525242347869</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TodoView">
@@ -960,11 +950,11 @@
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="4" />
-      <window_info anchor="bottom" id="TODO" order="5" weight="0.3203267" />
+      <window_info anchor="bottom" id="TODO" order="5" weight="0.3190883" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50807756" side_tool="true" weight="0.26527572" />
       <window_info anchor="right" id="Maven Projects" order="5" sideWeight="0.4937888" weight="0.32956383" />
-      <window_info active="true" anchor="right" id="REPL" order="6" sideWeight="0.61538464" side_tool="true" visible="true" weight="0.21405493" />
+      <window_info active="true" anchor="right" id="REPL" order="6" sideWeight="0.61538464" side_tool="true" visible="true" weight="0.29725364" />
       <window_info anchor="bottom" id="Run" order="3" sideWeight="0.4951535" weight="0.32763532" />
       <window_info anchor="bottom" id="Version Control" order="14" weight="0.32626426" />
       <window_info anchor="right" id="Leiningen" order="7" sideWeight="0.3846154" weight="0.21405493" />
@@ -973,6 +963,7 @@
       <window_info id="Designer" order="2" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1825525" />
       <window_info anchor="bottom" id="Docker" order="11" sideWeight="0.48949918" weight="0.32386363" />
+      <window_info anchor="bottom" id="Find" order="2" sideWeight="0.49192247" weight="0.3233618" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.24959612" />
       <window_info id="UI Designer" order="4" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.3980424" />
@@ -987,7 +978,6 @@
       <window_info anchor="bottom" id="Inspection Results" order="12" weight="0.3259958" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="6" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="2" sideWeight="0.49192247" weight="0.3233618" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" id="Palette" order="4" />
@@ -1038,7 +1028,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
-    <MESSAGE value="Send and receive buffers are now linked in size.&#10;The receive buffer is twice as big as the send buffer to ensure&#10;that it can consume the incoming traffic. The sender always uses&#10;congestion control" />
     <MESSAGE value="Receive buffer size is now dynamically configured.&#10;This is achieved by using the get-size result for the input stream&#10;and the dependency on sender in receiver could be removed" />
     <MESSAGE value="Message mit Receive-Timestamp.&#10;Message-Filter wieder eingebaut.&#10;Listen: output-to-file funktioniert jetzt" />
     <MESSAGE value="Fixed message header parsing error.&#10;Cause: Header was parsed from the beginning of the buffer." />
@@ -1063,11 +1052,12 @@
     <MESSAGE value="Join part 2 completed:&#10;* Gnothi seauton now works. Node identification via node id which&#10;must be unique within a session anyway.&#10;Pending:&#10;* Sessions expire too early." />
     <MESSAGE value="Session expiry issue fixed.&#10;I-am-alive was sent as commands with the &quot;robust&quot; parameter set to true&#10;which meant that NORM was sending the command 20 times to be sure all&#10;receivers have received it (no flow control or NAK on commands).&#10;Setting &quot;robust&quot; to false solved the problem and occasional command&#10;loss is acceptable because the stateless timeouts are sufficiently.&#10;They just could not deal with a 500ms delay between commands where&#10;100ms was expected." />
     <MESSAGE value="Fixed crash in stateless receiver at end of transmission.&#10;JVM really crashed because the stream handle was closed and&#10;receive data was still reading. Now we retain and release it" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed crash in stateless receiver at end of transmission.&#10;JVM really crashed because the stream handle was closed and&#10;receive data was still reading. Now we retain and release it" />
+    <MESSAGE value="Fixed broken unit tests and kibit findings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed broken unit tests and kibit findings" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="49" />
+      <option name="time" value="50" />
     </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
@@ -1132,13 +1122,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateful_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="64" selection-start-line="19" selection-start-column="64" selection-end-line="19" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/topic.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -1178,13 +1161,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" column="52" selection-start-line="9" selection-start-column="52" selection-end-line="9" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1911">
-          <caret line="300" column="66" selection-start-line="300" selection-start-column="66" selection-end-line="300" selection-end-column="66" />
         </state>
       </provider>
     </entry>
@@ -1273,6 +1249,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/project.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="58" selection-start-line="20" selection-start-column="58" selection-end-line="20" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="92" column="47" selection-start-line="92" selection-start-column="47" selection-end-line="92" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateful_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1065">
@@ -1287,24 +1284,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/project.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="58" selection-start-line="20" selection-start-column="58" selection-end-line="20" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="538">
-          <caret line="50" column="49" selection-start-line="50" selection-start-column="49" selection-end-line="50" selection-end-column="49" />
+        <state relative-caret-position="363">
+          <caret line="106" column="44" selection-start-line="106" selection-start-column="44" selection-end-line="106" selection-end-column="44" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj">
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="92" column="47" selection-start-line="92" selection-start-column="47" selection-end-line="92" selection-end-column="47" />
+        <state relative-caret-position="239">
+          <caret line="187" column="17" selection-start-line="187" selection-start-column="17" selection-end-line="187" selection-end-column="17" />
         </state>
       </provider>
     </entry>
