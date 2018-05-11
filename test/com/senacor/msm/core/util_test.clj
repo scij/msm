@@ -172,3 +172,18 @@
 (deftest test-get-local-process-id
   (is (< 0 (get-my-process-id)))
   (is (> Integer/MAX_VALUE (get-my-process-id))))
+
+(deftest test-get-default-node-id
+  (with-redefs-fn
+    {#'get-interface-address (fn [_] (.getBytes "abcd")),
+     #'get-my-process-id (fn [] 1234)}
+    #(do
+       (is (= 1667499218 (get-default-node-id "en3")))
+       (is (= "99.100/1234" (printable-node-id 1667499218)))
+      )))
+
+(deftest test-get-interface-address
+  (is (bytes? (get-interface-address "lo0")))
+  (is (or
+        (= 4 (count (get-interface-address "lo0")))
+        (= 16 (count (get-interface-address "lo0"))))))

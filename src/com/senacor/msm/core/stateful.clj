@@ -41,7 +41,7 @@
       (log/trace "Command received" cmd)
       (let [remote-label (:subscription (command/parse-command (:cmd cmd)))
             remote-active (:active cmd)
-            remote-node-id (norm/get-node-name (:node-id cmd))
+            remote-node-id (:node-id cmd)
             now (System/currentTimeMillis)]
         (when (= remote-label subscription)
           (swap! session-active record-session-status remote-node-id remote-label remote-active now))

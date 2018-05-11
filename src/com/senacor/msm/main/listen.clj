@@ -14,9 +14,6 @@
 
 (def cli-options
   [["-h" "--help"]
-   ["-i" "--node-id NODE-ID" "Node ID"
-    :default (util/default-node-id)
-    :parse-fn #(Integer/parseInt %)]
    ["-l" "--loopback"]
    ["-o" "--output FILE" "Output file name"]
    ["-r" "--receive MODE" "Receiver mode"

@@ -8,9 +8,17 @@
   <component name="ChangeListManager">
     <list default="true" id="2728eb43-e098-452b-b478-f18e8b8e4c1c" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/2018 Devcon.key" beforeDir="false" afterPath="$PROJECT_DIR$/doc/2018 Devcon.key" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/command.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/command.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/control.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/control.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/stateful.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/stateful.clj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/core/util.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/core/util.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" beforeDir="false" afterPath="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj" beforeDir="false" afterPath="$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" beforeDir="false" afterPath="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj" beforeDir="false" afterPath="$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,29 +40,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="message.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/message.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="27" selection-start-line="27" selection-end-line="27" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="norm_api.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9585">
-              <caret line="639" column="23" selection-start-line="639" selection-start-column="20" selection-end-line="639" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="receiver.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1065">
-              <caret line="71" selection-start-line="71" selection-end-line="71" />
+            <state relative-caret-position="397">
+              <caret line="731" column="23" lean-forward="true" selection-start-line="731" selection-start-column="23" selection-end-line="731" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -62,44 +52,35 @@
       <file leaf-file-name="stateless.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="106" column="44" selection-start-line="106" selection-start-column="44" selection-end-line="106" selection-end-column="44" />
+            <state relative-caret-position="610">
+              <caret line="203" selection-start-line="203" selection-end-line="203" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stateless_test.clj" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stateless_test.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="187" column="17" selection-start-line="187" selection-start-column="17" selection-end-line="187" selection-end-column="17" />
+            <state relative-caret-position="342">
+              <caret line="59" column="55" lean-forward="true" selection-start-line="59" selection-start-column="55" selection-end-line="59" selection-end-column="55" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="monitor.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj">
+      <file leaf-file-name="sender_test.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/sender_test.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="259">
-              <caret line="55" selection-start-line="55" selection-end-line="55" />
+            <state relative-caret-position="684">
+              <caret line="55" column="38" lean-forward="true" selection-start-line="55" selection-start-column="38" selection-end-line="55" selection-end-column="38" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="receiver_test.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj">
+      <file leaf-file-name="listen.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="92" column="47" selection-start-line="92" selection-start-column="47" selection-end-line="92" selection-end-column="47" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sender.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
-              <caret line="45" selection-start-line="45" selection-end-line="45" />
+            <state relative-caret-position="240">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
             </state>
           </provider>
         </entry>
@@ -107,8 +88,35 @@
       <file leaf-file-name="send.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/send.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="705">
-              <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
+            <state relative-caret-position="224">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="control.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/control.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="684">
+              <caret line="65" column="40" selection-start-line="65" selection-start-column="40" selection-end-line="65" selection-end-column="40" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="util.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/util.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="253">
+              <caret line="171" selection-start-line="171" selection-end-line="171" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="util_test.clj" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="984">
+              <caret line="181" column="57" selection-start-line="181" selection-start-column="57" selection-end-line="181" selection-end-column="57" />
             </state>
           </provider>
         </entry>
@@ -125,8 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>flush</find>
-      <find>stop</find>
       <find>command</find>
       <find>get-com</find>
       <find>water</find>
@@ -155,6 +161,8 @@
       <find>str</find>
       <find>close</find>
       <find>currentT</find>
+      <find>get-no</find>
+      <find>join-wait-timestamp</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
@@ -198,33 +206,33 @@
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/sender_test.clj" />
         <option value="$PROJECT_DIR$/doc/intro.md" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/topic.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateful.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/control_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/msg_test.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/control.clj" />
-        <option value="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/mon_test.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/message.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/command.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj" />
         <option value="$PROJECT_DIR$/resources/log4j2.xml" />
-        <option value="$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj" />
         <option value="$PROJECT_DIR$/test-resources/log4j2.xml" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj" />
         <option value="$PROJECT_DIR$/doc/stateless.md" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/util.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj" />
         <option value="$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj" />
         <option value="$PROJECT_DIR$/project.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/command.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateful.clj" />
+        <option value="$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
-        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
         <option value="$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/main/send.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/control.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj" />
+        <option value="$PROJECT_DIR$/src/com/senacor/msm/core/util.clj" />
+        <option value="$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj" />
       </list>
     </option>
   </component>
@@ -235,8 +243,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1280" />
-    <option name="height" value="800" />
+    <option name="x" value="1280" />
+    <option name="y" value="-458" />
+    <option name="width" value="1920" />
+    <option name="height" value="1200" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -318,6 +328,11 @@
             <path>
               <item name="msm" type="b2602c69:ProjectViewProjectNode" />
               <item name="msm" type="462c0819:PsiDirectoryNode" />
+              <item name="doc" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="msm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="msm" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -363,7 +378,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -379,7 +394,7 @@
       <recent name="$PROJECT_DIR$/test/com/senacor/msm/norm" />
     </key>
   </component>
-  <component name="ReplState" timestamp="1525376211186">{:repl-history {:ide [], :local [{:command &quot;(pr-str {:a 1, :b 2, :c {:aa 1}})&quot;, :offset 30, :ns &quot;user&quot;} {:command &quot;(repeatedly 3 (print))&quot;, :offset 20, :ns &quot;user&quot;} {:command &quot;(doall (range 3)\n       (println \&quot;hi\&quot;))&quot;, :offset 37, :ns &quot;user&quot;} {:command &quot;(doseq (range 3)\n  (println \&quot;hi\&quot;))&quot;, :offset 33, :ns &quot;user&quot;} {:command &quot;(doseq [i (range 3)]\n  (println \&quot;hi\&quot; i))&quot;, :offset 38, :ns &quot;user&quot;} {:command &quot;(defn f1 [f]\n  (f))&quot;, :offset 18, :ns &quot;user&quot;} {:command &quot;(f1 (fn [] (println \&quot;hi\&quot;)))&quot;, :offset 24, :ns &quot;user&quot;} {:command &quot;(repeat 10 (println \&quot;huhu\&quot;))&quot;, :offset 25, :ns &quot;user&quot;} {:command &quot;(+ 2 3)&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(let [start (System/currentTimeMillis)]\n  (loop [t start\n         seq 0]\n    (println \&quot;t\&quot;)\n    (when (&lt; t (+ start 100 100))\n      (recur (System/currentTimeMillis) (inc seq)))))&quot;, :offset 178, :ns &quot;user&quot;} {:command &quot;(let [start (System/currentTimeMillis)]\n  (loop [t start\n         seq 0]\n    (println t)\n    (when (&lt; t (+ start 100 100))\n      (recur (System/currentTimeMillis) (inc seq)))))&quot;, :offset 146, :ns &quot;user&quot;} {:command &quot;(zero? 0)&quot;, :offset 8, :ns &quot;user&quot;} {:command &quot;(zero? nil)&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(&gt; nil 100)&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(+ 1 2)&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(command/alive 1 \&quot;s1\&quot; true 3 6)&quot;, :offset 30, :ns &quot;user&quot;} {:command &quot;(count (command/alive 1 \&quot;s1\&quot; true 3 6))&quot;, :offset 39, :ns &quot;user&quot;} {:command &quot;(java.net.NetworkInterface/getByName \&quot;en3\&quot;)&quot;, :offset 41, :ns &quot;user&quot;} {:command &quot;(first (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 76, :ns &quot;user&quot;} {:command &quot;(.getInetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 61, :ns &quot;user&quot;} {:command &quot;(first (.inetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(.inetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 60, :ns &quot;user&quot;} {:command &quot;(first (.getInetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 71, :ns &quot;user&quot;} {:command &quot;(.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 68, :ns &quot;user&quot;} {:command &quot;(map .getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 17, :ns &quot;user&quot;} {:command &quot;(map InterfaceAddress/getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(map InterfaceAddress.getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(map ^InterfaceAddress getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(map .getAddress ^InterfaceAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 35, :ns &quot;user&quot;} {:command &quot;(map .getAddress (^InterfaceAddress .getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 36, :ns &quot;user&quot;} {:command &quot;(map .getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 18} {:command &quot;(map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 21, :ns &quot;user&quot;} {:command &quot;(filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))))&quot;, :offset 128, :ns &quot;user&quot;} {:command &quot;(.getName (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 139, :ns &quot;user&quot;} {:command &quot;(.getHostAddres (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 15, :ns &quot;user&quot;} {:command &quot;(.getHostAddress (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 16, :ns &quot;user&quot;} {:command &quot;(.getHostAddress (first (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))))))&quot;, :offset 154, :ns &quot;user&quot;}], :remote []}}</component>
+  <component name="ReplState" timestamp="1526049072214">{:repl-history {:ide [], :local [{:command &quot;(pr-str {:a 1, :b 2, :c {:aa 1}})&quot;, :offset 30, :ns &quot;user&quot;} {:command &quot;(repeatedly 3 (print))&quot;, :offset 20, :ns &quot;user&quot;} {:command &quot;(doall (range 3)\n       (println \&quot;hi\&quot;))&quot;, :offset 37, :ns &quot;user&quot;} {:command &quot;(doseq (range 3)\n  (println \&quot;hi\&quot;))&quot;, :offset 33, :ns &quot;user&quot;} {:command &quot;(doseq [i (range 3)]\n  (println \&quot;hi\&quot; i))&quot;, :offset 38, :ns &quot;user&quot;} {:command &quot;(defn f1 [f]\n  (f))&quot;, :offset 18, :ns &quot;user&quot;} {:command &quot;(f1 (fn [] (println \&quot;hi\&quot;)))&quot;, :offset 24, :ns &quot;user&quot;} {:command &quot;(repeat 10 (println \&quot;huhu\&quot;))&quot;, :offset 25, :ns &quot;user&quot;} {:command &quot;(+ 2 3)&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(let [start (System/currentTimeMillis)]\n  (loop [t start\n         seq 0]\n    (println \&quot;t\&quot;)\n    (when (&lt; t (+ start 100 100))\n      (recur (System/currentTimeMillis) (inc seq)))))&quot;, :offset 178, :ns &quot;user&quot;} {:command &quot;(let [start (System/currentTimeMillis)]\n  (loop [t start\n         seq 0]\n    (println t)\n    (when (&lt; t (+ start 100 100))\n      (recur (System/currentTimeMillis) (inc seq)))))&quot;, :offset 146, :ns &quot;user&quot;} {:command &quot;(zero? 0)&quot;, :offset 8, :ns &quot;user&quot;} {:command &quot;(zero? nil)&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(&gt; nil 100)&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(command/alive 1 \&quot;s1\&quot; true 3 6)&quot;, :offset 30, :ns &quot;user&quot;} {:command &quot;(count (command/alive 1 \&quot;s1\&quot; true 3 6))&quot;, :offset 39, :ns &quot;user&quot;} {:command &quot;(java.net.NetworkInterface/getByName \&quot;en3\&quot;)&quot;, :offset 41, :ns &quot;user&quot;} {:command &quot;(first (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 76, :ns &quot;user&quot;} {:command &quot;(.getInetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 61, :ns &quot;user&quot;} {:command &quot;(first (.inetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 10, :ns &quot;user&quot;} {:command &quot;(.inetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 60, :ns &quot;user&quot;} {:command &quot;(first (.getInetAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 71, :ns &quot;user&quot;} {:command &quot;(.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 68, :ns &quot;user&quot;} {:command &quot;(map .getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))&quot;, :offset 17, :ns &quot;user&quot;} {:command &quot;(map InterfaceAddress/getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(map InterfaceAddress.getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(map ^InterfaceAddress getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 6, :ns &quot;user&quot;} {:command &quot;(map .getAddress ^InterfaceAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 35, :ns &quot;user&quot;} {:command &quot;(map .getAddress (^InterfaceAddress .getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 36, :ns &quot;user&quot;} {:command &quot;(map .getAddress (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 18} {:command &quot;(map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))&quot;, :offset 21, :ns &quot;user&quot;} {:command &quot;(filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))))&quot;, :offset 128, :ns &quot;user&quot;} {:command &quot;(.getName (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 139, :ns &quot;user&quot;} {:command &quot;(.getHostAddres (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 15, :ns &quot;user&quot;} {:command &quot;(.getHostAddress (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;)))))&quot;, :offset 16, :ns &quot;user&quot;} {:command &quot;(.getHostAddress (first (filter #(instance? Inet4Address %) (map #(.getAddress %) (.getInterfaceAddresses (java.net.NetworkInterface/getByName \&quot;en3\&quot;))))))&quot;, :offset 154, :ns &quot;user&quot;} {:command &quot;(take-last 3 [1 2 3 4 5 6 7])&quot;, :offset 27, :ns &quot;user&quot;} {:command &quot;(into [] (take-last 3 [1 2 3 4 5 6 7]))&quot;, :offset 39, :ns &quot;user&quot;} {:command &quot;(+ 1 2)&quot;, :offset 6, :ns &quot;user&quot;}], :remote []}}</component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -589,13 +604,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1488727036841</updated>
-    </task>
-    <task id="LOCAL-00024" summary="First stage of command and stateless&#10;Unit tests for command&#10;cloverage added">
-      <created>1505926799180</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1505926799180</updated>
     </task>
     <task id="LOCAL-00025" summary="Command parser test">
       <created>1505977924224</created>
@@ -933,7 +941,14 @@
       <option name="project" value="LOCAL" />
       <updated>1525242347869</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="Join after timeout implemented and tested">
+      <created>1525376252806</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1525376252806</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TodoView">
@@ -946,7 +961,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
+    <frame x="1280" y="-458" width="1920" height="1200" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="4" />
@@ -954,16 +969,16 @@
       <window_info anchor="right" id="Palette&#9;" order="8" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50807756" side_tool="true" weight="0.26527572" />
       <window_info anchor="right" id="Maven Projects" order="5" sideWeight="0.4937888" weight="0.32956383" />
-      <window_info active="true" anchor="right" id="REPL" order="6" sideWeight="0.61538464" side_tool="true" visible="true" weight="0.29725364" />
+      <window_info active="true" anchor="right" id="REPL" order="6" sideWeight="0.61538464" side_tool="true" visible="true" weight="0.3881789" />
       <window_info anchor="bottom" id="Run" order="3" sideWeight="0.4951535" weight="0.32763532" />
       <window_info anchor="bottom" id="Version Control" order="14" weight="0.32626426" />
       <window_info anchor="right" id="Leiningen" order="7" sideWeight="0.3846154" weight="0.21405493" />
       <window_info anchor="bottom" id="CheckStyle" order="13" weight="0.32670453" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.32970452" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1825525" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13631523" />
       <window_info anchor="bottom" id="Docker" order="11" sideWeight="0.48949918" weight="0.32386363" />
-      <window_info anchor="bottom" id="Find" order="2" sideWeight="0.49192247" weight="0.3233618" />
+      <window_info anchor="bottom" id="Find" order="2" sideWeight="0.49192247" weight="0.32214156" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.24959612" />
       <window_info id="UI Designer" order="4" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.3980424" />
@@ -985,30 +1000,30 @@
       <window_info anchor="bottom" id="CheckStyle" order="13" weight="0.32670453" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="11" sideWeight="0.48949918" weight="0.32386363" />
-      <window_info anchor="bottom" id="Version Control" order="14" weight="0.32626426" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="right" id="Module Dependencies" order="1" sideWeight="0.4915254" weight="0.32956383" />
-      <window_info id="Structure" order="1" weight="0.24959612" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="bottom" id="Run" order="3" sideWeight="0.4951535" weight="0.32763532" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="5" weight="0.32102272" />
-      <window_info anchor="right" id="REPL" order="6" sideWeight="0.6131078" side_tool="true" weight="0.36752826" />
+      <window_info anchor="bottom" id="Cvs" order="6" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12034079" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.24959612" />
+      <window_info anchor="right" id="Module Dependencies" order="1" sideWeight="0.4915254" weight="0.32956383" />
+      <window_info anchor="bottom" id="TODO" order="5" weight="0.3190883" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="right" id="REPL" order="6" sideWeight="0.61538464" side_tool="true" visible="true" weight="0.19595315" />
       <window_info anchor="bottom" id="Inspection Results" order="12" weight="0.3259958" />
       <window_info id="Designer" order="2" />
-      <window_info anchor="right" id="Leiningen" order="7" sideWeight="0.38689217" weight="0.21486267" />
+      <window_info anchor="right" id="Leiningen" order="7" sideWeight="0.3846154" weight="0.21405493" />
       <window_info id="UI Designer" order="4" />
-      <window_info anchor="bottom" id="Inspection" order="7" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Find" order="2" sideWeight="0.49192247" visible="true" weight="0.3228106" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.3980424" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
-      <window_info anchor="bottom" id="Run" order="3" sideWeight="0.4951535" weight="0.32809225" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50807756" side_tool="true" weight="0.265625" />
-      <window_info anchor="bottom" id="Cvs" order="6" weight="0.25" />
-      <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.32970452" />
-      <window_info anchor="bottom" id="Find" order="2" sideWeight="0.49192247" weight="0.3236607" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50807756" side_tool="true" weight="0.26527572" />
+      <window_info anchor="bottom" id="Inspection" order="7" weight="0.4" />
+      <window_info anchor="bottom" id="Version Control" order="14" weight="0.32626426" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="bottom" id="Messages" order="9" weight="0.328125" />
       <window_info anchor="right" id="Maven Projects" order="5" sideWeight="0.4937888" weight="0.32956383" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.118743345" />
+      <window_info id="Favorites" order="3" side_tool="true" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1028,7 +1043,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
-    <MESSAGE value="Receive buffer size is now dynamically configured.&#10;This is achieved by using the get-size result for the input stream&#10;and the dependency on sender in receiver could be removed" />
     <MESSAGE value="Message mit Receive-Timestamp.&#10;Message-Filter wieder eingebaut.&#10;Listen: output-to-file funktioniert jetzt" />
     <MESSAGE value="Fixed message header parsing error.&#10;Cause: Header was parsed from the beginning of the buffer." />
     <MESSAGE value="Fixed race condition in receiver causing broken messages.&#10;Reading the NORM buffer was a go-loop inside a go-loop which&#10;could lead to two async-threads running at the same time and&#10;reading the NORM buffer." />
@@ -1053,7 +1067,8 @@
     <MESSAGE value="Session expiry issue fixed.&#10;I-am-alive was sent as commands with the &quot;robust&quot; parameter set to true&#10;which meant that NORM was sending the command 20 times to be sure all&#10;receivers have received it (no flow control or NAK on commands).&#10;Setting &quot;robust&quot; to false solved the problem and occasional command&#10;loss is acceptable because the stateless timeouts are sufficiently.&#10;They just could not deal with a 500ms delay between commands where&#10;100ms was expected." />
     <MESSAGE value="Fixed crash in stateless receiver at end of transmission.&#10;JVM really crashed because the stream handle was closed and&#10;receive data was still reading. Now we retain and release it" />
     <MESSAGE value="Fixed broken unit tests and kibit findings" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed broken unit tests and kibit findings" />
+    <MESSAGE value="Join after timeout implemented and tested" />
+    <option name="LAST_COMMIT_MESSAGE" value="Join after timeout implemented and tested" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1108,31 +1123,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/sender_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1185">
-          <caret line="79" column="28" selection-start-line="79" selection-start-column="28" selection-end-line="79" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateful.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-169">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/topic.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="12" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/control_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -1147,20 +1141,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="626">
           <caret line="379" column="23" lean-forward="true" selection-start-line="379" selection-start-column="23" selection-end-line="379" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="802">
-          <caret line="128" column="26" selection-start-line="128" selection-start-column="26" selection-end-line="128" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/control.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="52" selection-start-line="9" selection-start-column="52" selection-end-line="9" selection-end-column="52" />
         </state>
       </provider>
     </entry>
@@ -1190,37 +1170,8 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/doc/install.md" />
-    <entry file="file://$PROJECT_DIR$/doc/backlog.md" />
     <entry file="file://$PROJECT_DIR$/doc/stateless.md" />
     <entry file="file://$PROJECT_DIR$/doc/devcon2017.md" />
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2595">
-          <caret line="173" column="16" selection-start-line="173" selection-start-column="16" selection-end-line="173" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/util.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2745">
-          <caret line="183" selection-start-line="183" selection-end-line="183" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/command.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="57" selection-start-line="28" selection-start-column="57" selection-end-line="28" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1290">
-          <caret line="86" column="19" selection-start-line="86" selection-start-column="19" selection-end-line="86" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/sender.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
@@ -1235,31 +1186,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/send.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="705">
-          <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9585">
-          <caret line="639" column="23" selection-start-line="639" selection-start-column="20" selection-end-line="639" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/project.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="20" column="58" selection-start-line="20" selection-start-column="58" selection-end-line="20" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="92" column="47" selection-start-line="92" selection-start-column="47" selection-end-line="92" selection-end-column="47" />
         </state>
       </provider>
     </entry>
@@ -1270,31 +1200,123 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/command.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1065">
-          <caret line="71" selection-start-line="71" selection-end-line="71" />
+        <state relative-caret-position="242">
+          <caret line="49" column="23" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/command_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="354">
+          <caret line="192" column="32" lean-forward="true" selection-start-line="192" selection-start-column="32" selection-end-line="192" selection-end-column="32" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/monitor.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
+        <state relative-caret-position="608">
           <caret line="55" selection-start-line="55" selection-end-line="55" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj">
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/receiver_test.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="106" column="44" selection-start-line="106" selection-start-column="44" selection-end-line="106" selection-end-column="44" />
+        <state relative-caret-position="1741">
+          <caret line="214" column="47" selection-start-line="214" selection-start-column="47" selection-end-line="214" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateful.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="43" column="4" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/receiver.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10">
+          <caret line="91" selection-start-line="91" selection-end-line="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/norm_api.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="731" column="23" lean-forward="true" selection-start-line="731" selection-start-column="23" selection-end-line="731" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/doc/backlog.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/listen.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/main/send.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/sender_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="55" column="38" lean-forward="true" selection-start-line="55" selection-start-column="38" selection-end-line="55" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/control.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="65" column="40" selection-start-line="65" selection-start-column="40" selection-end-line="65" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/control_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="48" selection-start-line="19" selection-start-column="48" selection-end-line="19" selection-end-column="48" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/stateless_test.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="187" column="17" selection-start-line="187" selection-start-column="17" selection-end-line="187" selection-end-column="17" />
+        <state relative-caret-position="342">
+          <caret line="59" column="55" lean-forward="true" selection-start-line="59" selection-start-column="55" selection-end-line="59" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/stateless.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="610">
+          <caret line="203" selection-start-line="203" selection-end-line="203" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/senacor/msm/core/util.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="171" selection-start-line="171" selection-end-line="171" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/senacor/msm/core/util_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="984">
+          <caret line="181" column="57" selection-start-line="181" selection-start-column="57" selection-end-line="181" selection-end-column="57" />
         </state>
       </provider>
     </entry>

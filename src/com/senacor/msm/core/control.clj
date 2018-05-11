@@ -3,7 +3,8 @@
             [com.senacor.msm.core.monitor :as mon]
             [clojure.tools.logging :as log]
             [clojure.string :as str]
-            [clojure.core.async :refer [chan tap untap go-loop thread >! <! >!! close!]]))
+            [clojure.core.async :refer [chan tap untap go-loop thread >! <! >!! close!]]
+            [com.senacor.msm.core.util :as util]))
 
 
 ;;
@@ -60,8 +61,9 @@
   omitted the process id will be used. Override it if you have more than
   one session per process."
   [instance if-name address port options]
-  (let [session (norm/create-session instance address port (:node-id options))]
-    (log/infof "session created %s %d %d" address port (:node-id options))
+  (let [node-id (util/get-default-node-id if-name)
+        session (norm/create-session instance address port node-id)]
+    (log/infof "session created %s %d %s" address port (util/printable-node-id node-id))
     (when-not (str/blank? if-name)
       (norm/set-multicast-interface session if-name))
     (when (:ttl options)

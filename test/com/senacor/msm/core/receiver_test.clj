@@ -212,6 +212,7 @@
                                                    (>!! ctl-chan :ready)
                                                    true)
                        #'norm/retain (fn [_]),
+                       #'norm/release (fn [_]),
                        #'norm/get-size (fn [_] 1024)}
         #(do
            (receiver-handler session (mult event-chan) out-chan fx-x)

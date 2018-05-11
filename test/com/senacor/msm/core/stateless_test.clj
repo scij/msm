@@ -183,10 +183,10 @@
                          (filter-fn-builder 1 "s1" out-chan a-zero a-one)
                          [fix-one-b-arr]))))
           (testing "Join timer expiry without a message"
-            (println "*** At" *testing-contexts*)
             (with-redefs-fn
               {#'join-wait-timestamp (fn [] 0)}
               #(do
+                 (println "*** At" *testing-contexts*)
                  (reset! ts 0)
                  (is (= (into [] (take-last 499 fix-msgs))
                         (into []
@@ -197,28 +197,22 @@
 
 (deftest test-join-filter
   (testing "All should be filtered because we stop sending before the threshold is reached"
-    (with-redefs-fn
-      {#'util/now-ts (fn [] 1000)}
-      (fn []
-        (let [fix-msgs0 (map #(message/create-message "s1" (str "co" %) (+ 5 %) (str "Payload " %))
-                             (range 1 50))
-              now 1000
-              fix-msgs1 (map #(assoc % :receive-ts (+ now (:msg-seq-nbr %)))
-                             fix-msgs0)]
-          (is (= [] (into [] (join-filter (partial command/join 1 "s1") nil) fix-msgs1)))
-          ))))
+    (let [fix-msgs0 (map #(message/create-message "s1" (str "co" %) (+ 5 %) (str "Payload " %))
+                         (range 1 50))
+          now 1000
+          fix-msgs1 (map #(assoc % :receive-ts (+ now (:msg-seq-nbr %)))
+                         fix-msgs0)]
+      (is (= [] (into [] (join-filter 1200 (partial command/join 1 "s1") nil) fix-msgs1)))
+      ))
   (testing "First 100 should be filtered and the rest should pass"
-    (with-redefs-fn
-      {#'util/now-ts (fn [] 1000)}
-      (fn []
-        (let [fix-msgs0 (map #(message/create-message "s1" (str "co" %) % (str "Payload " %))
-                             (range 1 (* 5 alive-interval)))
-              now 1000
-              fix-msgs1 (map #(assoc % :receive-ts (+ now (:msg-seq-nbr %)))
-                             fix-msgs0)]
-          (is (= (take-last 98 fix-msgs1)
-                 (into [] (join-filter (partial command/join 1 "s1") nil) fix-msgs1)
-                 ))))))
+    (let [fix-msgs0 (map #(message/create-message "s1" (str "co" %) % (str "Payload " %))
+                         (range 1 (* 5 alive-interval)))
+          now 1000
+          fix-msgs1 (map #(assoc % :receive-ts (+ now (:msg-seq-nbr %)))
+                         fix-msgs0)]
+      (is (= (take-last 99 fix-msgs1)
+             (into [] (join-filter 1200 (partial command/join 1 "s1") nil) fix-msgs1)
+             ))))
   )
 
 (deftest test-stateless-session-handler

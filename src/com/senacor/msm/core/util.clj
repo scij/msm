@@ -6,7 +6,8 @@
             [bytebuffer.buff :as bb]
             [me.raynes.moments :as moments])
   (:import (java.nio ByteBuffer)
-           (java.lang.management ManagementFactory)))
+           (java.lang.management ManagementFactory)
+           (java.net NetworkInterface InterfaceAddress)))
 
 ;; Based on m0smith's code at https://gist.github.com/m0smith/1684476#file-hexlify-clj
 (defprotocol Hexl
@@ -153,10 +154,40 @@ byte.  Works for chars as well."
   []
   (Integer/parseInt (first (str/split (.getName (ManagementFactory/getRuntimeMXBean)) #"@"))))
 
-(defn default-node-id
-  "Returns the process id as a default value for the node id."
-  []
-  (get-my-process-id))
+(defn get-interface-address
+  "Returns the first IP address bound to the given interface.
+  The result a byte array of four bytes (IPv4) or 16 bytes (IPv6)"
+  [if-name]
+  (-> if-name
+      NetworkInterface/getByName
+      .getInterfaceAddresses
+      first
+      .getAddress
+      .getAddress))
+
+(defn get-default-node-id
+  "Returns the last two bytes of the interface IP address and
+  the process id as an approximation for a unique node id."
+  [if-name]
+  (+
+    (bit-shift-left
+      (reduce
+        (fn [acc x]
+          (bit-and
+            (+ (bit-shift-left acc 8) x)
+            0xffff))
+        (get-interface-address if-name))
+      16)
+    (get-my-process-id)))
+
+(defn printable-node-id
+  [node-id]
+  (str
+    (bit-shift-right (bit-and node-id 0xff000000) 24)
+    "."
+    (bit-shift-right (bit-and node-id 0xff0000) 16)
+    "/"
+    (bit-and node-id 0xffff)))
 
 ;; NORM event handling helper
 

@@ -14,9 +14,6 @@
   [["-f" "--file FILE" "Read messages from file"]
    ["-h" "--help"]
    ["-l" "--loopback"]
-   ["-i" "--node-id NODE-ID" "Node ID"
-    :default (util/default-node-id)
-    :parse-fn #(Integer/parseInt %)]
    ["-r" "--repeat COUNT" "Repeat message COUNT times"
     :default 1
     :parse-fn #(Integer/parseInt %)]

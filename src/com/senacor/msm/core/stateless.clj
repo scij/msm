@@ -44,7 +44,7 @@
 (defn find-my-index
   "Returns the index of the current session in the sessions table"
   [sessions local-node-id]
-  (log/trace "Find my index" sessions)
+  (log/trace "Find my index" local-node-id sessions)
   (.indexOf (keys sessions) local-node-id))
 
 (defn handle-receiver-status
@@ -52,7 +52,7 @@
   (go-loop [cmd (<! cmd-chan-in)]
     (when cmd
       (let [remote-label (:subscription cmd)
-            remote-node-id (norm/get-node-id (:node-id cmd))
+            remote-node-id (:node-id cmd)
             now (util/now-ts)]
         (when (and
                 (not= remote-node-id (norm/get-local-node-id session))
@@ -98,30 +98,31 @@
   and estimates the message sequence number where this session will join processing
   (aka join-seq-no). No message with a sequence number below join-seq-no will pass this
   filter. All messages above this number will pass.
+  join-wait-end-ts is a ms-timestamp when the join wait will end.
+  join-cmd-fn is the builder function for the join command to be sent to all co-receivers.
   cmd-chan-out is the channel where the join command will be published."
-  [join-cmd-fn cmd-chan-out]
+  [join-wait-end-ts join-cmd-fn cmd-chan-out]
   (fn [step]
     (let [join-seq-no (volatile! Long/MAX_VALUE)
-          first-seq-no (volatile! 0)
-          wait-end-ts (join-wait-timestamp)]
+          first-seq-no (volatile! 0)]
       (fn
          ([] (step))
          ([result] (step result))
          ([result msg]
           (log/tracef "First %d, Join %d, Wait ts %d, Msg Seq %d, Msg ts %d"
-                      @first-seq-no @join-seq-no wait-end-ts (:msg-seq-nbr msg) (:receive-ts msg))
+                      @first-seq-no @join-seq-no join-wait-end-ts (:msg-seq-nbr msg) (:receive-ts msg))
           (when (zero? @first-seq-no)
             (vreset! first-seq-no (:msg-seq-nbr msg))
             (log/tracef "First seq no %d" @first-seq-no)
             (when (and
-                    (> (:receive-ts msg) wait-end-ts)
+                    (> (:receive-ts msg) join-wait-end-ts)
                     (= @join-seq-no Long/MAX_VALUE))
               (vreset! join-seq-no @first-seq-no)
               (go
                 (>! cmd-chan-out (join-cmd-fn @join-seq-no)))
               (log/tracef "Join after timeout with %d" @join-seq-no)))
           (when (and
-                  (> (:receive-ts msg) wait-end-ts)
+                  (> (:receive-ts msg) join-wait-end-ts)
                   (= @join-seq-no Long/MAX_VALUE))
             (vreset! join-seq-no (+ (* 2 (- (:msg-seq-nbr msg) @first-seq-no)) @first-seq-no))
             (go
@@ -142,7 +143,7 @@
   (comp
     message/message-rebuilder
     (filter (partial message/label-match subscription))
-    (join-filter (partial command/join session subscription) cmd-chan-out)
+    (join-filter (join-wait-timestamp) (partial command/join session subscription) cmd-chan-out)
     (filter (partial is-my-message a-my-session-index a-receiver-count))))
 
 (defn send-status-messages
@@ -153,12 +154,13 @@
   (moments/schedule-every util/sl-exec alive-interval
                           (fn []
                             (log/trace "sending alive command msg")
-                            (go (>! cmd-chan-out
-                                    (command/alive session
-                                                   subscription
-                                                   true
-                                                   @a-my-session-index
-                                                   @a-my-session-last-msg)))
+                            (when @a-my-session-index
+                              (go (>! cmd-chan-out
+                                      (command/alive session
+                                                     subscription
+                                                     true
+                                                     @a-my-session-index
+                                                     @a-my-session-last-msg))))
                             )))
 
 (defn receive-status-messages
@@ -199,7 +201,8 @@
   ; todo buffer messages in case we need to reprocess them after another consumer failed
   [session subscription event-chan msg-chan]
   (let [cmd-chan-out (chan 16)
-        a-session-receivers (atom (sorted-map (norm/get-local-node-id session) {:expires Long/MAX_VALUE,
+        local-node-id (norm/get-local-node-id session)
+        a-session-receivers (atom (sorted-map local-node-id {:expires Long/MAX_VALUE,
                                                                                 :subscription subscription}))
         a-my-session-index (atom nil)
         a-my-session-last-msg (atom 0)
