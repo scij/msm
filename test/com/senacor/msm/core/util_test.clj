@@ -178,7 +178,7 @@
     {#'get-interface-address (fn [_] (.getBytes "abcd")),
      #'get-my-process-id (fn [] 1234)}
     #(do
-       (is (= 1667499218 (get-default-node-id "en3")))
+       (is (= 1667499218 (get-node-id "en3")))
        (is (= "99.100/1234" (printable-node-id 1667499218)))
       )))
 

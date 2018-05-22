@@ -8,7 +8,8 @@
             [clojure.tools.logging :as log]
             [clojure.tools.cli :as cli]
             [clojure.string :as str]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [com.senacor.msm.core.norm-api :as norm]))
 
 (def cli-options
   [["-f" "--file FILE" "Read messages from file"]
@@ -65,7 +66,7 @@
         instance (control/init-norm event-chan)
         session (control/start-session instance if-name network port options)]
     (monitor/mon-event-loop event-chan-m)
-    (sender/create-sender session (:node-id options)
+    (sender/create-sender session (norm/get-local-node-id session)
                           event-chan-m msg-chan sync-chan
                           (:size options))
     (if (:file options)

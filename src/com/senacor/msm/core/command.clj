@@ -47,7 +47,7 @@
     (tap event-chan ec-tap)
     (go-loop [event (<! ec-tap)]
       (let [cmd (merge (parse-command (norm/get-command (:node event)))
-                       {:node-id (norm/get-node-name (:node event))})]
+                       {:node-id (norm/get-node-id (:node event))})]
         (log/trace "Received command" cmd)
         (>! cmd-chan cmd))
       (recur (<! ec-tap)))))

@@ -165,7 +165,7 @@ byte.  Works for chars as well."
       .getAddress
       .getAddress))
 
-(defn get-default-node-id
+(defn get-node-id
   "Returns the last two bytes of the interface IP address and
   the process id as an approximation for a unique node id."
   [if-name]

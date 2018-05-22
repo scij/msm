@@ -201,12 +201,12 @@
   num-parity is the number of parity symbol segemnts with block-size + num-parity
   <= 255."
   [^NormSession handle
-   ^Integer session-id
+   ^Long session-id
    ^Long buffer-space
    ^Integer segment-size
    ^Short block-size
    ^Short num-parity]
-  (.startSender handle session-id buffer-space segment-size block-size num-parity))
+  (.startSender handle (.intValue session-id) buffer-space segment-size block-size num-parity))
 
 (defn stop-sender
   "Stops the sender and de-allocates all associated resources."

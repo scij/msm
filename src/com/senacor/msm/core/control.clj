@@ -61,7 +61,7 @@
   omitted the process id will be used. Override it if you have more than
   one session per process."
   [instance if-name address port options]
-  (let [node-id (util/get-default-node-id if-name)
+  (let [node-id (util/get-node-id if-name)
         session (norm/create-session instance address port node-id)]
     (log/infof "session created %s %d %s" address port (util/printable-node-id node-id))
     (when-not (str/blank? if-name)
