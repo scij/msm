@@ -26,13 +26,13 @@
           event-chan (chan 1)
           cmd-chan (chan 1)]
       (with-redefs-fn {#'norm/get-command    (fn [_] (alive session "s1" true 0 1001))
-                       #'norm/get-node-name  (fn [_] "abcdef")}
+                       #'norm/get-node-id  (fn [_] 17)}
         #(do
            (command-receiver session (mult event-chan) cmd-chan)
            (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
            (let [cmd-msg (<!! cmd-chan)]
              (is (some? cmd-msg))
-             (is (= "abcdef" (:node-id cmd-msg)))
+             (is (= 17 (:node-id cmd-msg)))
              (is (= "s1" (:subscription cmd-msg)))
              (is (= 1001 (:msg-seq-nbr cmd-msg))))
            (Thread/sleep 100)
@@ -51,7 +51,7 @@
                                                   (alive session "s1" false 0 (- 1004 @cmd-count))
                                                   :else
                                                   nil)),
-                       #'norm/get-node-name (fn [_] "abcdef")}
+                       #'norm/get-node-id (fn [_] 18)}
         #(do
            (command-receiver session (mult event-chan) cmd-chan)
            (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
@@ -70,7 +70,7 @@
           event-chan (chan 3)]
       (with-redefs-fn {#'norm/get-command (fn [session]
                                             (alive session (str "s" session) true 1 1000)),
-                       #'norm/get-node-name (fn [_] "abcdef")}
+                       #'norm/get-node-id (fn [_] 19)}
         #(do
            (command-receiver 1 (mult event-chan) cmd-chan)
            (>!! event-chan {:session 1 :event-type :rx-object-cmd-new :node 1234})
