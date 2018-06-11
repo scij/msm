@@ -13,7 +13,7 @@
                  [me.raynes/moments "0.1.1"]
                  [org.apache.logging.log4j/log4j-api "2.8.2"]
                  [org.apache.logging.log4j/log4j-core "2.8.2"]
-                 [melee "0.1.0-SNAPSHOT"]
+                 [org.clojars.scij/melee "0.2.0-SNAPSHOT"]
                  ]
   :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]
   :profiles {:test    {:resource-paths ["test-resources"]}
