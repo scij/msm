@@ -15,6 +15,14 @@
   "A stateless process sends this command to inform it's peers that
   it intends to join processing" 2)
 
+(def ^:const CMD_REQUEST_VOTE
+  "Part of raft consensus used by stateful to elect the current leader" 3)
+
+(def ^:const CMD_VOTE_REPLY
+  "Part of raft consensus used by stateful to reply to vote requests" 4)
+(def ^:const CMD_APPEND_ENTRIES
+  "Part of raft consensus used by the leader to replicate its log" 5)
+
 (defn command-sender
   "Receive commands as byte array messages from cmd-chan and send them
   to all NORM receivers of this session. Use event-chan to receive
@@ -97,7 +105,7 @@
     (bb/put-int result my-session-index)
     (bb/put-long result msg-seq-nbr)
     (put-string result (str subscription))
-    (util/byte-array-head (.array result) (.position result))))
+    (util/buffer2array result)))
 
 (defn join
   "Creates a JOIN command message informing all participating SL processes that the
@@ -108,7 +116,41 @@
     (put-fixed-header result CMD_JOIN)
     (bb/put-long result msg-seq-nbr)
     (put-string result (str subscription))
-    (util/byte-array-head (.array result) (.position result))))
+    (util/buffer2array result)))
+
+(defn raft-request-vote
+  "Creates a REQUEST_VOTE command message"
+  [subscription term candidate-id last-log-index last-log-term]
+  (let [result (bb/byte-buffer 256)]
+    (put-fixed-header result CMD_REQUEST_VOTE)
+    (put-string result (str subscription))
+    (bb/put-int result term)
+    (put-string result (str candidate-id))
+    (bb/put-int result last-log-index)
+    (bb/put-int result last-log-term)
+    (util/buffer2array result)))
+
+(defn raft-vote-reply
+  [subscription term vote-granted]
+  (let [result (bb/byte-buffer 256)]
+    (put-fixed-header result CMD_VOTE_REPLY)
+    (put-string result (str subscription))
+    (bb/put-int result term)
+    (bb/put-byte result (if vote-granted 1 0))
+    (util/buffer2array result)))
+
+(defn raft-append-entries
+  [subscription term leader-id prev-log-index prev-log-term entries leader-commit]
+  (let [result (bb/byte-buffer 256)]
+    (put-fixed-header result CMD_APPEND_ENTRIES)
+    (put-string result (str subscription))
+    (bb/put-int result term)
+    (put-string result (str leader-id))
+    (bb/put-int result prev-log-index)
+    (bb/put-int result prev-log-term)
+    ;; TODO transmit entries missing
+    (bb/put-int result leader-commit)
+    (util/buffer2array result)))
 
 (defn parse-fixed-header
   [buf]
@@ -145,6 +187,33 @@
   {:msg-seq-nbr (bb/take-long buf),
   :subscription (util/take-string buf)})
 
+(defn parse-append-entries
+  [buf]
+  (log/trace "AppendEntries received")
+  {:subscription   (util/take-string buf),
+   :current-term   (bb/take-int buf),
+   :leader-id      (util/take-string buf),
+   :prev-log-index (bb/take-int buf),
+   :prev-log-term  (bb/take-int buf),
+   ;; TODO take entries
+   :leader-commit  (bb/take-int buf)})
+
+(defn parse-vote-request
+  [buf]
+  (log/trace "VoteRequest received")
+  {:subscription   (util/take-string buf),
+   :current-term   (bb/take-int buf),
+   :candidate-id   (util/take-string buf),
+   :last-log-index (bb/take-int buf),
+   :last-log-term  (bb/take-int buf)})
+
+(defn parse-vote-reply
+  [buf]
+  (log/trace "VoteReply received")
+  {:subscription (util/take-string buf),
+   :current-term (bb/take-int buf),
+   :vote-granted (= 1 (bb/take-byte buf))})
+
 (defn parse-command
   [b-arr]
   (let [buf (ByteBuffer/wrap b-arr)
@@ -153,6 +222,9 @@
             (cond
               (= cmd CMD_ALIVE) (parse-alive-var-part buf)
               (= cmd CMD_JOIN) (parse-join-var-part buf)
+              (= cmd CMD_APPEND_ENTRIES) (parse-append-entries buf)
+              (= cmd CMD_REQUEST_VOTE) (parse-vote-request buf)
+              (= cmd CMD_VOTE_REPLY) (parse-vote-reply buf)
               :else
               (do
                 (log/errorf "Unknown command type %d" cmd)

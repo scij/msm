@@ -1,6 +1,8 @@
 <component name="libraryTable">
   <library name="Leiningen: org.clojars.scij/melee:0.2.0-SNAPSHOT">
-    <CLASSES />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/clojars/scij/melee/0.2.0-SNAPSHOT/melee-0.2.0-SNAPSHOT.jar!/" />
+    </CLASSES>
     <JAVADOC />
     <SOURCES />
   </library>

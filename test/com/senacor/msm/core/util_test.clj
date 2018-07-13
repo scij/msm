@@ -187,3 +187,26 @@
   (is (or
         (= 4 (count (get-interface-address "lo0")))
         (= 16 (count (get-interface-address "lo0"))))))
+
+(deftest test-buffer2array
+  (testing "empty buffer"
+    (is (= 0 (count (buffer2array (bb/byte-buffer 10))))))
+  (testing "buffer with one byte"
+    (let [buf (bb/byte-buffer 10)]
+      (bb/put-byte buf (byte \D))
+      (is (byte-array-equal (.getBytes "D") (buffer2array buf)))))
+  (testing "Buffer with many bytes"
+    (let [buf (bb/byte-buffer 10)]
+      (bb/put-byte buf (byte \a))
+      (bb/put-byte buf (byte \b))
+      (bb/put-byte buf (byte \c))
+      (bb/put-byte buf (byte \d))
+      (is (byte-array-equal (.getBytes "abcd") (buffer2array buf)))))
+  (testing "full buffer"
+    (let [buf (bb/byte-buffer 4)]
+      (bb/put-byte buf (byte \a))
+      (bb/put-byte buf (byte \b))
+      (bb/put-byte buf (byte \c))
+      (bb/put-byte buf (byte \d))
+      (is (byte-array-equal (.getBytes "abcd") (buffer2array buf)))))
+  )

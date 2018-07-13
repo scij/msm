@@ -42,6 +42,23 @@ Details can be found at [The clojure.core.async github page](https://github.com/
 
 ## Usage
 
+### Command line sender
+
+    lein run -m com.senacor.msm.main.send --loopback --autonumber --repeat 1000 "en0;239.192.0.1:7100" /com/senacor/msm "MSG"
+    
+Run a sender talking to receivers on the same host. Send 1000 messages starting with "MSG" 
+followed by a sequence number (autonumber). Send to multicast address 239.192.0.1 port
+7100 on interface en0 (WLAN on my machine). Label all messages with /com/senacor/msm.
+
+### Command line receiver
+
+    lein run -m com.senacor.msm.main.listen --loopback --receive stateless --output target/msg.txt "en0;239.192.0.1:7100" /com/senacor/msm
+    
+Run the receiver receiving data from a sender on the same host (loopback) running a
+stateless receiver. Received messages are written to target/msg.txt. Listen
+to the multicast address 239.192.0.1 port 7100 on interface en0 (WLAN on my machine)
+and filter by label /com/senacor/msm
+
 ### A simple sender
 
     (let [event-chan (chan 512)

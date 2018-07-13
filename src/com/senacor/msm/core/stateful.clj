@@ -7,9 +7,7 @@
             [com.senacor.msm.core.norm-api :as norm]
             [me.raynes.moments :as moments]
             [com.senacor.msm.core.message :as message]
-            [com.senacor.msm.core.receiver :as receiver]
-            [melee.consensus :as mcon]
-            [melee.log :as mlog]))
+            [com.senacor.msm.core.receiver :as receiver]))
 
 (def session-active
   "A map keyed by node-id and subscription with the active-state of
@@ -98,33 +96,3 @@
     (log/infof "Create stateful session on interface %s, address %s, port %d" if-name network port)
     (stateful-session-handler session subscription event-chan msg-chan)
     ))
-
-(defn follow-the-leader
-  [state cmd-chan-in cmd-chan-out]
-  (go-loop [[res c] (alts! [cmd-chan-in (timeout election-timeout)])]
-    (if (nil? res)
-      (partial election state cmd-chan-in cmd-chan-out)
-      (do
-        (mcon/append state (entry res))
-        (recur (alts! (cmd-chan-in (timeout election-timeout))))
-        )
-      )
-    ))
-
-(defn become-candidate
-  [state]
-  (mcon/state (:id state) :candidate (inc (:current-term state))
-              (:id state) (:log state) (:commit-index state) (:last-applied state)))
-
-(defn request-vote
-  [state cmd-chan-out]
-
-  )
-
-(defn election
-  [state cmd-chan-in cmd-chan-out]
-  (alts! [cmd-chan-in (timeout (+ election-timeout (rand-int election-timeout)))])
-  ; nil huh?
-  ; request-vote someone else is the leader
-  ; request-vote-reply counting
-  )

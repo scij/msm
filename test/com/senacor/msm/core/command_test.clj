@@ -117,6 +117,35 @@
     (is (= 18 (.limit fix)))
     ))
 
+(deftest test-append-entries
+  (let [fix (ByteBuffer/wrap (raft-append-entries "abc" 100 "xy" 100 200 [] 300))]
+    (is (= (parse-command (.array fix))
+           {:cmd CMD_APPEND_ENTRIES,
+            :subscription "abc",
+            :current-term 100,
+            :leader-id "xy",
+            :prev-log-index 100,
+            :prev-log-term 200,
+            :leader-commit 300}))))
+
+(deftest test-vote-request
+  (let [fix (ByteBuffer/wrap (raft-request-vote "abc" 100 "xy" 200 300))]
+    (is (= (parse-command (.array fix))
+           {:cmd CMD_REQUEST_VOTE,
+            :subscription "abc",
+            :current-term 100,
+            :candidate-id "xy",
+            :last-log-index 200,
+            :last-log-term 300}))))
+
+(deftest test-vote-reply
+  (let [fix (ByteBuffer/wrap (raft-vote-reply "abc" 100 true))]
+    (is (= (parse-command (.array fix))
+           {:cmd CMD_VOTE_REPLY,
+            :subscription "abc",
+            :current-term 100,
+            :vote-granted true}))))
+
 
 (deftest test-command-sender
   (let [sent-msg-chan (timeout 100)]
@@ -223,5 +252,51 @@
       (is (= {:cmd CMD_JOIN,
               :msg-seq-nbr 91475,
               :subscription "ab"}
+             (parse-command (.array fix))))))
+  (testing "well formed vote request"
+    (let [fix (bb/byte-buffer 256)]
+      (bb/with-buffer fix
+                      (bb/put-byte (byte \C))
+                      (bb/put-byte (byte \X))
+                      (bb/put-byte 1)
+                      (bb/put-byte 0)
+                      (bb/put-byte CMD_REQUEST_VOTE)
+                      (bb/put-byte 3)
+                      (bb/put-byte (byte \a))
+                      (bb/put-byte (byte \b))
+                      (bb/put-byte (byte \c))
+                      (bb/put-int 10)
+                      (bb/put-byte 2)
+                      (bb/put-byte (byte \x))
+                      (bb/put-byte (byte \y))
+                      (bb/put-int 233)
+                      (bb/put-int 800))
+      (.flip fix)
+      (is (= {:cmd CMD_REQUEST_VOTE,
+              :subscription "abc",
+              :current-term 10,
+              :candidate-id "xy",
+              :last-log-index 233,
+              :last-log-term 800}
+             (parse-command (.array fix))))))
+  (testing "well formed vote reply"
+    (let [fix (bb/byte-buffer 256)]
+      (bb/with-buffer fix
+                      (bb/put-byte (byte \C))
+                      (bb/put-byte (byte \X))
+                      (bb/put-byte 1)
+                      (bb/put-byte 0)
+                      (bb/put-byte CMD_VOTE_REPLY)
+                      (bb/put-byte 3)
+                      (bb/put-byte (byte \a))
+                      (bb/put-byte (byte \b))
+                      (bb/put-byte (byte \c))
+                      (bb/put-int 10)
+                      (bb/put-byte 0))
+      (.flip fix)
+      (is (= {:cmd CMD_VOTE_REPLY,
+              :subscription "abc",
+              :current-term 10,
+              :vote-granted false}
              (parse-command (.array fix))))))
   )

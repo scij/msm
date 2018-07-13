@@ -132,6 +132,13 @@ byte.  Works for chars as well."
      (.get buf b 0 net-len)
      (String. b))))
 
+(defn buffer2array
+  "Takes buf, a byte buffer that has been filled using put
+  and returns a byte array with all bytes that
+  have been written to buf"
+  [^ByteBuffer buf]
+  (byte-array-head (.array buf) (.position buf)))
+
 ;; Command line helper
 
 (defn parse-network-spec
