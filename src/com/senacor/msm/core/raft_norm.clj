@@ -30,6 +30,11 @@
   (mcons/state (:id state) :candidate (inc (:current-term state))
                (:id state) (:log state) (:commit-index state) (:last-applied state)))
 
+(defn become-leader
+  [state]
+  (mcons/state (:id state) :leader (:current-term state)
+               (:id state) (:log state) (:commit-index state) (:last-applied state)))
+
 (defn follow-the-leader
   "Listens for heartbeats and log updates. Starts a new election when nothing is received."
   [subscription state cmd-chan-in cmd-chan-out]

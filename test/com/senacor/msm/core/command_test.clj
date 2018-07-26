@@ -146,6 +146,14 @@
             :current-term 100,
             :vote-granted true}))))
 
+(deftest test-append-entries-reply
+  (let [fix (ByteBuffer/wrap (raft-append-entries-reply "abc" 100 true))]
+    (is (= (parse-command (.array fix))
+           {:cmd CMD_APPEND_ENTRIES_REPLY,
+            :subscription "abc",
+            :current-term 100,
+            :success true}))))
+
 
 (deftest test-command-sender
   (let [sent-msg-chan (timeout 100)]
@@ -298,5 +306,25 @@
               :subscription "abc",
               :current-term 10,
               :vote-granted false}
+             (parse-command (.array fix))))))
+  (testing "well formed append entries reply"
+    (let [fix (bb/byte-buffer 256)]
+      (bb/with-buffer fix
+                      (bb/put-byte (byte \C))
+                      (bb/put-byte (byte \X))
+                      (bb/put-byte 1)
+                      (bb/put-byte 0)
+                      (bb/put-byte CMD_APPEND_ENTRIES_REPLY)
+                      (bb/put-byte 3)
+                      (bb/put-byte (byte \a))
+                      (bb/put-byte (byte \b))
+                      (bb/put-byte (byte \c))
+                      (bb/put-int 10)
+                      (bb/put-byte 0))
+      (.flip fix)
+      (is (= {:cmd CMD_APPEND_ENTRIES_REPLY,
+              :subscription "abc",
+              :current-term 10,
+              :success false}
              (parse-command (.array fix))))))
   )

@@ -20,8 +20,12 @@
 
 (def ^:const CMD_VOTE_REPLY
   "Part of raft consensus used by stateful to reply to vote requests" 4)
+
 (def ^:const CMD_APPEND_ENTRIES
   "Part of raft consensus used by the leader to replicate its log" 5)
+
+(def ^:const CMD_APPEND_ENTRIES_REPLY
+  "The leader's response to an append-entries request" 6)
 
 (defn command-sender
   "Receive commands as byte array messages from cmd-chan and send them
@@ -152,6 +156,15 @@
     (bb/put-int result leader-commit)
     (util/buffer2array result)))
 
+(defn raft-append-entries-reply
+  [subscription term success]
+  (let [result (bb/byte-buffer 256)]
+    (put-fixed-header result CMD_APPEND_ENTRIES_REPLY)
+    (put-string result (str subscription))
+    (bb/put-int result term)
+    (bb/put-byte result (if success 1 0))
+    (util/buffer2array result)))
+
 (defn parse-fixed-header
   [buf]
   (if (> (.remaining buf) 5)
@@ -198,6 +211,13 @@
    ;; TODO take entries
    :leader-commit  (bb/take-int buf)})
 
+(defn parse-append-entries-reply
+  [buf]
+  (log/trace "AppendEntriesReply received")
+  {:subscription   (util/take-string buf),
+   :current-term   (bb/take-int buf),
+   :success        (= 1 (bb/take-byte buf))})
+
 (defn parse-vote-request
   [buf]
   (log/trace "VoteRequest received")
@@ -225,6 +245,7 @@
               (= cmd CMD_APPEND_ENTRIES) (parse-append-entries buf)
               (= cmd CMD_REQUEST_VOTE) (parse-vote-request buf)
               (= cmd CMD_VOTE_REPLY) (parse-vote-reply buf)
+              (= cmd CMD_APPEND_ENTRIES_REPLY) (parse-append-entries-reply buf)
               :else
               (do
                 (log/errorf "Unknown command type %d" cmd)
