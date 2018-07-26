@@ -59,6 +59,9 @@
         (log/trace "State maching loop" my-state res)
         (cond
           ; Any state
+          ; Kill switch
+          (and (= chan parsed-cmd-chan) (= res :exit))
+          (log/trace "Exit command received. Raft state machine exiting")
           ; Different subscription
           (and (some? res) (not= subscription (:subscription res)))
           (recur my-state wait-time)
@@ -68,9 +71,6 @@
             (>! cmd-chan-out (command/raft-vote-reply subscription (:term vote-result) (:candidate-id res)
                                                       (:vote-granted vote-result)))
             (recur (:state vote-result) wait-time))
-          ; Kill switch
-          (and (= chan parsed-cmd-chan) (= res :exit))
-          (log/trace "Exit command received. Raft state machine exiting")
 
           ; State = Follower
           ; Timed out waiting for heartbeat -> start new election
