@@ -135,11 +135,12 @@
     (util/buffer2array result)))
 
 (defn raft-vote-reply
-  [subscription term vote-granted]
+  [subscription term candidate-id vote-granted]
   (let [result (bb/byte-buffer 256)]
     (put-fixed-header result CMD_VOTE_REPLY)
     (put-string result (str subscription))
     (bb/put-int result term)
+    (put-string result candidate-id)
     (bb/put-byte result (if vote-granted 1 0))
     (util/buffer2array result)))
 
@@ -222,7 +223,7 @@
   [buf]
   (log/trace "VoteRequest received")
   {:subscription   (util/take-string buf),
-   :current-term   (bb/take-int buf),
+   :term           (bb/take-int buf),
    :candidate-id   (util/take-string buf),
    :last-log-index (bb/take-int buf),
    :last-log-term  (bb/take-int buf)})
@@ -231,22 +232,25 @@
   [buf]
   (log/trace "VoteReply received")
   {:subscription (util/take-string buf),
-   :current-term (bb/take-int buf),
+   :term         (bb/take-int buf),
+   :candidate-id (util/take-string buf),
    :vote-granted (= 1 (bb/take-byte buf))})
 
 (defn parse-command
   [b-arr]
-  (let [buf (ByteBuffer/wrap b-arr)
-        cmd (parse-fixed-header buf)]
-    (merge {:cmd cmd}
-            (cond
-              (= cmd CMD_ALIVE) (parse-alive-var-part buf)
-              (= cmd CMD_JOIN) (parse-join-var-part buf)
-              (= cmd CMD_APPEND_ENTRIES) (parse-append-entries buf)
-              (= cmd CMD_REQUEST_VOTE) (parse-vote-request buf)
-              (= cmd CMD_VOTE_REPLY) (parse-vote-reply buf)
-              (= cmd CMD_APPEND_ENTRIES_REPLY) (parse-append-entries-reply buf)
-              :else
-              (do
-                (log/errorf "Unknown command type %d" cmd)
-                nil)))))
+  (if (bytes? b-arr)
+    (let [buf (ByteBuffer/wrap b-arr)
+          cmd (parse-fixed-header buf)]
+      (merge {:cmd cmd}
+             (cond
+               (= cmd CMD_ALIVE) (parse-alive-var-part buf)
+               (= cmd CMD_JOIN) (parse-join-var-part buf)
+               (= cmd CMD_APPEND_ENTRIES) (parse-append-entries buf)
+               (= cmd CMD_REQUEST_VOTE) (parse-vote-request buf)
+               (= cmd CMD_VOTE_REPLY) (parse-vote-reply buf)
+               (= cmd CMD_APPEND_ENTRIES_REPLY) (parse-append-entries-reply buf)
+               :else
+               (do
+                 (log/errorf "Unknown command type %d" cmd)
+                 nil))))
+    b-arr))

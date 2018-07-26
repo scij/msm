@@ -133,17 +133,18 @@
     (is (= (parse-command (.array fix))
            {:cmd CMD_REQUEST_VOTE,
             :subscription "abc",
-            :current-term 100,
+            :term 100,
             :candidate-id "xy",
             :last-log-index 200,
             :last-log-term 300}))))
 
 (deftest test-vote-reply
-  (let [fix (ByteBuffer/wrap (raft-vote-reply "abc" 100 true))]
+  (let [fix (ByteBuffer/wrap (raft-vote-reply "abc" 100 "99" true))]
     (is (= (parse-command (.array fix))
            {:cmd CMD_VOTE_REPLY,
             :subscription "abc",
-            :current-term 100,
+            :term 100,
+            :candidate-id "99"
             :vote-granted true}))))
 
 (deftest test-append-entries-reply
@@ -282,7 +283,7 @@
       (.flip fix)
       (is (= {:cmd CMD_REQUEST_VOTE,
               :subscription "abc",
-              :current-term 10,
+              :term 10,
               :candidate-id "xy",
               :last-log-index 233,
               :last-log-term 800}
@@ -300,11 +301,15 @@
                       (bb/put-byte (byte \b))
                       (bb/put-byte (byte \c))
                       (bb/put-int 10)
+                      (bb/put-byte 2)
+                      (bb/put-byte (byte \9))
+                      (bb/put-byte (byte \9))
                       (bb/put-byte 0))
       (.flip fix)
       (is (= {:cmd CMD_VOTE_REPLY,
               :subscription "abc",
-              :current-term 10,
+              :term 10,
+              :candidate-id "99"
               :vote-granted false}
              (parse-command (.array fix))))))
   (testing "well formed append entries reply"
@@ -327,4 +332,6 @@
               :current-term 10,
               :success false}
              (parse-command (.array fix))))))
+  (testing "not a byte array"
+    (is (= :exit (parse-command :exit))))
   )
