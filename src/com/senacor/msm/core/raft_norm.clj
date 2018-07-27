@@ -77,6 +77,7 @@
           ; Received vote request
           (and (= command/CMD_REQUEST_VOTE (:cmd res)) (= subscription (:subscription res)))
           (let [vote-result (mcons/vote my-state (ballot res))]
+            (log/trace "Voting" vote-result)
             (>! cmd-chan-out (command/raft-vote-reply subscription (:term vote-result) (:candidate-id res)
                                                       (:vote-granted vote-result)))
             (recur (:state vote-result) wait-time))
@@ -85,6 +86,7 @@
           ; Timed out waiting for heartbeat -> start new election
           (and (= :follower (:role my-state)) (nil? res))
           (let [candidate-state (become-candidate my-state)]
+            (log/trace "Starting election")
             (>! cmd-chan-out (command/raft-request-vote subscription
                                                         (:current-term candidate-state)
                                                         (:id candidate-state)
@@ -102,6 +104,7 @@
           ; Timeout in election, restart election
           (and (= :candidate (:role my-state)) (nil? res))
           (let [candidate-state (become-candidate my-state)]
+            (log/trace "Restarting election after timeout")
             (>! cmd-chan-out (command/raft-request-vote subscription
                                                         (:current-term candidate-state)
                                                         (:id candidate-state)
@@ -114,6 +117,7 @@
           (if (= (:id my-state) (:candidate-id res))
             (let [leader (mcons/state (:id my-state) :leader (max (:current-term my-state) (:term res))
                                       (:voted-for nil) (:log my-state) (:commit-index my-state) (:last-applied my-state))]
+              (log/info "Becoming leader" leader)
               (reset! a-leader? true)
               (>! cmd-chan-out (heartbeat subscription leader))
               (recur leader heartbeat-interval))
@@ -135,6 +139,7 @@
           (and (= :leader (:role my-state)) (= command/CMD_APPEND_ENTRIES (:cmd res))
                (> (:current-term res) (:current-term my-state) (= subscription (:subscription my-state))))
           (do
+            (log/info "Fallback to follower. New leader is " (:leader-id res))
             (reset! a-leader? false)
             (recur (become-follower my-state res) (election-timeout)))
 
