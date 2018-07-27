@@ -35,7 +35,7 @@
 
 (defn init-norm
   "Initialize the NORM infrastructure. Must be called
-  exactly onece before any subsequent interaction is possible."
+  exactly once before any subsequent interaction is possible."
   [event-chan]
   (let [instance (norm/create-instance)
         event-loop-result-chan (thread (event-loop instance event-chan))]

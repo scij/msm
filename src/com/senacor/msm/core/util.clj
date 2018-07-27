@@ -126,7 +126,7 @@ byte.  Works for chars as well."
        (.get buf b 0 net-len)
        (String. b))
      ""))
-  ([len buf]
+  ([len ^ByteBuffer buf]
    (let [net-len (min len (.remaining buf))
          b (byte-array net-len)]
      (.get buf b 0 net-len)
@@ -168,7 +168,7 @@ byte.  Works for chars as well."
   (-> if-name
       NetworkInterface/getByName
       .getInterfaceAddresses
-      first
+      ^InterfaceAddress first
       .getAddress
       .getAddress))
 

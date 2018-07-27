@@ -10,7 +10,8 @@
             [clojure.java.io :as io]
             [clojure.tools.cli :as cli]
             [clojure.string :as str])
-  (:import (mil.navy.nrl.norm.enums NormEventType)))
+  (:import (mil.navy.nrl.norm.enums NormEventType)
+           (java.io Writer)))
 
 (def cli-options
   [["-h" "--help"]
@@ -40,7 +41,7 @@
 
 (defn print-to-file
   [file-name msg-chan]
-  (go-loop [writer (io/writer file-name)
+  (go-loop [^Writer writer (io/writer file-name)
             msg (<! msg-chan)]
     (if msg
       (do

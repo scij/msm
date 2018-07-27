@@ -78,7 +78,7 @@
 ;; -- end of message
 
 (defn put-fixed-header
-  [buf command-type]
+  [^ByteBuffer buf command-type]
   (bb/with-buffer buf
                   (bb/put-byte (byte \C))
                   (bb/put-byte (byte \X))
@@ -88,7 +88,7 @@
   buf)
 
 (defn put-string
-  [buf str]
+  [^ByteBuffer buf ^String str]
   (bb/put-byte buf (count str))
   (.put buf (.getBytes str))
   buf)
@@ -167,7 +167,7 @@
     (util/buffer2array result)))
 
 (defn parse-fixed-header
-  [buf]
+  [^ByteBuffer buf]
   (if (> (.remaining buf) 5)
     (let [magic1  (bb/take-byte buf)
           magic2  (bb/take-byte buf)

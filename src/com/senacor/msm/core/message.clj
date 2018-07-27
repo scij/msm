@@ -104,10 +104,10 @@
   "Takes a message and returns a byte array with it's binary
   transport representation"
   [msg]
-  (let [b-label (.getBytes (:label msg))
-        b-corr-id (.getBytes (:correlation-id msg))
-        b-payload (.getBytes (:payload msg))
-        b-array (byte-array (message-length b-label b-corr-id b-payload))]
+  (let [^bytes b-label (.getBytes ^String (:label msg))
+        ^bytes b-corr-id (.getBytes ^String (:correlation-id msg))
+        ^bytes b-payload (.getBytes ^String (:payload msg))
+        ^bytes b-array (byte-array (message-length b-label b-corr-id b-payload))]
     (doto (ByteBuffer/wrap b-array)
       ;; Fixed header
       (bb/put-byte msg-prefix-m)
@@ -136,7 +136,7 @@
 (defn parse-fixed-header
   "Parse the fixed part of the header from buf and returns the variable
   header length and the payload length (as an array)"
-  [buf]
+  [^ByteBuffer buf]
   (let [magic1 (bb/take-byte buf)
         magic2 (bb/take-byte buf)
         major-v (bb/take-byte buf)

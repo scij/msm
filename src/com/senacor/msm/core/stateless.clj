@@ -8,7 +8,8 @@
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.receiver :as receiver]
             [clojure.tools.logging :as log]
-            [com.senacor.msm.core.monitor :as monitor]))
+            [com.senacor.msm.core.monitor :as monitor])
+  (:import (java.util List)))
 
 (def ^:const alive-interval
   "Interval in ms to report that a receiver is alive"
@@ -45,7 +46,7 @@
   "Returns the index of the current session in the sessions table"
   [sessions local-node-id]
   (log/trace "Find my index" local-node-id sessions)
-  (.indexOf (keys sessions) local-node-id))
+  (.indexOf ^List (keys sessions) local-node-id))
 
 (defn handle-receiver-status
   [session label cmd-chan-in a-session-receivers a-my-session-index a-receiver-count]

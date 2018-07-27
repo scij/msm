@@ -494,7 +494,7 @@
   length is the number of bytes used in the buffer.
   robust shall be true to indicate that NORM will make sure that all receivers
   have received the command and false otherwise."
-  [handle buffer length robust]
+  [^NormSession handle buffer length robust]
   (assert (<= length 256) "Command max size 256 bytes")
   (.sendCommand handle buffer 0 length robust)
   handle)
