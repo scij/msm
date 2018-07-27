@@ -1,5 +1,5 @@
 (ns com.senacor.msm.core.raft-norm
-  (:require [clojure.core.async :refer [>!! >! alts! chan go-loop pipeline timeout]]
+  (:require [clojure.core.async :refer [>!! >! alts! chan close! go-loop pipeline timeout]]
             [melee.consensus :as mcons]
             [melee.log :as mlog]
             [com.senacor.msm.core.command :as command]
@@ -49,6 +49,13 @@
   (mcons/ballot (:term vote-reply) (:candidate-id vote-reply) (:last-log-index vote-reply) (:last-log-term vote-reply)))
 
 (defn raft-state-machine
+  "Communicate with other services on the same subscription and determine leaders and followers.
+  Implements the Raft protocol.
+  subscription Only considers processes on the same subscription.
+  session-id Identity of the current process. Returns the session-id.
+  a-leader? a boolean encapsulated in an atom to indicate whether this process is the current leader.
+  cmd-chan-in NORM inbound command channel where Raft messages from other processes are received.
+  cmd-chan-out NORM output command channel where the process sends Raft messages to other processes."
   [subscription session-id a-leader? cmd-chan-in cmd-chan-out]
   (reset! a-leader? false)
   (let [parsed-cmd-chan (chan 1)]
@@ -61,7 +68,9 @@
           ; Any state
           ; Kill switch
           (and (= chan parsed-cmd-chan) (= res :exit))
-          (log/trace "Exit command received. Raft state machine exiting")
+          (do
+            (log/trace "Exit command received. Raft state machine exiting")
+            (close! cmd-chan-out))
           ; Different subscription
           (and (some? res) (not= subscription (:subscription res)))
           (recur my-state wait-time)
@@ -130,6 +139,8 @@
             (recur (become-follower my-state res) (election-timeout)))
 
           :else
-          (log/error "Unknown state transition: " my-state res))
-        )))
+          (do
+            (log/error "Unknown state transition: " my-state res)
+            (close! cmd-chan-out))
+          ))))
   session-id)
