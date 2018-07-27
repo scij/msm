@@ -63,7 +63,7 @@
     (go-loop [my-state (mcons/state session-id :follower 0 nil [] 0 0)
               wait-time (election-timeout)]
       (let [[res chan] (alts! [parsed-cmd-chan (timeout wait-time)])]
-        (log/trace "State maching loop" my-state res)
+        (log/trace "State machine loop" my-state res)
         (cond
           ; Any state
           ; Kill switch
@@ -137,11 +137,13 @@
             (recur my-state heartbeat-interval))
           ; There is another leader
           (and (= :leader (:role my-state)) (= command/CMD_APPEND_ENTRIES (:cmd res))
-               (> (:current-term res) (:current-term my-state) (= subscription (:subscription my-state))))
-          (do
-            (log/info "Fallback to follower. New leader is " (:leader-id res))
-            (reset! a-leader? false)
-            (recur (become-follower my-state res) (election-timeout)))
+               (= subscription (:subscription res)))
+          (if (> (:current-term res) (:current-term my-state))
+            (do
+              (log/info "Fallback to follower. New leader is " (:leader-id res))
+              (reset! a-leader? false)
+              (recur (become-follower my-state res) (election-timeout)))
+            (recur my-state heartbeat-interval))
 
           :else
           (do

@@ -1,9 +1,10 @@
 (ns com.senacor.msm.core.raft-norm-test
   (:require [clojure.test :refer :all]
-            [clojure.core.async :refer [>!! <!! close! chan timeout]]
+            [clojure.core.async :refer [>!! <!! close! chan poll! timeout]]
             [melee.consensus :as mcons]
             [com.senacor.msm.core.raft-norm :refer :all]
-            [com.senacor.msm.core.command :as command]))
+            [com.senacor.msm.core.command :as command]
+            [clojure.tools.logging :as log]))
 
 (deftest test-election-timeout
   (is (>= 300 (election-timeout)))
@@ -69,6 +70,7 @@
 
 (deftest test-raft-state-machine
   (testing "Startup case - starting as follower"
+    (log/trace "***" *testing-contexts*)
     (let [cmd-chan-in (chan 1)
           cmd-chan-out (chan 1)
           a-leader? (atom false)]
@@ -83,6 +85,7 @@
       (is (not @a-leader?))
       (>!! cmd-chan-in :exit)))
   (testing "Election timeout"
+    (log/trace "***" *testing-contexts*)
     (let [cmd-chan-in (chan 1)
           cmd-chan-out (chan 1)
           a-leader? (atom false)]
@@ -104,6 +107,7 @@
       (is (not @a-leader?))
       (>!! cmd-chan-in :exit)))
   (testing "Election winner"
+    (log/trace "***" *testing-contexts*)
     (let [cmd-chan-in (chan 1)
           cmd-chan-out (chan 1)
           a-leader? (atom false)]
@@ -128,6 +132,7 @@
       (>!! cmd-chan-in :exit)
       ))
   (testing "Sending heartbeats"
+    (log/trace "***" *testing-contexts*)
     (let [cmd-chan-in (chan 1)
           cmd-chan-out (chan 1)
           a-leader? (atom false)]
@@ -167,6 +172,7 @@
               :leader-commit 0}))
       (>!! cmd-chan-in :exit)))
   (testing "Another leader"
+    (log/trace "***" *testing-contexts*)
     (let [cmd-chan-in (chan 1)
           cmd-chan-out (chan 2)
           a-leader? (atom false)]
@@ -194,7 +200,58 @@
               :last-log-index 0,
               :last-log-term 0}))
       (>!! cmd-chan-in :exit)))
+  (testing "Loosing leadership"
+    (log/trace "***" *testing-contexts*)
+    (let [cmd-chan-in (chan 1)
+          cmd-chan-out (chan 1)
+          a-leader? (atom false)]
+      (is (= "99" (raft-state-machine "abc" "99" a-leader? cmd-chan-in cmd-chan-out)))
+      (is (= (command/parse-command (<!! cmd-chan-out))
+             {:cmd            command/CMD_REQUEST_VOTE,
+              :subscription   "abc",
+              :term           1,
+              :candidate-id   "99",
+              :last-log-index 0,
+              :last-log-term  0}))
+      (>!! cmd-chan-in (command/raft-append-entries "abc" 2 "100" 0 0 [] 0))
+      (is (nil? (poll! cmd-chan-out)))
+      (>!! cmd-chan-in :exit)))
+  (testing "Not loosing leadership"
+    (log/trace "***" *testing-contexts*)
+    (let [cmd-chan-in (chan 1)
+          cmd-chan-out (chan 1)
+          a-leader? (atom false)]
+      (is (= "99" (raft-state-machine "abc" "99" a-leader? cmd-chan-in cmd-chan-out)))
+      (is (= (command/parse-command (<!! cmd-chan-out))
+             {:cmd            command/CMD_REQUEST_VOTE,
+              :subscription   "abc",
+              :term           1,
+              :candidate-id   "99",
+              :last-log-index 0,
+              :last-log-term  0}))
+      (>!! cmd-chan-in (command/raft-vote-reply "abc" 1 "99" true))
+      (is (= (command/parse-command (<!! cmd-chan-out))
+             {:cmd command/CMD_APPEND_ENTRIES,
+              :subscription "abc",
+              :current-term 1,
+              :leader-id "99",
+              :prev-log-index 0,
+              :prev-log-term 0,
+              :leader-commit 0}))
+      (is @a-leader?)
+      (>!! cmd-chan-in (command/raft-append-entries "abc" 1 "100" 0 0 [] 0))
+      (is (= (command/parse-command (<!! cmd-chan-out))
+             {:cmd command/CMD_APPEND_ENTRIES,
+              :subscription "abc",
+              :current-term 1,
+              :leader-id "99",
+              :prev-log-index 0,
+              :prev-log-term 0,
+              :leader-commit 0}))
+      (is @a-leader?)
+      (>!! cmd-chan-in :exit)))
   (testing "Another subscription"
+    (log/trace "***" *testing-contexts*)
     (let [cmd-chan-in (chan 1)
           cmd-chan-out (chan 1)
           a-leader? (atom false)]
