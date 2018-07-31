@@ -54,6 +54,12 @@
     (clojure.pprint/pprint rec-table wrt)
     (jmx-write mbean :sl-receivers (str wrt))))
 
+(defn record-sf-status
+  [session state]
+  (let [mbean (get @session-names session)]
+    (jmx-write mbean :sf-state (str state))
+    (jmx-write mbean :is-active (= :leader (:role state)))))
+
 (defn mon-event-loop
   "Event handler for monitoring events. Subscribes to
   event-chan and uses all monitoring related events

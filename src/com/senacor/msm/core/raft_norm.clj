@@ -3,7 +3,8 @@
             [melee.consensus :as mcons]
             [melee.log :as mlog]
             [com.senacor.msm.core.command :as command]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [com.senacor.msm.core.monitor :as mon]))
 ;
 ; Implement the raft related IPC on top of NORM.
 ;
@@ -64,6 +65,7 @@
               wait-time (election-timeout)]
       (let [[res chan] (alts! [parsed-cmd-chan (timeout wait-time)])]
         (log/trace "State machine loop" my-state res)
+        (mon/record-sf-status session-id (str my-state))
         (cond
           ; Any state
           ; Kill switch
