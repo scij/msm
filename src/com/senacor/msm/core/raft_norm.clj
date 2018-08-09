@@ -19,6 +19,12 @@
   []
   (+ 150 (rand-int 150)))
 
+(defn current-time
+  "Returns current time in milliseconds. This function actually exists to
+  mock currentTimeMillis and make testing easier"
+  []
+  (System/currentTimeMillis))
+
 (defn become-candidate
   [state]
   (mcons/state (:id state) :candidate (inc (:current-term state))
@@ -43,6 +49,39 @@
                                []
                                (:commit-index state)))
 
+(defn start-election
+  "Creates a new election state map with timeout initialized and
+  an initial vote for the initiating session."
+  [session subscription term]
+  (let [e-timeout (election-timeout)]
+    {:timeout-duration e-timeout,
+     :timeout-expiry (+ (current-time) e-timeout),
+     :votes [{:subscription subscription,
+              :term term,
+              :candidate-id session,
+              :vote-granted true}]}))
+
+(defn register-vote
+  "Returns a new election state representing remaining election
+  time and the votes collected so far
+  state is the election status. May be nil if the election has just been started
+  vote is a vote-reply just received. May be nil if the election timed out.
+  Returns an updated election state"
+  [state vote-reply]
+  {:timeout-duration (- (:timeout-expiry state) (current-time)),
+   :timeout-expiry (:timeout-expiry state),
+   :votes (conj (:votes state) vote-reply)})
+
+(defn election-won?
+  "Checks if session has won the majority of votes in the election
+   state is the election state.
+   session is the identifier of the current session"
+  [state session]
+  (> (count (filter #(and (= session (:candidate-id %))
+                          (:vote-granted %))
+                    (:votes state)))
+     (/ (count (:votes state)) 2)))
+
 (defn ballot
   "Create a ballot from the vote-request result"
   [vote-reply]
@@ -62,7 +101,8 @@
   (let [parsed-cmd-chan (chan 1)]
     (pipeline 1 parsed-cmd-chan (map command/parse-command) cmd-chan-in)
     (go-loop [my-state (mcons/state session-id :follower 0 nil [] 0 0)
-              wait-time (election-timeout)]
+              wait-time (election-timeout)
+              election-state nil]
       (let [[res chan] (alts! [parsed-cmd-chan (timeout wait-time)])]
         (log/trace "State machine loop" my-state res)
         (mon/record-sf-status session-id (str my-state))
@@ -75,15 +115,14 @@
             (close! cmd-chan-out))
           ; Different subscription
           (and (some? res) (not= subscription (:subscription res)))
-          (recur my-state wait-time)
+          (recur my-state wait-time election-state)
           ; Received vote request
           (and (= command/CMD_REQUEST_VOTE (:cmd res)) (= subscription (:subscription res)))
           (let [vote-result (mcons/vote my-state (ballot res))]
             (log/trace "Voting" vote-result)
             (>! cmd-chan-out (command/raft-vote-reply subscription (:term vote-result) (:candidate-id res)
                                                       (:vote-granted vote-result)))
-            (recur (:state vote-result) wait-time))
-
+            (recur (:state vote-result) wait-time election-state))
           ; State = Follower
           ; Timed out waiting for heartbeat -> start new election
           (and (= :follower (:role my-state)) (nil? res))
@@ -94,49 +133,50 @@
                                                         (:id candidate-state)
                                                         (count (:log candidate-state))
                                                         (mlog/last-term (:log candidate-state))))
-            (recur candidate-state (election-timeout)))
+            (recur candidate-state
+                   (election-timeout)
+                   (start-election (:id candidate-state) subscription (:current-term candidate-state))))
           ; Received heartbeat.
           (and (= :follower (:role my-state)) (= command/CMD_APPEND_ENTRIES (:cmd res))
                (empty? (:entries res)) (= subscription (:subscription res)))
           (recur (mcons/state (:id my-state) :follower (max (:current-term res) (:current-term my-state))
                               (:voted-for my-state) (:log my-state) (:commit-index my-state) (:last-applied my-state))
-                 (election-timeout))
+                 heartbeat-interval
+                 election-state)
 
           ; State = Candidate
           ; Timeout in election, restart election
           (and (= :candidate (:role my-state)) (nil? res))
-          (let [candidate-state (become-candidate my-state)]
-            (log/trace "Restarting election after timeout")
-            (>! cmd-chan-out (command/raft-request-vote subscription
-                                                        (:current-term candidate-state)
-                                                        (:id candidate-state)
-                                                        (count (:log candidate-state))
-                                                        (mlog/last-term (:log candidate-state))))
-            (recur candidate-state (election-timeout)))
+          (if (election-won? election-state (:id my-state))
+            (let [leader (mcons/state (:id my-state)
+                                      :leader
+                                      (:current-term my-state)
+                                      nil ;voted for
+                                      (:log my-state)
+                                      (:commit-index my-state)
+                                      (:last-applied my-state))]
+              (log/info "Election won" leader)
+              (reset! a-leader? true)
+              (>! cmd-chan-out (heartbeat subscription leader))
+              (recur leader heartbeat-interval nil)))
           ; Vote reply received
           (and (= :candidate (:role my-state)) (= command/CMD_VOTE_REPLY (:cmd res)) (= subscription (:subscription res)))
           ; todo count votes and check majority
-          (if (= (:id my-state) (:candidate-id res))
-            (let [leader (mcons/state (:id my-state) :leader (max (:current-term my-state) (:term res))
-                                      (:voted-for nil) (:log my-state) (:commit-index my-state) (:last-applied my-state))]
-              (log/info "Becoming leader" leader)
-              (reset! a-leader? true)
-              (>! cmd-chan-out (heartbeat subscription leader))
-              (recur leader heartbeat-interval))
-            (recur my-state (election-timeout)))
+          (let [upd-election-state (register-vote election-state res)]
+            (log/trace "Vote received" election-state res)
+            (recur my-state (:timeout-duration election-state) upd-election-state))
           ; someone else won the election
           (and (= :candidate (:role my-state)) (= command/CMD_APPEND_ENTRIES (:cmd res)) (= subscription (:subscription res)))
           (if (>= (:current-term res) (:current-term my-state))
-            (recur (become-follower my-state res)
-                   (election-timeout))
-            (recur my-state (election-timeout)))
+            (recur (become-follower my-state res) heartbeat-interval nil)
+            (recur my-state (:timeout-duration election-state) election-state))
 
           ; State = Leader
           ; Leader timeout - send new heartbeat.
           (and (= :leader (:role my-state)) (nil? res))
           (do
             (>! cmd-chan-out (heartbeat subscription my-state))
-            (recur my-state heartbeat-interval))
+            (recur my-state heartbeat-interval election-state))
           ; There is another leader
           (and (= :leader (:role my-state)) (= command/CMD_APPEND_ENTRIES (:cmd res))
                (= subscription (:subscription res)))
@@ -144,8 +184,8 @@
             (do
               (log/info "Fallback to follower. New leader is " (:leader-id res))
               (reset! a-leader? false)
-              (recur (become-follower my-state res) (election-timeout)))
-            (recur my-state heartbeat-interval))
+              (recur (become-follower my-state res) (election-timeout) election-state))
+            (recur my-state heartbeat-interval election-state))
 
           :else
           (do

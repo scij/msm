@@ -101,13 +101,15 @@
                   :last-log-index 0,
                   :last-log-term 0}))
           (is (= (command/parse-command (<!! cmd-chan-out))
-                 {:cmd command/CMD_REQUEST_VOTE,
+                 {:cmd command/CMD_APPEND_ENTRIES,
                   :subscription "abc",
-                  :term 2,
-                  :candidate-id "99",
-                  :last-log-index 0,
-                  :last-log-term 0}))
-          (is (not @a-leader?))
+                  :current-term 1,
+                  :leader-id "99",
+                  :prev-log-index 0,
+                  :prev-log-term 0,
+                  :leader-commit 0}))
+          ; Shall become a leader after the election times out with no other message.
+          (is @a-leader?)
           (>!! cmd-chan-in :exit)))
       (testing "Election winner"
         (log/trace "***" *testing-contexts*)
@@ -188,6 +190,7 @@
                   :last-log-index 0,
                   :last-log-term 0}))
           (>!! cmd-chan-in (command/raft-request-vote "abc" 1 "100" 0 0))
+          (>!! cmd-chan-in (command/raft-request-vote "abc" 1 "100" 0 0))
           (is (not @a-leader?))
           (is (= (command/parse-command (<!! cmd-chan-out))
                  {:cmd command/CMD_VOTE_REPLY,
@@ -195,13 +198,6 @@
                   :subscription "abc",
                   :term 1,
                   :vote-granted false}))
-          (is (= (command/parse-command (<!! cmd-chan-out))
-                 {:cmd command/CMD_REQUEST_VOTE,
-                  :subscription "abc",
-                  :term 2,
-                  :candidate-id "99",
-                  :last-log-index 0,
-                  :last-log-term 0}))
           (>!! cmd-chan-in :exit)))
       (testing "Loosing leadership"
         (log/trace "***" *testing-contexts*)
@@ -269,12 +265,126 @@
           (>!! cmd-chan-in (command/raft-vote-reply "def" 1 "99" true))
           (is (not @a-leader?))
           (is (= (command/parse-command (<!! cmd-chan-out))
-                 {:cmd command/CMD_REQUEST_VOTE,
+                 {:cmd command/CMD_APPEND_ENTRIES,
                   :subscription "abc",
-                  :term 2,
-                  :candidate-id "99",
-                  :last-log-index 0,
-                  :last-log-term 0}))
+                  :current-term 1,
+                  :leader-id "99",
+                  :prev-log-index 0,
+                  :prev-log-term 0,
+                  :leader-commit 0}))
           (>!! cmd-chan-in :exit)
           (is (nil? (<!! cmd-chan-out)))))
   )))
+
+(deftest test-start-election
+  (with-redefs-fn
+    {#'election-timeout (fn [] 109),
+     #'current-time (fn [] 1000)}
+    #(do
+       (is (= (start-election 123 "abc" 700)
+              {:timeout-duration 109,
+               :timeout-expiry 1109,
+               :votes [{:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true}]})))))
+
+(deftest test-election-won?
+  (testing "lonely server"
+    (let [fix {:timeout-duration 0,
+               :timeout-expiry 1109,
+               :votes [{:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true}]}]
+      (is (election-won? fix 123))))
+  (testing "Absolute majority"
+    (let [fix {:timeout-duration 0,
+               :timeout-expiry 1109,
+               :votes [{:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true},
+                       {:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true},
+                       {:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true}]}]
+      (is (election-won? fix 123))))
+  (testing "One vote for another server"
+    (let [fix {:timeout-duration 0,
+               :timeout-expiry 1109,
+               :votes [{:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true},
+                       {:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true},
+                       {:subscription "abc",
+                        :candidate-id 100,
+                        :term 700,
+                        :vote-granted true}]}]
+      (is (election-won? fix 123))))
+  (testing "Majority for another server"
+    (let [fix {:timeout-duration 0,
+               :timeout-expiry 1109,
+               :votes [{:subscription "abc",
+                        :candidate-id 100,
+                        :term 700,
+                        :vote-granted true},
+                       {:subscription "abc",
+                        :candidate-id 100,
+                        :term 700,
+                        :vote-granted true},
+                       {:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true}]}]
+      (is (not (election-won? fix 123)))))
+  (testing "Mixed vote"
+    (let [fix {:timeout-duration 0,
+               :timeout-expiry 1109,
+               :votes [{:subscription "abc",
+                        :candidate-id 100,
+                        :term 700,
+                        :vote-granted true},
+                       {:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted false},
+                       {:subscription "abc",
+                        :candidate-id 123,
+                        :term 700,
+                        :vote-granted true}]}]
+      (is (not (election-won? fix 123)))))
+  )
+
+(deftest test-register-vote
+  (with-redefs-fn
+    {#'current-time (fn [] 1010)}
+    #(do
+        (is (= (register-vote {:timeout-expiry 1019,
+                               :timeout-duration 19,
+                               :votes [{:subscription "abc",
+                                        :candidate-id 123,
+                                        :term 700,
+                                        :vote-granted true}]},
+                              {:subscription "abc",
+                               :candidate-id 123,
+                               :term 700,
+                               :vote-granted true})
+               {:timeout-expiry 1019,
+                :timeout-duration 9,
+                :votes [{:subscription "abc",
+                         :candidate-id 123,
+                         :term 700,
+                         :vote-granted true},
+                        {:subscription "abc",
+                         :candidate-id 123,
+                         :term 700,
+                         :vote-granted true}]})))))

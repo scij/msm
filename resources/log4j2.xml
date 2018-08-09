@@ -18,11 +18,13 @@
                 level="INFO">
             <AppenderRef ref="STDOUT"/>
         </Logger>
-<!--
         <Logger name="com.senacor.msm.core.command"
                 level="INFO">
             <AppenderRef ref="STDOUT"/>
         </Logger>
--->
+        <Logger name="com.senacor.msm.core.raft-norm"
+                level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
     </Loggers>
 </Configuration>

@@ -60,8 +60,11 @@
     (go-loop [event (<! ec-tap)]
       (let [cmd (merge (parse-command (norm/get-command (:node event)))
                        {:node-id (norm/get-node-id (:node event))})]
-        (log/trace "Received command" cmd)
-        (>! cmd-chan cmd))
+        (if (= (:node-id cmd) (norm/get-local-node-id session))
+          (log/trace "Reflected command ignored" cmd)
+          (do
+            (log/trace "Received command" cmd)
+            (>! cmd-chan cmd))))
       (recur (<! ec-tap)))))
 
 ;; Command Structure

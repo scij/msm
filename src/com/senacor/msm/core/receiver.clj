@@ -68,6 +68,7 @@
   (synch-message stream)
   ; prevent automatic disposal of stream handle when the sender closes the stream
   (norm/retain stream)
+  ; todo hier die events des eigenen node ausfiltern?
   (let [stream-events (chan 64 (filter #(and (= session (:session %))
                                              (= stream (:object %)))))
         stream-chan (chan 128 message-builder)
