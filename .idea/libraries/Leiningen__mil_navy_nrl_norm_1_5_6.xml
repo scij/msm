@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Leiningen: mil.navy.nrl/norm:1.5.6">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/mil/navy/nrl/norm/1.5.6/norm-1.5.6.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -3,16 +3,16 @@
   :url "http://bitbucket.senacor.com/jschiewe/msm"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.async "0.4.474"]
-                 [org.clojure/tools.logging "0.4.0"]
-                 [org.clojure/tools.cli "0.3.5"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/core.async "0.7.559"]
+                 [org.clojure/tools.logging "0.5.0"]
+                 [org.clojure/tools.cli "0.4.2"]
                  [org.clojure/java.jmx "0.3.4"]
                  [bytebuffer "0.2.0"]
-                 [mil.navy.nrl/norm "1.5.6"]
+                 [mil.navy.nrl/norm "1.5.9"]
                  [me.raynes/moments "0.1.1"]
-                 [org.apache.logging.log4j/log4j-api "2.8.2"]
-                 [org.apache.logging.log4j/log4j-core "2.8.2"]
+                 [org.apache.logging.log4j/log4j-api "2.13.0"]
+                 [org.apache.logging.log4j/log4j-core "2.13.0"]
                  [org.clojars.scij/melee "0.2.0-SNAPSHOT"]
                  ]
   :jvm-opts ["-Djava.library.path=/usr/lib:/usr/local/lib"]

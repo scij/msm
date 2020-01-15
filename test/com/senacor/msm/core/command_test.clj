@@ -8,6 +8,22 @@
             [com.senacor.msm.core.util :as util])
   (:import (java.nio ByteBuffer)))
 
+(def gl-session (atom nil))
+
+(defn new-val [_ n]
+  n)
+
+(defn session-fixture [test]
+  (let [instance (norm/create-instance)
+        session (norm/create-session instance "239.192.0.1" 7100 1)]
+    (swap! gl-session new-val session)
+    (test)
+    (swap! gl-session new-val nil)
+    (norm/destroy-session session)
+    (norm/destroy-instance instance)))
+
+(use-fixtures :each session-fixture)
+
 (deftest test-put-fixed-header
   (testing "test put alive"
     (let [fix (bb/byte-buffer 6)]
@@ -22,7 +38,7 @@
 
 (deftest test-command-receiver
   (testing "one single command"
-    (let [session 1
+    (let [session @gl-session
           event-chan (chan 1)
           cmd-chan (chan 1)]
       (with-redefs-fn {#'norm/get-command    (fn [_] (alive session "s1" true 0 1001))
@@ -39,7 +55,7 @@
            )))
     )
   (testing "multiple commands"
-    (let [session 1
+    (let [session @gl-session
           cmd-count (atom 4)
           event-chan (chan 1)
           cmd-chan (timeout 100)]
@@ -66,17 +82,18 @@
       )
     )
   (testing "command from a different session"
-    (let [cmd-chan (timeout 100)
+    (let [session @gl-session
+          cmd-chan (timeout 100)
           event-chan (chan 3)]
       (with-redefs-fn {#'norm/get-command (fn [session]
                                             (alive session (str "s" session) true 1 1000)),
                        #'norm/get-node-id (fn [_] 19)}
         #(do
-           (command-receiver 1 (mult event-chan) cmd-chan)
-           (>!! event-chan {:session 1 :event-type :rx-object-cmd-new :node 1234})
+           (command-receiver session (mult event-chan) cmd-chan)
+           (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
            (is (= "s1234" (:subscription (<!! cmd-chan))))
            (>!! event-chan {:session 2 :event-type :rx-object-cmd-new :node 4321})
-           (>!! event-chan {:session 1 :event-type :rx-object-cmd-new :node 1234})
+           (>!! event-chan {:session session :event-type :rx-object-cmd-new :node 1234})
            (is (= "s1234" (:subscription (<!! cmd-chan))))
            (is (nil? (<!! cmd-chan)))))))
   )
@@ -161,7 +178,7 @@
     (with-redefs-fn {#'norm/send-command (fn [_ buf len _]
                                            (>!! sent-msg-chan [buf len])
                                            (log/trace "cmd sent"))}
-      #(let [session 1
+      #(let [session @gl-session
              event-chan (chan 1)
              cmd-chan (chan 2)
              fix-alive (alive session "abcd" true 5 1962)]
