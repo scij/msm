@@ -2,7 +2,8 @@
   (:require [com.senacor.msm.core.norm-api :as norm]
             [clojure.core.async :refer [chan go-loop tap <! untap]]
             [clojure.java.jmx :as jmx]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure.pprint :as pp]))
 
 ;; Maps sessions to JMX bean names.
 (def session-names (atom {}))
@@ -51,7 +52,7 @@
   [session rec-table]
   (let [mbean (get @session-names session)
         wrt (java.io.StringWriter.)]
-    (clojure.pprint/pprint rec-table wrt)
+    (pp/pprint rec-table wrt)
     (jmx-write mbean :sl-receivers (str wrt))))
 
 (defn record-sf-status

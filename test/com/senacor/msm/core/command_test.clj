@@ -13,11 +13,11 @@
 (defn new-val [_ n]
   n)
 
-(defn session-fixture [test]
+(defn session-fixture [tfunc]
   (let [instance (norm/create-instance)
         session (norm/create-session instance "239.192.0.1" 7100 1)]
     (swap! gl-session new-val session)
-    (test)
+    (tfunc)
     (swap! gl-session new-val nil)
     (norm/destroy-session session)
     (norm/destroy-instance instance)))

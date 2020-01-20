@@ -85,6 +85,26 @@ and filter by label /com/senacor/msm
           (println msg)
           (recur (<! msg-chan)))))
 
+## Building
+
+This software has two *exotic* dependencies that require special handling to accomplish the build:
+1. A fork of the Raft implementation melee. You find the source code here [on github](https://www.gitbub.com/scij/melee)
+and the binary on clojars. The reference is specified in project.clj.
+2. The NORM runtime library. Since NORM is implemented in C++ with a Java JNI wrapper you need a native build
+to make the software work.
+
+### Installing NORM
+
+Clone the [NORM repository on github](https://github.com/USNavalResearchLaboratory/norm.git).
+Follow the instructions in BUILD.TXT making sure that you build the Java runtime.
+
+Once the software has been built and installed successfully you can install the NORM JNI library to your maven repository:
+
+    mvn install:install-file -Dfile=build/norm.jar -DgroupId=mil.navy.nrl -DartifactId=norm -Dversion=1.5.9 -Dpackaging=jar
+    
+(and adjust the version number to match the current version of NORM).
+Check the library path in project.clj. It needs to match the place where the NORM installation has put the dynamic libraries.
+
 ## Related work
 
 My search on server-less middleware returned two working open source projects: ZeroMQ and NanoMsg (the latter

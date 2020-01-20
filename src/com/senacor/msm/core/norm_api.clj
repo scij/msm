@@ -630,7 +630,7 @@
   (.setDefaultRxRobustFactor handle rx-robust-factor)
   handle)
 
-(defn ^NormNode set-default-rx-robust-factor
+(defn ^NormNode set-rx-robust-factor
   "The rx robust factor controls how long the receiver will request repair
   of incomplete or missing messages from this sender node."
   [^NormNode handle ^Integer rx-robust-factor]
@@ -667,8 +667,8 @@
     NormObjectType/NORM_OBJECT_NONE :none
     NormObjectType/NORM_OBJECT_STREAM :stream))
 
-(defn ^bytes get-info
-  "Get the info data included in the object."
+(defn get-info
+  "Get the info data included in the object. Returns a byte array."
   [^NormObject handle]
   (.getInfo handle))
 
@@ -708,7 +708,7 @@
   [^NormObject handle]
   (.getSender handle))
 
-(defn ^bytes get-data
+(defn get-data
   "Returns the data payload of the object as a byte array."
   [^NormData handle]
   (.getData handle))

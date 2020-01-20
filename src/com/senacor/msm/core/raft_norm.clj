@@ -123,6 +123,7 @@
             (>! cmd-chan-out (command/raft-vote-reply subscription (:term vote-result) (:candidate-id res)
                                                       (:vote-granted vote-result)))
             (recur (:state vote-result) wait-time election-state))
+
           ; State = Follower
           ; Timed out waiting for heartbeat -> start new election
           (and (= :follower (:role my-state)) (nil? res))
