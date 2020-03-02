@@ -26,6 +26,21 @@
   []
   (System/currentTimeMillis))
 
+(defn command-append-entries?
+  "Returns true if the response contains the append-entries command"
+  [res]
+  (= command/CMD_APPEND_ENTRIES (:cmd res)))
+
+(defn command-request-vote?
+  "Returns true if the response contains a request vote command"
+  [res]
+  (= command/CMD_REQUEST_VOTE (:cmd res)))
+
+(defn command-vote-reply?
+  "Returns true if the response contains a vote reply command"
+  [res]
+  (= command/CMD_VOTE_REPLY (:cmd res)))
+
 (defn become-candidate
   [state]
   (mcons/state (:id state) :candidate (inc (:current-term state))
@@ -33,9 +48,24 @@
 
 (defn become-follower
   [state append-request]
-  (assert (= command/CMD_APPEND_ENTRIES (:cmd append-request)))
+  (assert (command-append-entries? append-request))
   (mcons/state (:id state) :follower (:current-term append-request) (:voted-for nil) (:log state)
                (:leader-commit append-request) (:leader-commit append-request)))
+
+(defn follower?
+  "Returns true if the state is follower"
+  [state]
+  (= :follower (:role state)))
+
+(defn leader?
+  "Returns true if the state is leader"
+  [state]
+  (= :leader (:role state)))
+
+(defn candidate?
+  "Returns true if the state is candidate"
+  [state]
+  (= :candidate (:role state)))
 
 (defn heartbeat
   "Returns the heartbeat message for the current state."
@@ -86,7 +116,7 @@
 (defn ballot
   "Create a ballot from the vote-request result"
   [vote-reply]
-  (assert (= command/CMD_REQUEST_VOTE (:cmd vote-reply)))
+  (assert (command-request-vote? vote-reply))
   (mcons/ballot (:term vote-reply) (:candidate-id vote-reply) (:last-log-index vote-reply) (:last-log-term vote-reply)))
 
 (defn raft-state-machine
@@ -118,7 +148,7 @@
           (and (some? res) (not= subscription (:subscription res)))
           (recur my-state wait-time election-state)
           ; Received vote request
-          (and (= command/CMD_REQUEST_VOTE (:cmd res)) (= subscription (:subscription res)))
+          (and (command-request-vote? res) (= subscription (:subscription res)))
           (let [vote-result (mcons/vote my-state (ballot res))]
             (log/trace "Voting" vote-result)
             (>! cmd-chan-out (command/raft-vote-reply subscription (:term vote-result) (:candidate-id res)
@@ -127,7 +157,7 @@
 
           ; State = Follower
           ; Timed out waiting for heartbeat -> start new election
-          (and (= :follower (:role my-state)) (nil? res))
+          (and (follower? my-state) (nil? res))
           (let [candidate-state (become-candidate my-state)]
             (log/trace "Starting election")
             (>! cmd-chan-out (command/raft-request-vote subscription
@@ -139,7 +169,7 @@
                    (election-timeout)
                    (start-election (:id candidate-state) subscription (:current-term candidate-state))))
           ; Received heartbeat.
-          (and (= :follower (:role my-state)) (= command/CMD_APPEND_ENTRIES (:cmd res))
+          (and (follower? my-state) (command-append-entries? res)
                (empty? (:entries res)) (= subscription (:subscription res)))
           (recur (mcons/state (:id my-state) :follower (max (:current-term res) (:current-term my-state))
                               (:voted-for my-state) (:log my-state) (:commit-index my-state) (:last-applied my-state))
@@ -148,7 +178,7 @@
 
           ; State = Candidate
           ; Timeout in election, restart election
-          (and (= :candidate (:role my-state)) (nil? res))
+          (and (candidate? my-state) (nil? res))
           (if (election-won? election-state (:id my-state))
             (let [leader (mcons/state (:id my-state)
                                       :leader
@@ -162,26 +192,25 @@
               (>! cmd-chan-out (heartbeat subscription leader))
               (recur leader heartbeat-interval nil)))
           ; Vote reply received
-          (and (= :candidate (:role my-state)) (= command/CMD_VOTE_REPLY (:cmd res)) (= subscription (:subscription res)))
           ; todo count votes and check majority
+          (and (candidate? my-state) (command-vote-reply? res) (= subscription (:subscription res)))
           (let [upd-election-state (register-vote election-state res)]
             (log/trace "Vote received" election-state res)
             (recur my-state (:timeout-duration election-state) upd-election-state))
           ; someone else won the election
-          (and (= :candidate (:role my-state)) (= command/CMD_APPEND_ENTRIES (:cmd res)) (= subscription (:subscription res)))
+          (and (candidate? my-state) (command-append-entries? res) (= subscription (:subscription res)))
           (if (>= (:current-term res) (:current-term my-state))
             (recur (become-follower my-state res) heartbeat-interval nil)
             (recur my-state (:timeout-duration election-state) election-state))
 
           ; State = Leader
           ; Leader timeout - send new heartbeat.
-          (and (= :leader (:role my-state)) (nil? res))
+          (and (= (leader? my-state)) (nil? res))
           (do
             (>! cmd-chan-out (heartbeat subscription my-state))
             (recur my-state heartbeat-interval election-state))
           ; There is another leader
-          (and (= :leader (:role my-state)) (= command/CMD_APPEND_ENTRIES (:cmd res))
-               (= subscription (:subscription res)))
+          (and (leader? my-state) (command-append-entries? res) (= subscription (:subscription res)))
           (if (> (:current-term res) (:current-term my-state))
             (do
               (log/info "Fallback to follower. New leader is " (:leader-id res))
