@@ -134,30 +134,30 @@
     (go-loop [my-state (mcons/state session-id :follower 0 nil [] 0 0)
               wait-time (election-timeout)
               election-state nil]
-      (let [[res chan] (alts! [parsed-cmd-chan (timeout wait-time)])]
-        (log/trace "State machine loop" my-state res)
+      (let [[cmd chan] (alts! [parsed-cmd-chan (timeout wait-time)])]
+        (log/trace "State machine loop" my-state cmd)
         (mon/record-sf-status session-id (str my-state))
         (cond
           ; Any state
           ; Kill switch
-          (and (= chan parsed-cmd-chan) (= res :exit))
+          (and (= chan parsed-cmd-chan) (= cmd :exit))
           (do
             (log/trace "Exit command received. Raft state machine exiting")
             (close! cmd-chan-out))
           ; Different subscription
-          (and (some? res) (not= subscription (:subscription res)))
+          (and (some? cmd) (not= subscription (:subscription cmd)))
           (recur my-state wait-time election-state)
           ; Received vote request
-          (and (command-request-vote? res) (= subscription (:subscription res)))
-          (let [vote-result (mcons/vote my-state (ballot res))]
+          (and (command-request-vote? cmd) (= subscription (:subscription cmd)))
+          (let [vote-result (mcons/vote my-state (ballot cmd))]
             (log/trace "Voting" vote-result)
-            (>! cmd-chan-out (command/raft-vote-reply subscription (:term vote-result) (:candidate-id res)
+            (>! cmd-chan-out (command/raft-vote-reply subscription (:term vote-result) (:candidate-id cmd)
                                                       (:vote-granted vote-result)))
             (recur (:state vote-result) wait-time election-state))
 
           ; State = Follower
           ; Timed out waiting for heartbeat -> start new election
-          (and (follower? my-state) (nil? res))
+          (and (follower? my-state) (nil? cmd))
           (let [candidate-state (become-candidate my-state)]
             (log/trace "Starting election")
             (>! cmd-chan-out (command/raft-request-vote subscription
@@ -169,16 +169,16 @@
                    (election-timeout)
                    (start-election (:id candidate-state) subscription (:current-term candidate-state))))
           ; Received heartbeat.
-          (and (follower? my-state) (command-append-entries? res)
-               (empty? (:entries res)) (= subscription (:subscription res)))
-          (recur (mcons/state (:id my-state) :follower (max (:current-term res) (:current-term my-state))
+          (and (follower? my-state) (command-append-entries? cmd)
+               (empty? (:entries cmd)) (= subscription (:subscription cmd)))
+          (recur (mcons/state (:id my-state) :follower (max (:current-term cmd) (:current-term my-state))
                               (:voted-for my-state) (:log my-state) (:commit-index my-state) (:last-applied my-state))
                  heartbeat-interval
                  election-state)
 
           ; State = Candidate
           ; Timeout in election, restart election
-          (and (candidate? my-state) (nil? res))
+          (and (candidate? my-state) (nil? cmd))
           (if (election-won? election-state (:id my-state))
             (let [leader (mcons/state (:id my-state)
                                       :leader
@@ -193,34 +193,34 @@
               (recur leader heartbeat-interval nil)))
           ; Vote reply received
           ; todo count votes and check majority
-          (and (candidate? my-state) (command-vote-reply? res) (= subscription (:subscription res)))
-          (let [upd-election-state (register-vote election-state res)]
-            (log/trace "Vote received" election-state res)
+          (and (candidate? my-state) (command-vote-reply? cmd) (= subscription (:subscription cmd)))
+          (let [upd-election-state (register-vote election-state cmd)]
+            (log/trace "Vote received" election-state cmd)
             (recur my-state (:timeout-duration election-state) upd-election-state))
           ; someone else won the election
-          (and (candidate? my-state) (command-append-entries? res) (= subscription (:subscription res)))
-          (if (>= (:current-term res) (:current-term my-state))
-            (recur (become-follower my-state res) heartbeat-interval nil)
+          (and (candidate? my-state) (command-append-entries? cmd) (= subscription (:subscription cmd)))
+          (if (>= (:current-term cmd) (:current-term my-state))
+            (recur (become-follower my-state cmd) heartbeat-interval nil)
             (recur my-state (:timeout-duration election-state) election-state))
 
           ; State = Leader
           ; Leader timeout - send new heartbeat.
-          (and (= (leader? my-state)) (nil? res))
+          (and (= (leader? my-state)) (nil? cmd))
           (do
             (>! cmd-chan-out (heartbeat subscription my-state))
             (recur my-state heartbeat-interval election-state))
           ; There is another leader
-          (and (leader? my-state) (command-append-entries? res) (= subscription (:subscription res)))
-          (if (> (:current-term res) (:current-term my-state))
+          (and (leader? my-state) (command-append-entries? cmd) (= subscription (:subscription cmd)))
+          (if (> (:current-term cmd) (:current-term my-state))
             (do
-              (log/info "Fallback to follower. New leader is " (:leader-id res))
+              (log/info "Fallback to follower. New leader is " (:leader-id cmd))
               (reset! a-leader? false)
-              (recur (become-follower my-state res) (election-timeout) election-state))
+              (recur (become-follower my-state cmd) (election-timeout) election-state))
             (recur my-state heartbeat-interval election-state))
 
           :else
           (do
-            (log/error "Unknown state transition: " my-state res)
+            (log/error "Unknown state transition: " my-state cmd)
             (close! cmd-chan-out))
           ))))
   session-id)
