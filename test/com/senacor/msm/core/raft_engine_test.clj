@@ -1,8 +1,8 @@
-(ns com.senacor.msm.core.raft-norm-test
+(ns com.senacor.msm.core.raft-engine-test
   (:require [clojure.test :refer :all]
             [clojure.core.async :refer [>!! <!! close! chan poll! timeout]]
             [melee.consensus :as mcons]
-            [com.senacor.msm.core.raft-norm :refer :all]
+            [com.senacor.msm.core.raft-engine :refer :all]
             [com.senacor.msm.core.command :as command]
             [clojure.tools.logging :as log]
             [com.senacor.msm.core.monitor :as monitor]))

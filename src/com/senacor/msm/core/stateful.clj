@@ -6,7 +6,7 @@
             [com.senacor.msm.core.command :as command]
             [com.senacor.msm.core.norm-api :as norm]
             [com.senacor.msm.core.message :as message]
-            [com.senacor.msm.core.raft-norm :as raft-norm]
+            [com.senacor.msm.core.raft-engine :as raft-norm]
             [com.senacor.msm.core.receiver :as receiver]))
 
 (defn is-my-message

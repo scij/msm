@@ -1,4 +1,4 @@
-(ns com.senacor.msm.core.raft-norm
+(ns com.senacor.msm.core.raft-engine
   (:require [clojure.core.async :refer [>!! >! alts! chan close! go-loop pipeline timeout]]
             [melee.consensus :as mcons]
             [melee.log :as mlog]
@@ -6,7 +6,8 @@
             [clojure.tools.logging :as log]
             [com.senacor.msm.core.monitor :as mon]))
 ;
-; Implement the raft related IPC on top of NORM.
+; Implement a raft engine on top of the melee implementation.
+; This implementation uses NORM commands to exchange state between nodes.
 ;
 
 (def ^:const heartbeat-interval
