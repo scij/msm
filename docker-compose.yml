@@ -1,0 +1,14 @@
+---
+
+version: '3.5'
+services:
+  listen:
+    image: msm-listen:jdk11
+    container_name: listen
+    ports:
+      - "239.192.0.1:7100:7100/udp"
+  send:
+    image: msm-send:jdk11
+    container_name: send
+    depends_on:
+      - "listen"

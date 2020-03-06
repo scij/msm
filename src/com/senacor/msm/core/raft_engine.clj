@@ -205,7 +205,7 @@
 
           ; State = Leader
           ; Leader timeout - send new heartbeat.
-          (and (= (leader? my-state)) (nil? cmd))
+          (and (leader? my-state) (nil? cmd))
           (do
             (>! cmd-chan-out (heartbeat subscription my-state))
             (recur my-state heartbeat-interval election-state))

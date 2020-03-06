@@ -1,6 +1,6 @@
 # run with docker run -p 239.192.0.1:7100:7100/udp test/msm-listen
 
-FROM scij/deb-norm
+FROM scij/deb-norm:jdk11
 
 COPY target/com.senacor.msm-0.1.0-SNAPSHOT-standalone.jar .
 EXPOSE 7100/udp
