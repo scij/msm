@@ -72,8 +72,11 @@
                               NormEventType/NORM_RX_OBJECT_UPDATED      :rx-object-updated,
                               NormEventType/NORM_RX_OBJECT_COMPLETED    :rx-object-completed,
                               NormEventType/NORM_RX_OBJECT_ABORTED      :rx-object-aborted,
+                              NormEventType/NORM_RX_ACK_REQUEST         :rx-ack-request,
                               NormEventType/NORM_RX_CMD_NEW             :rx-object-cmd-new,
                               NormEventType/NORM_GRTT_UPDATED           :grtt-updated,
+                              NormEventType/NORM_ACKING_NODE_NEW        :acking-node-new,
+                              NormEventType/NORM_SEND_ERROR             :send-error,
                               NormEventType/NORM_EVENT_INVALID          :event-invalid})
 
 
